@@ -1,0 +1,174 @@
+﻿<Window x:Class="youtube_dl_wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="{materialDesign:MaterialDesignFont}"
+        Title="Cube YouTube Downloader" Height="690" Width="960">
+    <materialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}">
+        <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
+            <materialDesign:DrawerHost.LeftDrawerContent>
+                <DockPanel MinWidth="220">
+                    <ToggleButton 
+                        Style="{StaticResource MaterialDesignHamburgerToggleButton}" 
+                        DockPanel.Dock="Top"
+                        HorizontalAlignment="Right" 
+                        Margin="16"
+                        IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
+                    <ListBox 
+                        x:Name="DrawerItemsListBox"
+                        Margin="0 16 0 16"
+                        SelectedIndex="0"
+                        SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding DrawerItems}"
+                        PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp">
+                        <ListBox.Resources>
+                            <Style TargetType="ScrollBar" BasedOn="{StaticResource MaterialDesignScrollBarMinimal}"/>
+                        </ListBox.Resources>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="domain:DemoItem">
+                                <TextBlock Text="{Binding Name}" Margin="32 0 32 0" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </materialDesign:DrawerHost.LeftDrawerContent>
+            <DockPanel>
+                <materialDesign:ColorZone
+                    Mode="PrimaryMid"
+                    materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                    Padding="16"
+                    DockPanel.Dock="Top">
+                    <DockPanel>
+                        <ToggleButton
+                            Style="{DynamicResource MaterialDesignHamburgerToggleButton}"
+                            IsChecked="False"
+                            x:Name="MenuToggleButton"/>
+                        <materialDesign:PopupBox
+                            DockPanel.Dock="Right"
+                            PlacementMode="BottomAndAlignRightEdges">
+                            <StackPanel>
+                                <Button Content="Settings" IsEnabled="False"/>
+                                <Separator/>
+                                <Button Content="About" IsEnabled="False"/>
+                            </StackPanel>
+                        </materialDesign:PopupBox>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="22">
+                            Cube YouTube Downloader
+                        </TextBlock>
+                    </DockPanel>
+                </materialDesign:ColorZone>
+                <Grid>
+                    <ScrollViewer
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Auto">
+                        <Grid Margin="24,24,24,24">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Margin="8,8,8,8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Start your download</TextBlock>
+                            <StackPanel Grid.Row="1">
+                                <StackPanel Orientation="Horizontal" >
+                                    <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Video Link</TextBlock>
+                                    <TextBox
+                                        x:Name="hostnameTextBox"
+                                        materialDesign:HintAssist.Hint="e.g. https://www.youtube.com/watch?v=b2390GAm4d0"
+                                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                        Margin="8,8,8,8" Width="384" />
+                                    <Button x:Name="downloadButton" Margin="8,8,8,8">Download</Button>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Top" Margin="8,8,8,8">Options</TextBlock>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ToggleButton
+                                                x:Name="listFormatsToggle"
+                                                Margin="8,8,8,8"/>
+                                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">List Formats</TextBlock>
+                                            <ToggleButton
+                                                x:Name="overrideFormatsToggle"
+                                                Margin="16,8,8,8"/>
+                                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Override Formats</TextBlock>
+                                            <TextBlock VerticalAlignment="Center" Margin="8,8,8,8">Video Format</TextBlock>
+                                            <TextBox
+                                                x:Name="videoTextBox"
+                                                Margin="0,8,8,8"
+                                                Width="50"
+                                                IsEnabled="{Binding Path=IsChecked, ElementName=overrideFormatsToggle}"/>
+                                            <TextBlock VerticalAlignment="Center" Margin="8,8,8,8">Audio Format</TextBlock>
+                                            <TextBox
+                                                x:Name="audioTextBox"
+                                                Margin="0,8,8,8"
+                                                Width="50"
+                                                IsEnabled="{Binding Path=IsChecked, ElementName=overrideFormatsToggle}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                            <ToggleButton
+                                                x:Name="thumbnailToggle"
+                                                Margin="8,8,8,8"
+                                                IsChecked="True"/>
+                                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Thumbnail</TextBlock>
+                                            <ToggleButton
+                                                x:Name="SubtitlesToggle"
+                                                Margin="8,8,8,8"
+                                                IsChecked="True"/>
+                                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Subtitles</TextBlock>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="2">
+                                            <ToggleButton
+                                                x:Name="pathToggle"
+                                                Margin="8,8,8,8"/>
+                                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Custom Download Path</TextBlock>
+                                            <TextBox
+                                                x:Name="pathTextBox"
+                                                Margin="8,8,2,8"
+                                                Width="384"
+                                                IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}"/>
+                                            <Button
+                                                x:Name="browseButton"
+                                                Margin="2,0,8,0"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}">Browse</Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2">
+                                <TextBlock Margin="8,24,8,8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Results</TextBlock>
+                                <TextBox
+                                    x:Name="resultTextBox"
+                                    Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                                    Height="240"
+                                    Margin="8,8,8,8"
+                                    TextWrapping="Wrap"
+                                    IsReadOnly="True"
+                                    VerticalScrollBarVisibility="Auto"
+                                    HorizontalScrollBarVisibility="Auto"
+                                    materialDesign:HintAssist.Hint="Output from youtube-dl"
+                                    IsEnabled="True"
+                                    Text="" />
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                    <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="MainSnackbar" Grid.Row="1" />
+                </Grid>
+            </DockPanel>
+        </materialDesign:DrawerHost>
+    </materialDesign:DialogHost>
+</Window>
