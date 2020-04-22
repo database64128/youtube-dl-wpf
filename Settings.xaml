@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="youtube_dl_wpf.Settings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:youtube_dl_wpf"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="960">
+    <UserControl.DataContext>
+        <local:SettingsViewModel/>
+    </UserControl.DataContext>
+    <Grid Margin="24,24,24,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Margin="8,8,8,8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Settings</TextBlock>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,0">
+            <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Color Mode</TextBlock>
+            <ToggleButton
+                x:Name="darkModeToggle"
+                Margin="8,8,8,8"
+                IsChecked="{Binding DarkMode}"/>
+            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8" Text="{Binding ColorMode}" />
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8"><Italic>youtube-dl</Italic> Path</TextBlock>
+            <TextBox
+                x:Name="dlPathTextBox"
+                Margin="2,8,2,8"
+                Width="384"
+                Text="{Binding DlPath}"/>
+            <Button
+                x:Name="dlPathBrowseButton"
+                Margin="2,0,8,0"
+                Style="{StaticResource MaterialDesignOutlinedButton}">Browse</Button>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8"><Italic>ffmpeg</Italic> Path</TextBlock>
+            <TextBox
+                x:Name="ffmpegPathTextBox"
+                Margin="2,8,2,8"
+                Width="384"
+                Text="{Binding FfmpegPath}"/>
+            <Button
+                x:Name="ffmpegPathBrowseButton"
+                Margin="2,0,8,0"
+                Style="{StaticResource MaterialDesignOutlinedButton}">Browse</Button>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Proxy</TextBlock>
+            <TextBox
+                x:Name="proxyTextBox"
+                Margin="2,8,2,8"
+                Width="384"
+                Text="{Binding Proxy}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
