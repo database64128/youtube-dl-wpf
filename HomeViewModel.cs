@@ -1,32 +1,196 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace youtube_dl_wpf
 {
     public class HomeViewModel : ViewModelBase
     {
+        public HomeViewModel()
+        {
+            _browseFolder = new DelegateCommand(OnBrowseFolder, (object commandParameter) => true);
+            _startDownload = new DelegateCommand(OnStartDownload, CanStartDownload);
+            _listFormats = new DelegateCommand(OnListFormats, CanStartDownload);
+
+            _videoFormat = AppSettings.settings.VideoFormat;
+            _audioFormat = AppSettings.settings.AudioFormat;
+            _downloadPath = AppSettings.settings.DownloadPath;
+
+            //UpdateDl();
+        }
+        
         private string _link;
-        private bool _listFormats;
         private bool _overrideFormats;
         private string _videoFormat;
         private string _audioFormat;
+        private bool _metadata = true;
         private bool _thumbnail = true;
         private bool _subtitles = true;
         private bool _customPath;
-        private string _path;
+        private string _downloadPath;
         private string _output;
+
+        private StringBuilder outputString;
+
+        private readonly DelegateCommand _browseFolder;
+        private readonly DelegateCommand _startDownload;
+        private readonly DelegateCommand _listFormats;
+
+        private void OnBrowseFolder(object commandParameter)
+        {
+            Microsoft.Win32.OpenFileDialog folderDialog = new Microsoft.Win32.OpenFileDialog();
+            folderDialog.FileName = "Folder Selection.";
+            folderDialog.ValidateNames = false;
+            folderDialog.CheckFileExists = false;
+            folderDialog.CheckPathExists = true;
+
+            Nullable<bool> result = folderDialog.ShowDialog();
+
+            if (result == true)
+            {
+                if ((string)commandParameter == "DownloadPath")
+                    DownloadPath = System.IO.Path.GetDirectoryName(folderDialog.FileName);
+            }
+        }
+
+        private void OnStartDownload(object commandParameter)
+        {
+            outputString = new StringBuilder();
+
+            using (Process dlProcess = new Process())
+            {
+                dlProcess.StartInfo.FileName = AppSettings.settings.DlPath;
+                dlProcess.StartInfo.CreateNoWindow = true;
+                dlProcess.StartInfo.UseShellExecute = false;
+                dlProcess.StartInfo.RedirectStandardError = true;
+                dlProcess.StartInfo.RedirectStandardOutput = true;
+                dlProcess.ErrorDataReceived += DlOutputHandler;
+                dlProcess.OutputDataReceived += DlOutputHandler;
+                // make parameter list
+                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("--proxy");
+                    dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
+                }
+                if (!String.IsNullOrEmpty(AppSettings.settings.FfmpegPath))
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("--ffmpeg-location");
+                    dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.FfmpegPath}");
+                }
+                if (_overrideFormats && !String.IsNullOrEmpty(_videoFormat) && !String.IsNullOrEmpty(_audioFormat))
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("-f");
+                    dlProcess.StartInfo.ArgumentList.Add($"{_videoFormat}+{_audioFormat}");
+                }
+                if (_metadata)
+                    dlProcess.StartInfo.ArgumentList.Add("--add-metadata");
+                if (_thumbnail)
+                    dlProcess.StartInfo.ArgumentList.Add("--embed-thumbnail");
+                if (_subtitles)
+                    dlProcess.StartInfo.ArgumentList.Add("--embed-subs");
+                if (_customPath)
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("-o");
+                    dlProcess.StartInfo.ArgumentList.Add($@"{_downloadPath}\%(title)s-%(id)s.%(ext)s");
+                }
+                // start download
+                dlProcess.Start();
+                dlProcess.BeginErrorReadLine();
+                dlProcess.BeginOutputReadLine();
+                dlProcess.WaitForExit();
+            }
+        }
+
+        private void OnListFormats(object commandParameter)
+        {
+            outputString = new StringBuilder();
+            
+            using (Process dlProcess = new Process())
+            {
+                dlProcess.StartInfo.FileName = AppSettings.settings.DlPath;
+                dlProcess.StartInfo.CreateNoWindow = true;
+                dlProcess.StartInfo.UseShellExecute = false;
+                dlProcess.StartInfo.RedirectStandardError = true;
+                dlProcess.StartInfo.RedirectStandardOutput = true;
+                dlProcess.ErrorDataReceived += DlOutputHandler;
+                dlProcess.OutputDataReceived += DlOutputHandler;
+                // make parameter list
+                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("--proxy");
+                    dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
+                }
+                dlProcess.StartInfo.ArgumentList.Add($"-F");
+                dlProcess.StartInfo.ArgumentList.Add($"{_link}");
+                // start download
+                dlProcess.Start();
+                dlProcess.BeginErrorReadLine();
+                dlProcess.BeginOutputReadLine();
+                dlProcess.WaitForExit();
+            }
+        }
+
+        private bool CanStartDownload(object commandParameter)
+        {
+            return !(String.IsNullOrEmpty(_link) && String.IsNullOrEmpty(AppSettings.settings.DlPath));
+        }
+
+        private void UpdateDl()
+        {
+            outputString = new StringBuilder();
+
+            using (Process dlProcess = new Process())
+            {
+                dlProcess.StartInfo.FileName = AppSettings.settings.DlPath;
+                dlProcess.StartInfo.CreateNoWindow = true;
+                dlProcess.StartInfo.UseShellExecute = false;
+                dlProcess.StartInfo.RedirectStandardError = true;
+                dlProcess.StartInfo.RedirectStandardOutput = true;
+                dlProcess.ErrorDataReceived += DlOutputHandler;
+                dlProcess.OutputDataReceived += DlOutputHandler;
+                // make parameter list
+                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("--proxy");
+                    dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
+                }
+                dlProcess.StartInfo.ArgumentList.Add($"-U");
+                // start update
+                dlProcess.Start();
+                dlProcess.BeginErrorReadLine();
+                dlProcess.BeginOutputReadLine();
+                dlProcess.WaitForExit();
+            }
+        }
+
+        private void DlOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        {
+            if (!String.IsNullOrEmpty(outLine.Data))
+            {
+                outputString.Append(outLine.Data);
+                outputString.Append(Environment.NewLine);
+                Output = outputString.ToString();
+                /*Dispatcher.BeginInvoke(DispatcherPriority.Render,
+                    new Action(() =>
+                    {
+                        outputString.Append(outLine.Data);
+                        outputString.Append(Environment.NewLine);
+                        Output = outputString.ToString();
+                    }));*/
+            }
+        }
+
+        public ICommand BrowseFolder => _browseFolder;
+        public ICommand StartDownload => _startDownload;
+        public ICommand ListFormats => _listFormats;
 
         public string Link
         {
             get => _link;
             set => SetProperty(ref _link, value);
-        }
-
-        public bool ListFormats
-        {
-            get => _listFormats;
-            set => SetProperty(ref _listFormats, value);
         }
 
         public bool OverrideFormats
@@ -38,13 +202,29 @@ namespace youtube_dl_wpf
         public string VideoFormat
         {
             get => _videoFormat;
-            set => SetProperty(ref _videoFormat, value);
+            set
+            {
+                SetProperty(ref _videoFormat, value);
+                AppSettings.settings.VideoFormat = _videoFormat;
+                AppSettings.SaveSettings();
+            }
         }
 
         public string AudioFormat
         {
             get => _audioFormat;
-            set => SetProperty(ref _audioFormat, value);
+            set
+            {
+                SetProperty(ref _audioFormat, value);
+                AppSettings.settings.AudioFormat = _audioFormat;
+                AppSettings.SaveSettings();
+            }
+        }
+
+        public bool Metadata
+        {
+            get => _metadata;
+            set => SetProperty(ref _metadata, value);
         }
 
         public bool Thumbnail
@@ -65,10 +245,15 @@ namespace youtube_dl_wpf
             set => SetProperty(ref _customPath, value);
         }
 
-        public string Path
+        public string DownloadPath
         {
-            get => _path;
-            set => SetProperty(ref _path, value);
+            get => _downloadPath;
+            set
+            {
+                SetProperty(ref _downloadPath, value);
+                AppSettings.settings.DownloadPath = _downloadPath;
+                AppSettings.SaveSettings();
+            }
         }
 
         public string Output

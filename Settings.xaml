@@ -7,9 +7,6 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="960">
-    <UserControl.DataContext>
-        <local:SettingsViewModel/>
-    </UserControl.DataContext>
     <Grid Margin="24,24,24,24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -24,7 +21,9 @@
             <ToggleButton
                 x:Name="darkModeToggle"
                 Margin="8,8,8,8"
-                IsChecked="{Binding DarkMode}"/>
+                IsChecked="{Binding DarkMode}"
+                Command="{Binding ChangeColorMode}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}"/>
             <TextBlock VerticalAlignment="Center" Margin="0,8,8,8" Text="{Binding ColorMode}" />
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
@@ -37,7 +36,9 @@
             <Button
                 x:Name="dlPathBrowseButton"
                 Margin="2,0,8,0"
-                Style="{StaticResource MaterialDesignOutlinedButton}">Browse</Button>
+                Style="{StaticResource MaterialDesignOutlinedButton}"
+                Command="{Binding BrowseExe}"
+                CommandParameter="youtube-dl">Browse</Button>
         </StackPanel>
         <StackPanel Grid.Row="3" Orientation="Horizontal">
             <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8"><Italic>ffmpeg</Italic> Path</TextBlock>
@@ -49,7 +50,9 @@
             <Button
                 x:Name="ffmpegPathBrowseButton"
                 Margin="2,0,8,0"
-                Style="{StaticResource MaterialDesignOutlinedButton}">Browse</Button>
+                Style="{StaticResource MaterialDesignOutlinedButton}"
+                Command="{Binding BrowseExe}"
+                CommandParameter="ffmpeg">Browse</Button>
         </StackPanel>
         <StackPanel Grid.Row="4" Orientation="Horizontal">
             <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Proxy</TextBlock>

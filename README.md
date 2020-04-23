@@ -5,12 +5,19 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 ## Features
 
 - Toggle 🌃 Dark Mode and 🔆 Light Mode.
+- Update `youtube-dl` on startup.
 - List available formats.
 - Override video and audio formats.
-- Prompt to update `youtube-dl`.
-- Toggle thumbnail and subtitles downloads.
-- Set custom `ffmpeg` and `youtube-dl` path.
+- Toggle metadata embedding.
+- Toggle thumbnail and subtitles embedding.
+- Custom `ffmpeg` and `youtube-dl` path.
 - Custom proxy support.
+
+## Known Issues
+
+- Output only updates after the process exits.
+- UI freezes when the process is started.
+- The implementation of AppSettings is nasty. An Event Aggregator should be used instead.
 
 ## License
 
