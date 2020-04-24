@@ -33,28 +33,24 @@ namespace youtube_dl_wpf
 
         public static void LoadSettings()
         {
-            try
-            {
-                using var _settingsJson = new FileStream("Settings.json", FileMode.OpenOrCreate);
-                settings = JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson).Result;
-            }
-            catch
+            if (!File.Exists("Settings.json"))
             {
                 settings = new SettingsJson();
+                return;
             }
+            using var _settingsJson = new FileStream("Settings.json", FileMode.OpenOrCreate);
+            settings = JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson).Result;
         }
 
         public static async Task LoadSettingsAsync()
         {
-            try
-            {
-                using var _settingsJson = new FileStream("Settings.json", FileMode.OpenOrCreate);
-                settings = await JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson);
-            }
-            catch
+            if (!File.Exists("Settings.json"))
             {
                 settings = new SettingsJson();
+                return;
             }
+            using var _settingsJson = new FileStream("Settings.json", FileMode.OpenOrCreate);
+            settings = await JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson);
         }
 
         public static void SaveSettings()

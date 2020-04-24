@@ -2,6 +2,9 @@
 
 A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
+![Light Mode](LightMode.png "Light Mode")
+![Dark Mode](DarkMode.png "Dark Mode")
+
 ## Features
 
 - Toggle 🌃 Dark Mode and 🔆 Light Mode.
@@ -15,9 +18,11 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 ## Known Issues
 
-- Output only updates after the process exits.
-- UI freezes when the process is started.
-- The implementation of AppSettings is nasty. An Event Aggregator should be used instead.
+- Setting `youtube-dl` path won't update button status.
+
+## To-Do
+
+- Re-implement AppSettings using Event Aggregators.
 
 ## License
 

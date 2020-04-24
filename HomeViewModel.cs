@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -19,7 +21,8 @@ namespace youtube_dl_wpf
             _audioFormat = AppSettings.settings.AudioFormat;
             _downloadPath = AppSettings.settings.DownloadPath;
 
-            //UpdateDl();
+            if (!String.IsNullOrEmpty(AppSettings.settings.DlPath))
+                UpdateDl();
         }
         
         private string _link;
@@ -34,10 +37,20 @@ namespace youtube_dl_wpf
         private string _output;
 
         private StringBuilder outputString;
+        private bool _freezeButton = false; // true for freezing the button
+        private BackgroundWorker worker;
+        //private Thread t;
 
         private readonly DelegateCommand _browseFolder;
         private readonly DelegateCommand _startDownload;
         private readonly DelegateCommand _listFormats;
+
+        private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            FreezeButton = false;
+            _startDownload.InvokeCanExecuteChanged();
+            _listFormats.InvokeCanExecuteChanged();
+        }
 
         private void OnBrowseFolder(object commandParameter)
         {
@@ -57,6 +70,20 @@ namespace youtube_dl_wpf
         }
 
         private void OnStartDownload(object commandParameter)
+        {
+            /*t = new Thread(DoStartDownload);
+            t.Start();*/
+            FreezeButton = true;
+            _startDownload.InvokeCanExecuteChanged();
+            _listFormats.InvokeCanExecuteChanged();
+
+            worker = new BackgroundWorker();
+            worker.DoWork += DoStartDownload;
+            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+            worker.RunWorkerAsync();
+        }
+
+        private void DoStartDownload(object sender, DoWorkEventArgs e)
         {
             outputString = new StringBuilder();
 
@@ -90,12 +117,16 @@ namespace youtube_dl_wpf
                 if (_thumbnail)
                     dlProcess.StartInfo.ArgumentList.Add("--embed-thumbnail");
                 if (_subtitles)
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("--write-sub");
                     dlProcess.StartInfo.ArgumentList.Add("--embed-subs");
+                }
                 if (_customPath)
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-o");
                     dlProcess.StartInfo.ArgumentList.Add($@"{_downloadPath}\%(title)s-%(id)s.%(ext)s");
                 }
+                dlProcess.StartInfo.ArgumentList.Add($"{_link}");
                 // start download
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
@@ -106,8 +137,22 @@ namespace youtube_dl_wpf
 
         private void OnListFormats(object commandParameter)
         {
+            /*t = new Thread(DoListFormats);
+            t.Start();*/
+            FreezeButton = true;
+            _startDownload.InvokeCanExecuteChanged();
+            _listFormats.InvokeCanExecuteChanged();
+
+            worker = new BackgroundWorker();
+            worker.DoWork += DoListFormats;
+            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+            worker.RunWorkerAsync();
+        }
+
+        private void DoListFormats(object sender, DoWorkEventArgs e)
+        {
             outputString = new StringBuilder();
-            
+
             using (Process dlProcess = new Process())
             {
                 dlProcess.StartInfo.FileName = AppSettings.settings.DlPath;
@@ -135,10 +180,24 @@ namespace youtube_dl_wpf
 
         private bool CanStartDownload(object commandParameter)
         {
-            return !(String.IsNullOrEmpty(_link) && String.IsNullOrEmpty(AppSettings.settings.DlPath));
+            return !(String.IsNullOrEmpty(Link) || String.IsNullOrEmpty(AppSettings.settings.DlPath) || _freezeButton);
         }
 
         private void UpdateDl()
+        {
+            /*t = new Thread(DoUpdateDl);
+            t.Start();*/
+            FreezeButton = true;
+            _startDownload.InvokeCanExecuteChanged();
+            _listFormats.InvokeCanExecuteChanged();
+
+            worker = new BackgroundWorker();
+            worker.DoWork += DoUpdateDl;
+            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+            worker.RunWorkerAsync();
+        }
+
+        private void DoUpdateDl(object sender, DoWorkEventArgs e)
         {
             outputString = new StringBuilder();
 
@@ -173,13 +232,6 @@ namespace youtube_dl_wpf
                 outputString.Append(outLine.Data);
                 outputString.Append(Environment.NewLine);
                 Output = outputString.ToString();
-                /*Dispatcher.BeginInvoke(DispatcherPriority.Render,
-                    new Action(() =>
-                    {
-                        outputString.Append(outLine.Data);
-                        outputString.Append(Environment.NewLine);
-                        Output = outputString.ToString();
-                    }));*/
             }
         }
 
@@ -190,7 +242,12 @@ namespace youtube_dl_wpf
         public string Link
         {
             get => _link;
-            set => SetProperty(ref _link, value);
+            set
+            {
+                SetProperty(ref _link, value);
+                _startDownload.InvokeCanExecuteChanged();
+                _listFormats.InvokeCanExecuteChanged();
+            }
         }
 
         public bool OverrideFormats
@@ -260,6 +317,12 @@ namespace youtube_dl_wpf
         {
             get => _output;
             set => SetProperty(ref _output, value);
+        }
+
+        public bool FreezeButton
+        {
+            get => _freezeButton;
+            set => SetProperty(ref _freezeButton, value);
         }
     }
 }
