@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Windows.Input;
-using MaterialDesignThemes.Wpf;
 
 namespace youtube_dl_wpf
 {
@@ -15,7 +13,7 @@ namespace youtube_dl_wpf
             _dlPath = AppSettings.settings.DlPath;
             _ffmpegPath = AppSettings.settings.FfmpegPath;
             _proxy = AppSettings.settings.Proxy;
-            
+
             _paletteHelper = new PaletteHelper();
             _changeColorMode = new DelegateCommand(OnChangeColorMode, (object commandParameter) => true);
             _browseExe = new DelegateCommand(OnBrowseExe, (object commandParameter) => true);

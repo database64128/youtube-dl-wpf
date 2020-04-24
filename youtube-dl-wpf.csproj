@@ -6,6 +6,11 @@
     <RootNamespace>youtube_dl_wpf</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Product>Cube YouTube Downloader</Product>
+    <Company>database64128</Company>
+    <Authors>database64128</Authors>
+    <Version>0.5.0</Version>
+    <ApplicationIcon>CubeYouTubeDownloader.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

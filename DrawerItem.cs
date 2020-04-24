@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace youtube_dl_wpf
+﻿namespace youtube_dl_wpf
 {
     public class DrawerItem : ViewModelBase
     {

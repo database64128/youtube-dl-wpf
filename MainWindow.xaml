@@ -56,9 +56,7 @@
                             DockPanel.Dock="Right"
                             PlacementMode="BottomAndAlignRightEdges">
                             <StackPanel>
-                                <Button Content="Settings" IsEnabled="False"/>
-                                <Separator/>
-                                <Button Content="About" IsEnabled="False"/>
+                                <Button Content="About" Command="{Binding OpenMessageDialog}"/>
                             </StackPanel>
                         </materialDesign:PopupBox>
                         <TextBlock

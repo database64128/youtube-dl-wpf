@@ -22,7 +22,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 ## To-Do
 
-- Re-implement AppSettings using Event Aggregators.
+- Re-implement `AppSettings` using Event Aggregators.
 
 ## License
 

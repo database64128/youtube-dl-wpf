@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace youtube_dl_wpf
@@ -24,7 +21,7 @@ namespace youtube_dl_wpf
             if (!String.IsNullOrEmpty(AppSettings.settings.DlPath))
                 UpdateDl();
         }
-        
+
         private string _link;
         private bool _overrideFormats;
         private string _videoFormat;
