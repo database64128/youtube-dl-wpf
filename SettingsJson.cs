@@ -7,12 +7,15 @@ namespace youtube_dl_wpf
     public class SettingsJson
     {
         public bool DarkMode { get; set; }
+        public bool AutoUpdateDl { get; set; }
         public string DlPath { get; set; }
         public string FfmpegPath { get; set; }
         public string Proxy { get; set; }
 
+        public bool OverrideFormats { get; set; }
         public string VideoFormat { get; set; }
         public string AudioFormat { get; set; }
+        public bool CustomPath { get; set; }
         public string DownloadPath { get; set; }
     }
 
@@ -32,6 +35,8 @@ namespace youtube_dl_wpf
             if (!File.Exists("Settings.json"))
             {
                 settings = new SettingsJson();
+                settings.AutoUpdateDl = true;
+                SaveSettings();
                 return;
             }
             using var _settingsJson = new FileStream("Settings.json", FileMode.OpenOrCreate);
@@ -43,6 +48,8 @@ namespace youtube_dl_wpf
             if (!File.Exists("Settings.json"))
             {
                 settings = new SettingsJson();
+                settings.AutoUpdateDl = true;
+                SaveSettings();
                 return;
             }
             using var _settingsJson = new FileStream("Settings.json", FileMode.OpenOrCreate);

@@ -12,5 +12,10 @@ namespace youtube_dl_wpf
             InitializeComponent();
             DataContext = new HomeViewModel();
         }
+
+        private void resultTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            resultTextBox.ScrollToEnd();
+        }
     }
 }

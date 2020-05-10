@@ -13,7 +13,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Margin="8 8 8 8" Style="{StaticResource MaterialDesignHeadline5TextBlock}" TextWrapping="Wrap">About - v0.5 Build 20200424</TextBlock>
+        <TextBlock Grid.Row="0" Margin="8 8 8 8" Style="{StaticResource MaterialDesignHeadline5TextBlock}" TextWrapping="Wrap">About - v0.6 Build 20200510</TextBlock>
         <TextBlock Grid.Row="1" Margin="8 8 8 8" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" TextWrapping="Wrap">Cube YouTube Downloader is a simple GUI wrapper for <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/ytdl-org/youtube-dl">https://github.com/ytdl-org/youtube-dl</Hyperlink></TextBlock>
         <TextBlock Grid.Row="2" Margin="8 8 8 8" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" TextWrapping="Wrap">For more information please visit <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/database64128/youtube-dl-wpf">https://github.com/database64128/youtube-dl-wpf</Hyperlink></TextBlock>
         <Button Grid.Row="3" 

@@ -10,6 +10,7 @@ namespace youtube_dl_wpf
         {
             //appSettings = new AppSettings();
             _darkMode = AppSettings.settings.DarkMode;
+            _autoUpdateDl = AppSettings.settings.AutoUpdateDl;
             _dlPath = AppSettings.settings.DlPath;
             _ffmpegPath = AppSettings.settings.FfmpegPath;
             _proxy = AppSettings.settings.Proxy;
@@ -23,6 +24,7 @@ namespace youtube_dl_wpf
         }
 
         private bool _darkMode; // default to light mode
+        private bool _autoUpdateDl; // auto update youtube-dl by default
         private string _colorMode = "Light Mode"; // color mode text for TextBlock
         private string _dlPath; // youtube-dl path
         private string _ffmpegPath;
@@ -71,6 +73,17 @@ namespace youtube_dl_wpf
             {
                 SetProperty(ref _darkMode, value);
                 AppSettings.settings.DarkMode = _darkMode;
+                AppSettings.SaveSettings();
+            }
+        }
+
+        public bool AutoUpdateDl
+        {
+            get => _autoUpdateDl;
+            set
+            {
+                SetProperty(ref _autoUpdateDl, value);
+                AppSettings.settings.AutoUpdateDl = _autoUpdateDl;
                 AppSettings.SaveSettings();
             }
         }
