@@ -13,6 +13,8 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 - Override video and audio formats.
 - Toggle metadata embedding.
 - Toggle thumbnail and subtitles embedding.
+- Toggle downloading a single video or the whole playlist.
+- Custom download path.
 - Custom `ffmpeg` and `youtube-dl` path.
 - Custom proxy support.
 

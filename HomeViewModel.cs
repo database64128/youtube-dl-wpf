@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Windows;
 using System.Windows.Input;
 
 namespace youtube_dl_wpf
@@ -16,6 +15,7 @@ namespace youtube_dl_wpf
             _openFolder = new DelegateCommand(OnOpenFolder, CanOpenFolder);
             _startDownload = new DelegateCommand(OnStartDownload, CanStartDownload);
             _listFormats = new DelegateCommand(OnListFormats, CanStartDownload);
+            _abortDl = new DelegateCommand(OnAbortDl, (object commandParameter) => _freezeButton);
 
             _overrideFormats = AppSettings.settings.OverrideFormats;
             _videoFormat = AppSettings.settings.VideoFormat;
@@ -43,17 +43,20 @@ namespace youtube_dl_wpf
         private bool _freezeButton = false; // true for freezing the button
         private BackgroundWorker worker;
         //private Thread t;
+        private Process dlProcess;
 
         private readonly DelegateCommand _browseFolder;
         private readonly DelegateCommand _openFolder;
         private readonly DelegateCommand _startDownload;
         private readonly DelegateCommand _listFormats;
+        private readonly DelegateCommand _abortDl;
 
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             FreezeButton = false;
             _startDownload.InvokeCanExecuteChanged();
             _listFormats.InvokeCanExecuteChanged();
+            _abortDl.InvokeCanExecuteChanged();
         }
 
         private void OnBrowseFolder(object commandParameter)
@@ -64,7 +67,7 @@ namespace youtube_dl_wpf
             folderDialog.CheckFileExists = false;
             folderDialog.CheckPathExists = true;
 
-            Nullable<bool> result = folderDialog.ShowDialog();
+            bool? result = folderDialog.ShowDialog();
 
             if (result == true)
             {
@@ -79,9 +82,9 @@ namespace youtube_dl_wpf
             {
                 Process.Start("explorer.exe", _downloadPath);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                MessageBox.Show(e.Message);
+                Output = ex.Message;
             }
         }
 
@@ -92,6 +95,7 @@ namespace youtube_dl_wpf
             FreezeButton = true;
             _startDownload.InvokeCanExecuteChanged();
             _listFormats.InvokeCanExecuteChanged();
+            _abortDl.InvokeCanExecuteChanged();
 
             worker = new BackgroundWorker();
             worker.DoWork += DoStartDownload;
@@ -102,8 +106,9 @@ namespace youtube_dl_wpf
         private void DoStartDownload(object sender, DoWorkEventArgs e)
         {
             outputString = new StringBuilder();
+            dlProcess = new Process();
 
-            using (Process dlProcess = new Process())
+            try
             {
                 dlProcess.StartInfo.FileName = AppSettings.settings.DlPath;
                 dlProcess.StartInfo.CreateNoWindow = true;
@@ -141,6 +146,10 @@ namespace youtube_dl_wpf
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--yes-playlist");
                 }
+                else
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("--no-playlist");
+                }
                 if (_customPath)
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-o");
@@ -153,6 +162,16 @@ namespace youtube_dl_wpf
                 dlProcess.BeginOutputReadLine();
                 dlProcess.WaitForExit();
             }
+            catch (Exception ex)
+            {
+                outputString.Append(ex.Message);
+                outputString.Append(Environment.NewLine);
+                Output = outputString.ToString();
+            }
+            finally
+            {
+                dlProcess.Dispose();
+            }
         }
 
         private void OnListFormats(object commandParameter)
@@ -162,6 +181,7 @@ namespace youtube_dl_wpf
             FreezeButton = true;
             _startDownload.InvokeCanExecuteChanged();
             _listFormats.InvokeCanExecuteChanged();
+            _abortDl.InvokeCanExecuteChanged();
 
             worker = new BackgroundWorker();
             worker.DoWork += DoListFormats;
@@ -172,8 +192,9 @@ namespace youtube_dl_wpf
         private void DoListFormats(object sender, DoWorkEventArgs e)
         {
             outputString = new StringBuilder();
+            dlProcess = new Process();
 
-            using (Process dlProcess = new Process())
+            try
             {
                 dlProcess.StartInfo.FileName = AppSettings.settings.DlPath;
                 dlProcess.StartInfo.CreateNoWindow = true;
@@ -196,6 +217,38 @@ namespace youtube_dl_wpf
                 dlProcess.BeginOutputReadLine();
                 dlProcess.WaitForExit();
             }
+            catch (Exception ex)
+            {
+                outputString.Append(ex.Message);
+                outputString.Append(Environment.NewLine);
+                Output = outputString.ToString();
+            }
+            finally
+            {
+                dlProcess.Dispose();
+            }
+        }
+
+        private void OnAbortDl(object commandParameter)
+        {
+            try
+            {
+                // yes, I know it's bad to just kill the process.
+                // but currently .NET Core doesn't have an API for sending ^C or SIGTERM to a process
+                // see https://github.com/dotnet/runtime/issues/14628
+                // To implement a platform-specific solution,
+                // we need to use Win32 APIs.
+                // see https://stackoverflow.com/questions/283128/how-do-i-send-ctrlc-to-a-process-in-c
+                // I would prefer not to use Win32 APIs in the application.
+                dlProcess.Kill();
+                outputString.Append("🛑 Aborted.");
+                outputString.Append(Environment.NewLine);
+                Output = outputString.ToString();
+            }
+            catch (Exception ex)
+            {
+                Output = ex.Message;
+            }
         }
 
         private bool CanOpenFolder(object commandParameter)
@@ -215,6 +268,7 @@ namespace youtube_dl_wpf
             FreezeButton = true;
             _startDownload.InvokeCanExecuteChanged();
             _listFormats.InvokeCanExecuteChanged();
+            _abortDl.InvokeCanExecuteChanged();
 
             worker = new BackgroundWorker();
             worker.DoWork += DoUpdateDl;
@@ -225,8 +279,9 @@ namespace youtube_dl_wpf
         private void DoUpdateDl(object sender, DoWorkEventArgs e)
         {
             outputString = new StringBuilder();
+            dlProcess = new Process();
 
-            using (Process dlProcess = new Process())
+            try
             {
                 dlProcess.StartInfo.FileName = AppSettings.settings.DlPath;
                 dlProcess.StartInfo.CreateNoWindow = true;
@@ -248,6 +303,16 @@ namespace youtube_dl_wpf
                 dlProcess.BeginOutputReadLine();
                 dlProcess.WaitForExit();
             }
+            catch (Exception ex)
+            {
+                outputString.Append(ex.Message);
+                outputString.Append(Environment.NewLine);
+                Output = outputString.ToString();
+            }
+            finally
+            {
+                dlProcess.Dispose();
+            }
         }
 
         private void DlOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
@@ -264,6 +329,7 @@ namespace youtube_dl_wpf
         public ICommand OpenFolder => _openFolder;
         public ICommand StartDownload => _startDownload;
         public ICommand ListFormats => _listFormats;
+        public ICommand AbortDl => _abortDl;
 
         public string Link
         {

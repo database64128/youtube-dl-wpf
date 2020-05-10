@@ -7,7 +7,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="960">
-    <Grid Margin="24,24,24,24">
+    <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -21,12 +21,12 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Margin="8,8,8,8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Settings</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Settings</TextBlock>
         <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Color Mode</TextBlock>
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
             <ToggleButton
                 x:Name="darkModeToggle"
-                Margin="8,8,8,8"
+                Margin="8"
                 IsChecked="{Binding DarkMode}"
                 Command="{Binding ChangeColorMode}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}"/>

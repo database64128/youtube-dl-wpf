@@ -17,5 +17,12 @@ namespace youtube_dl_wpf
         {
             resultTextBox.ScrollToEnd();
         }
+
+        private void UserControl_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+        {
+            //resultStackPanel.MaxWidth = e.NewSize.Width - 48;
+            if (e.NewSize.Width > 64)
+                resultTextBox.MaxWidth = e.NewSize.Width - 64;
+        }
     }
 }
