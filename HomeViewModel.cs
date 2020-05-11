@@ -27,8 +27,6 @@ namespace youtube_dl_wpf
             _customPath = AppSettings.settings.CustomPath;
             _downloadPath = AppSettings.settings.DownloadPath;
 
-            dlProcess = new Process();
-
             if (!String.IsNullOrEmpty(AppSettings.settings.DlPath) && AppSettings.settings.AutoUpdateDl)
                 UpdateDl();
         }
@@ -49,13 +47,25 @@ namespace youtube_dl_wpf
         private bool _freezeButton = false; // true for freezing the button
         private BackgroundWorker? worker;
         //private Thread t;
-        private Process dlProcess;
+        private Process? dlProcess;
 
         private readonly DelegateCommand _browseFolder;
         private readonly DelegateCommand _openFolder;
         private readonly DelegateCommand _startDownload;
         private readonly DelegateCommand _listFormats;
         private readonly DelegateCommand _abortDl;
+
+        private void PrepareDlProcess()
+        {
+            dlProcess = new Process();
+            dlProcess.StartInfo.FileName = AppSettings.settings!.DlPath;
+            dlProcess.StartInfo.CreateNoWindow = true;
+            dlProcess.StartInfo.UseShellExecute = false;
+            dlProcess.StartInfo.RedirectStandardError = true;
+            dlProcess.StartInfo.RedirectStandardOutput = true;
+            dlProcess.ErrorDataReceived += DlOutputHandler;
+            dlProcess.OutputDataReceived += DlOutputHandler;
+        }
 
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -67,11 +77,16 @@ namespace youtube_dl_wpf
 
         private void OnBrowseFolder(object commandParameter)
         {
-            Microsoft.Win32.OpenFileDialog folderDialog = new Microsoft.Win32.OpenFileDialog();
-            folderDialog.FileName = "Folder Selection.";
-            folderDialog.ValidateNames = false;
-            folderDialog.CheckFileExists = false;
-            folderDialog.CheckPathExists = true;
+            Microsoft.Win32.OpenFileDialog folderDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                FileName = "Folder Selection.",
+                ValidateNames = false,
+                CheckFileExists = false,
+                CheckPathExists = true
+            };
+
+            if ((string)commandParameter == "DownloadPath")
+                folderDialog.InitialDirectory = DownloadPath;
 
             bool? result = folderDialog.ShowDialog();
 
@@ -112,49 +127,42 @@ namespace youtube_dl_wpf
         private void DoStartDownload(object sender, DoWorkEventArgs e)
         {
             outputString = new StringBuilder();
-            dlProcess = new Process();
+            PrepareDlProcess();
 
             try
             {
-                dlProcess.StartInfo.FileName = AppSettings.settings!.DlPath;
-                dlProcess.StartInfo.CreateNoWindow = true;
-                dlProcess.StartInfo.UseShellExecute = false;
-                dlProcess.StartInfo.RedirectStandardError = true;
-                dlProcess.StartInfo.RedirectStandardOutput = true;
-                dlProcess.ErrorDataReceived += DlOutputHandler;
-                dlProcess.OutputDataReceived += DlOutputHandler;
                 // make parameter list
-                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
+                if (!String.IsNullOrEmpty(AppSettings.settings!.Proxy))
                 {
-                    dlProcess.StartInfo.ArgumentList.Add("--proxy");
+                    dlProcess!.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
                 }
                 if (!String.IsNullOrEmpty(AppSettings.settings.FfmpegPath))
                 {
-                    dlProcess.StartInfo.ArgumentList.Add("--ffmpeg-location");
+                    dlProcess!.StartInfo.ArgumentList.Add("--ffmpeg-location");
                     dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.FfmpegPath}");
                 }
                 if (_overrideFormats && !String.IsNullOrEmpty(_videoFormat) && !String.IsNullOrEmpty(_audioFormat))
                 {
-                    dlProcess.StartInfo.ArgumentList.Add("-f");
+                    dlProcess!.StartInfo.ArgumentList.Add("-f");
                     dlProcess.StartInfo.ArgumentList.Add($"{_videoFormat}+{_audioFormat}");
                 }
                 if (_metadata)
-                    dlProcess.StartInfo.ArgumentList.Add("--add-metadata");
+                    dlProcess!.StartInfo.ArgumentList.Add("--add-metadata");
                 if (_thumbnail)
-                    dlProcess.StartInfo.ArgumentList.Add("--embed-thumbnail");
+                    dlProcess!.StartInfo.ArgumentList.Add("--embed-thumbnail");
                 if (_subtitles)
                 {
-                    dlProcess.StartInfo.ArgumentList.Add("--write-sub");
+                    dlProcess!.StartInfo.ArgumentList.Add("--write-sub");
                     dlProcess.StartInfo.ArgumentList.Add("--embed-subs");
                 }
                 if (_playlist)
                 {
-                    dlProcess.StartInfo.ArgumentList.Add("--yes-playlist");
+                    dlProcess!.StartInfo.ArgumentList.Add("--yes-playlist");
                 }
                 else
                 {
-                    dlProcess.StartInfo.ArgumentList.Add("--no-playlist");
+                    dlProcess!.StartInfo.ArgumentList.Add("--no-playlist");
                 }
                 if (_customPath)
                 {
@@ -176,7 +184,7 @@ namespace youtube_dl_wpf
             }
             finally
             {
-                dlProcess.Dispose();
+                dlProcess!.Dispose();
             }
         }
 
@@ -198,24 +206,17 @@ namespace youtube_dl_wpf
         private void DoListFormats(object sender, DoWorkEventArgs e)
         {
             outputString = new StringBuilder();
-            dlProcess = new Process();
+            PrepareDlProcess();
 
             try
             {
-                dlProcess.StartInfo.FileName = AppSettings.settings!.DlPath;
-                dlProcess.StartInfo.CreateNoWindow = true;
-                dlProcess.StartInfo.UseShellExecute = false;
-                dlProcess.StartInfo.RedirectStandardError = true;
-                dlProcess.StartInfo.RedirectStandardOutput = true;
-                dlProcess.ErrorDataReceived += DlOutputHandler;
-                dlProcess.OutputDataReceived += DlOutputHandler;
                 // make parameter list
                 if (!String.IsNullOrEmpty(AppSettings.settings!.Proxy))
                 {
-                    dlProcess.StartInfo.ArgumentList.Add("--proxy");
+                    dlProcess!.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
                 }
-                dlProcess.StartInfo.ArgumentList.Add($"-F");
+                dlProcess!.StartInfo.ArgumentList.Add($"-F");
                 dlProcess.StartInfo.ArgumentList.Add($"{_link}");
                 // start download
                 dlProcess.Start();
@@ -231,7 +232,7 @@ namespace youtube_dl_wpf
             }
             finally
             {
-                dlProcess.Dispose();
+                dlProcess!.Dispose();
             }
         }
 
@@ -246,7 +247,7 @@ namespace youtube_dl_wpf
                 // we need to use Win32 APIs.
                 // see https://stackoverflow.com/questions/283128/how-do-i-send-ctrlc-to-a-process-in-c
                 // I would prefer not to use Win32 APIs in the application.
-                dlProcess.Kill();
+                dlProcess!.Kill();
                 outputString!.Append("🛑 Aborted.");
                 outputString.Append(Environment.NewLine);
                 Output = outputString.ToString();
@@ -285,24 +286,17 @@ namespace youtube_dl_wpf
         private void DoUpdateDl(object sender, DoWorkEventArgs e)
         {
             outputString = new StringBuilder();
-            dlProcess = new Process();
+            PrepareDlProcess();
 
             try
             {
-                dlProcess.StartInfo.FileName = AppSettings.settings!.DlPath;
-                dlProcess.StartInfo.CreateNoWindow = true;
-                dlProcess.StartInfo.UseShellExecute = false;
-                dlProcess.StartInfo.RedirectStandardError = true;
-                dlProcess.StartInfo.RedirectStandardOutput = true;
-                dlProcess.ErrorDataReceived += DlOutputHandler;
-                dlProcess.OutputDataReceived += DlOutputHandler;
                 // make parameter list
-                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
+                if (!String.IsNullOrEmpty(AppSettings.settings!.Proxy))
                 {
-                    dlProcess.StartInfo.ArgumentList.Add("--proxy");
+                    dlProcess!.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
                 }
-                dlProcess.StartInfo.ArgumentList.Add($"-U");
+                dlProcess!.StartInfo.ArgumentList.Add($"-U");
                 // start update
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
@@ -317,7 +311,7 @@ namespace youtube_dl_wpf
             }
             finally
             {
-                dlProcess.Dispose();
+                dlProcess!.Dispose();
             }
         }
 

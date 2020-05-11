@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.IO;
 using System.Windows.Input;
 
 namespace youtube_dl_wpf
@@ -45,12 +46,19 @@ namespace youtube_dl_wpf
 
         private void OnBrowseExe(object commandParameter)
         {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.FileName = (string)commandParameter;
-            openFileDialog.DefaultExt = ".exe";
-            openFileDialog.Filter = "Executables (.exe)|*.exe";
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                FileName = (string)commandParameter,
+                DefaultExt = ".exe",
+                Filter = "Executables (.exe)|*.exe"
+            };
 
-            Nullable<bool> result = openFileDialog.ShowDialog();
+            if ((string)commandParameter == "youtube-dl")
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(_dlPath);
+            else if ((string)commandParameter == "ffmpeg")
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(_ffmpegPath);
+            
+            bool? result = openFileDialog.ShowDialog();
 
             if (result == true)
             {
