@@ -6,6 +6,22 @@ namespace youtube_dl_wpf
 {
     public class SettingsJson
     {
+        public SettingsJson()
+        {
+            // define default settings
+            DarkMode = false;
+            AutoUpdateDl = true;
+            DlPath = "";
+            FfmpegPath = "";
+            Proxy = "";
+
+            OverrideFormats = false;
+            VideoFormat = "248";
+            AudioFormat = "251";
+            CustomPath = false;
+            DownloadPath = "";
+        }
+        
         public bool DarkMode { get; set; }
         public bool AutoUpdateDl { get; set; }
         public string DlPath { get; set; }
@@ -21,7 +37,7 @@ namespace youtube_dl_wpf
 
     public static class AppSettings
     {
-        public static SettingsJson settings;
+        public static SettingsJson? settings;
 
         static AppSettings()
         {
@@ -35,7 +51,6 @@ namespace youtube_dl_wpf
             if (!File.Exists("Settings.json"))
             {
                 settings = new SettingsJson();
-                settings.AutoUpdateDl = true;
                 SaveSettings();
                 return;
             }
@@ -63,7 +78,7 @@ namespace youtube_dl_wpf
                 WriteIndented = true
             };
             using var _settingsJson = new FileStream("Settings.json", FileMode.Create);
-            JsonSerializer.SerializeAsync<SettingsJson>(_settingsJson, settings, jsonSerializerOptions).Wait();
+            JsonSerializer.SerializeAsync<SettingsJson>(_settingsJson, settings!, jsonSerializerOptions).Wait();
         }
 
         public static async Task SaveSettingsAsync()
@@ -73,7 +88,7 @@ namespace youtube_dl_wpf
                 WriteIndented = true
             };
             using var _settingsJson = new FileStream("Settings.json", FileMode.Create);
-            await JsonSerializer.SerializeAsync<SettingsJson>(_settingsJson, settings, jsonSerializerOptions);
+            await JsonSerializer.SerializeAsync<SettingsJson>(_settingsJson, settings!, jsonSerializerOptions);
         }
     }
 }

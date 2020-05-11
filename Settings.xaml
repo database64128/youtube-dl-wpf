@@ -46,7 +46,8 @@
             Grid.Column="1"
             x:Name="dlPathTextBox"
             Margin="2,8,2,8"
-            Width="384"
+            Width="400"
+            materialDesign:HintAssist.Hint="Required"
             Text="{Binding DlPath}"/>
         <Button
             Grid.Row="3"
@@ -62,7 +63,8 @@
             Grid.Column="1"
             x:Name="ffmpegPathTextBox"
             Margin="2,8,2,8"
-            Width="384"
+            Width="400"
+            materialDesign:HintAssist.Hint="Optional but recommended"
             Text="{Binding FfmpegPath}"/>
         <Button
             Grid.Row="4"
@@ -78,7 +80,8 @@
             Grid.Column="1"
             x:Name="proxyTextBox"
             Margin="2,8,2,8"
-            Width="384"
+            Width="400"
+            materialDesign:HintAssist.Hint="e.g. socks5://localhost:1080. Leave empty to use system proxy."
             Text="{Binding Proxy}"/>
     </Grid>
 </UserControl>

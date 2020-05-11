@@ -16,35 +16,35 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Margin="8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Start your download</TextBlock>
         <StackPanel Grid.Row="1">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" >
                 <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8">Video Link</TextBlock>
                 <TextBox
                     x:Name="linkTextBox"
                     materialDesign:HintAssist.Hint="e.g. https://www.youtube.com/watch?v=b2390GAm4d0"
-                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                    Margin="8" Width="384"
+                    Margin="8"
+                    Width="384"
                     Text="{Binding Link, UpdateSourceTrigger=PropertyChanged}"/>
                 <Button
                     x:Name="downloadButton"
-                    Margin="8"
+                    Margin="8 0 8 0"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True"
                     Command="{Binding StartDownload}">_Download</Button>
                 <Button
                     x:Name="listFormatsButton"
-                    Margin="8"
+                    Margin="8 0 8 0"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True"
                     Style="{StaticResource MaterialDesignRaisedAccentButton}"
                     Command="{Binding ListFormats}">_List Formats</Button>
                 <Button
                     x:Name="abortButton"
-                    Margin="8"
+                    Margin="8 0 8 0"
                     Style="{StaticResource MaterialDesignRaisedDarkButton}"
                     Command="{Binding AbortDl}">_Abort</Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Top" Margin="8">Options</TextBlock>
+                <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Margin="8">Options</TextBlock>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

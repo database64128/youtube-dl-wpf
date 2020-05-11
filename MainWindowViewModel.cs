@@ -14,7 +14,7 @@ namespace youtube_dl_wpf
         }
 
         private ObservableCollection<DrawerItem> _drawerItems;
-        private DrawerItem _selectedItem;
+        private DrawerItem? _selectedItem;
 
         private readonly DelegateCommand _openMessageDialog;
 
@@ -37,7 +37,7 @@ namespace youtube_dl_wpf
 
         public DrawerItem SelectedItem
         {
-            get => _selectedItem;
+            get => _selectedItem!;
             set => SetProperty(ref _selectedItem, value);
         }
 

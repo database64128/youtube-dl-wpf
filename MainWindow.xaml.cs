@@ -13,7 +13,7 @@ namespace youtube_dl_wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static Snackbar Snackbar;
+        public static Snackbar? Snackbar;
 
         public MainWindow()
         {
