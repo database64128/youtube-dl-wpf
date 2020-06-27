@@ -92,7 +92,7 @@
                             x:Name="playlistToggle"
                             Margin="8"
                             IsChecked="{Binding Playlist}"/>
-                        <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download the whole Playlist</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Playlist</TextBlock>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="2">
                         <ToggleButton

@@ -63,8 +63,7 @@ namespace youtube_dl_wpf
             if (!File.Exists("Settings.json"))
             {
                 settings = new SettingsJson();
-                settings.AutoUpdateDl = true;
-                SaveSettings();
+                await SaveSettingsAsync();
                 return;
             }
             using var _settingsJson = new FileStream("Settings.json", FileMode.OpenOrCreate);

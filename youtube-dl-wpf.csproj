@@ -9,24 +9,24 @@
     <Product>Cube YouTube Downloader</Product>
     <Company>database64128</Company>
     <Authors>database64128</Authors>
-    <Version>0.8.0</Version>
+    <Version>0.9.0</Version>
     <ApplicationIcon>CubeYouTubeDownloader.ico</ApplicationIcon>
     <Description>A simple GUI wrapper for https://github.com/ytdl-org/youtube-dl.</Description>
     <Copyright>© 2020 database64128</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/database64128/youtube-dl-wpf</PackageProjectUrl>
-    <PackageIcon>CubeYouTubeDownloader.ico</PackageIcon>
+    <PackageIcon>CubeYouTubeDownloader.png</PackageIcon>
     <RepositoryUrl>https://github.com/database64128/youtube-dl-wpf</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="3.1.1" />
+    <PackageReference Include="MaterialDesignThemes" Version="3.1.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="CubeYouTubeDownloader.ico">
+    <None Include="CubeYouTubeDownloader.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

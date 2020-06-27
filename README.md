@@ -35,7 +35,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 - _A:_ First use the "List Formats" button to ask youtube-dl to list all available formats. To specify the video and audio format, toggle "Override Formats" and fill in the format numbers, as shown in the screenshots above.
 
 - _Q:_ How can I use a proxy to download?
-- _A:_ Leave the proxy field empty to use system proxy settings. Otherwise the format is similar to how `curl` accepts proxy strings. Examples are, `socks5://localhost:1080`, `http://localhost:8080`. Currently the upstream doesn't accept `socks5h` protocol and treat `socks5` as `socks5h` by always resolving the hostname using the proxy. This is tracked in ytdl-org/youtube-dl#22618.
+- _A:_ Leave the proxy field empty to use system proxy settings. Otherwise the format is similar to how `curl` accepts proxy strings. Examples are, `socks5://localhost:1080/`, `http://localhost:8080/`. Currently the upstream doesn't accept `socks5h` protocol and treat `socks5` as `socks5h` by always resolving the hostname using the proxy. This is tracked in [this issue](https://github.com/ytdl-org/youtube-dl/issues/22618).
 
 - _Q:_ Downloading the whole playlist doesn't work!
 - _A:_ It's an upstream bug, just like many other issues you might discover. There's nothing I can do. Just report the bug to the [upstream](https://github.com/ytdl-org/youtube-dl).
