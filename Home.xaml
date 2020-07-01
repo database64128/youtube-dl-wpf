@@ -63,6 +63,7 @@
                             Margin="0,8,8,8"
                             Width="50"
                             IsEnabled="{Binding Path=IsChecked, ElementName=overrideFormatsToggle}"
+                            TextAlignment="Right"
                             Text="{Binding VideoFormat}"/>
                         <TextBlock VerticalAlignment="Center" Margin="8">Audio Format</TextBlock>
                         <TextBox
@@ -70,6 +71,7 @@
                             Margin="0,8,8,8"
                             Width="50"
                             IsEnabled="{Binding Path=IsChecked, ElementName=overrideFormatsToggle}"
+                            TextAlignment="Right"
                             Text="{Binding AudioFormat}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="1">
@@ -102,21 +104,21 @@
                         <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Custom Download Path</TextBlock>
                         <TextBox
                             x:Name="pathTextBox"
-                            Margin="8,8,2,8"
+                            Margin="8,8,1,8"
                             Width="384"
                             IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}"
                             Text="{Binding DownloadPath, UpdateSourceTrigger=PropertyChanged}"/>
                         <Button
                             x:Name="browseButton"
-                            Margin="2,0,8,0"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="1,0,1,0"
+                            Style="{StaticResource MaterialDesignFlatButton}"
                             IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}"
                             Command="{Binding BrowseFolder}"
                             CommandParameter="DownloadPath">Browse</Button>
                         <Button
                             x:Name="openFolderButton"
-                            Margin="2,0,8,0"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="1,0,1,0"
+                            Style="{StaticResource MaterialDesignFlatButton}"
                             Command="{Binding OpenFolder}">Open Folder</Button>
                     </StackPanel>
                 </Grid>

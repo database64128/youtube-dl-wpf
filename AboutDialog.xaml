@@ -6,20 +6,60 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="16">
+    <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Margin="8" Style="{StaticResource MaterialDesignHeadline5TextBlock}" TextWrapping="Wrap">About - v0.9 Build 20200628</TextBlock>
-        <TextBlock Grid.Row="1" Margin="8" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" TextWrapping="Wrap">Cube YouTube Downloader is a simple GUI wrapper for <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/ytdl-org/youtube-dl">https://github.com/ytdl-org/youtube-dl</Hyperlink></TextBlock>
-        <TextBlock Grid.Row="2" Margin="8" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" TextWrapping="Wrap">For more information please visit <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/database64128/youtube-dl-wpf">https://github.com/database64128/youtube-dl-wpf</Hyperlink></TextBlock>
-        <Button Grid.Row="3" 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <materialDesign:PackIcon Grid.Row="0" Grid.Column="0" Margin="8" Kind="InformationOutline" Height="32" Width="32" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <TextBlock Grid.Row="0"
+                   Grid.Column="1"
+                   Margin="8"
+                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center">
+            About - v0.10 Build 20200701
+        </TextBlock>
+        <TextBlock Grid.Row="1"
+                   Grid.Column="1"
+                   Margin="8"
+                   Style="{StaticResource MaterialDesignBody2TextBlock}"
+                   TextWrapping="Wrap">
+            Cube YouTube Downloader is a simple GUI wrapper for <Span FontWeight="Medium">youtube-dl</Span>.
+        </TextBlock>
+        <materialDesign:PackIcon Grid.Row="2" Grid.Column="0" Margin="8" Kind="Github" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <TextBlock Grid.Row="2"
+                   Grid.Column="1"
+                   Margin="8"
+                   Style="{StaticResource MaterialDesignBody2TextBlock}"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center">
+            Project Repository: <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/database64128/youtube-dl-wpf">https://github.com/database64128/youtube-dl-wpf</Hyperlink>.
+        </TextBlock>
+        <materialDesign:PackIcon Grid.Row="3" Grid.Column="0" Margin="8" Kind="Github" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <TextBlock Grid.Row="3"
+                   Grid.Column="1"
+                   Margin="8"
+                   Style="{StaticResource MaterialDesignBody2TextBlock}"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center">
+            youtube-dl Repository: <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/ytdl-org/youtube-dl">https://github.com/ytdl-org/youtube-dl</Hyperlink>.
+        </TextBlock>
+        
+        <Button Grid.Row="5"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
                 IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"
                 HorizontalAlignment="Right"
-                Margin="16 16 16 0"
+                Margin="8"
                 Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
             _OK
         </Button>

@@ -11,12 +11,7 @@ namespace youtube_dl_wpf
     {
         public HomeViewModel()
         {
-            _browseFolder = new DelegateCommand(OnBrowseFolder, (object commandParameter) => true);
-            _openFolder = new DelegateCommand(OnOpenFolder, CanOpenFolder);
-            _startDownload = new DelegateCommand(OnStartDownload, CanStartDownload);
-            _listFormats = new DelegateCommand(OnListFormats, CanStartDownload);
-            _abortDl = new DelegateCommand(OnAbortDl, (object commandParameter) => _freezeButton);
-
+            _link = "";
             _overrideFormats = AppSettings.settings!.OverrideFormats;
             _videoFormat = AppSettings.settings.VideoFormat;
             _audioFormat = AppSettings.settings.AudioFormat;
@@ -26,12 +21,19 @@ namespace youtube_dl_wpf
             _playlist = false;
             _customPath = AppSettings.settings.CustomPath;
             _downloadPath = AppSettings.settings.DownloadPath;
+            _output = "";
+
+            _browseFolder = new DelegateCommand(OnBrowseFolder, (object commandParameter) => true);
+            _openFolder = new DelegateCommand(OnOpenFolder, CanOpenFolder);
+            _startDownload = new DelegateCommand(OnStartDownload, CanStartDownload);
+            _listFormats = new DelegateCommand(OnListFormats, CanStartDownload);
+            _abortDl = new DelegateCommand(OnAbortDl, (object commandParameter) => _freezeButton);
 
             if (!String.IsNullOrEmpty(AppSettings.settings.DlPath) && AppSettings.settings.AutoUpdateDl)
                 UpdateDl();
         }
 
-        private string? _link;
+        private string _link;
         private bool _overrideFormats;
         private string _videoFormat;
         private string _audioFormat;
@@ -41,12 +43,11 @@ namespace youtube_dl_wpf
         private bool _playlist;
         private bool _customPath;
         private string _downloadPath;
-        private string? _output;
+        private string _output;
 
         private StringBuilder? outputString;
         private bool _freezeButton = false; // true for freezing the button
         private BackgroundWorker? worker;
-        //private Thread t;
         private Process? dlProcess;
 
         private readonly DelegateCommand _browseFolder;
@@ -54,6 +55,12 @@ namespace youtube_dl_wpf
         private readonly DelegateCommand _startDownload;
         private readonly DelegateCommand _listFormats;
         private readonly DelegateCommand _abortDl;
+
+        public ICommand BrowseFolder => _browseFolder;
+        public ICommand OpenFolder => _openFolder;
+        public ICommand StartDownload => _startDownload;
+        public ICommand ListFormats => _listFormats;
+        public ICommand AbortDl => _abortDl;
 
         private void PrepareDlProcess()
         {
@@ -111,8 +118,6 @@ namespace youtube_dl_wpf
 
         private void OnStartDownload(object commandParameter)
         {
-            /*t = new Thread(DoStartDownload);
-            t.Start();*/
             FreezeButton = true;
             _startDownload.InvokeCanExecuteChanged();
             _listFormats.InvokeCanExecuteChanged();
@@ -190,8 +195,6 @@ namespace youtube_dl_wpf
 
         private void OnListFormats(object commandParameter)
         {
-            /*t = new Thread(DoListFormats);
-            t.Start();*/
             FreezeButton = true;
             _startDownload.InvokeCanExecuteChanged();
             _listFormats.InvokeCanExecuteChanged();
@@ -270,8 +273,6 @@ namespace youtube_dl_wpf
 
         private void UpdateDl()
         {
-            /*t = new Thread(DoUpdateDl);
-            t.Start();*/
             FreezeButton = true;
             _startDownload.InvokeCanExecuteChanged();
             _listFormats.InvokeCanExecuteChanged();
@@ -325,13 +326,7 @@ namespace youtube_dl_wpf
             }
         }
 
-        public ICommand BrowseFolder => _browseFolder;
-        public ICommand OpenFolder => _openFolder;
-        public ICommand StartDownload => _startDownload;
-        public ICommand ListFormats => _listFormats;
-        public ICommand AbortDl => _abortDl;
-
-        public string? Link
+        public string Link
         {
             get => _link;
             set
@@ -422,7 +417,7 @@ namespace youtube_dl_wpf
             }
         }
 
-        public string? Output
+        public string Output
         {
             get => _output;
             set => SetProperty(ref _output, value);
