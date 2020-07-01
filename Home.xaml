@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="680" d:DesignWidth="960"
-             SizeChanged="UserControl_SizeChanged">
+             d:DesignHeight="680" d:DesignWidth="960">
     <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -14,6 +13,9 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Margin="8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Start your download</TextBlock>
         <StackPanel Grid.Row="1">
             <StackPanel Orientation="Horizontal" >
@@ -129,11 +131,10 @@
             Grid.Row="3"
             x:Name="resultTextBox"
             Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
-            Height="240"
             Margin="8"
             TextWrapping="Wrap"
             IsReadOnly="True"
-            VerticalAlignment="Top"
+            VerticalAlignment="Stretch"
             VerticalScrollBarVisibility="Auto"
             HorizontalScrollBarVisibility="Auto"
             materialDesign:HintAssist.Hint="Output from youtube-dl"

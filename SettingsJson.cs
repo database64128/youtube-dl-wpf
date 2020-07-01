@@ -37,7 +37,7 @@ namespace youtube_dl_wpf
 
     public static class AppSettings
     {
-        public static SettingsJson? settings;
+        public static SettingsJson settings = null!;
 
         static AppSettings()
         {

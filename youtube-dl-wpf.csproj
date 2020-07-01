@@ -9,7 +9,7 @@
     <Product>Cube YouTube Downloader</Product>
     <Company>database64128</Company>
     <Authors>database64128</Authors>
-    <Version>0.9.0</Version>
+    <Version>0.10.0</Version>
     <ApplicationIcon>CubeYouTubeDownloader.ico</ApplicationIcon>
     <Description>A simple GUI wrapper for https://github.com/ytdl-org/youtube-dl.</Description>
     <Copyright>© 2020 database64128</Copyright>

@@ -13,16 +13,12 @@ namespace youtube_dl_wpf
             DataContext = new HomeViewModel();
         }
 
+        private bool IsScrolledToEnd(TextBox textBox) => textBox.VerticalOffset > textBox.ExtentHeight - textBox.ViewportHeight - textBox.FontSize * textBox.FontFamily.LineSpacing;
+
         private void resultTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            resultTextBox.ScrollToEnd();
-        }
-
-        private void UserControl_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
-        {
-            //resultStackPanel.MaxWidth = e.NewSize.Width - 48;
-            if (e.NewSize.Width > 64)
-                resultTextBox.MaxWidth = e.NewSize.Width - 64;
+            if (IsScrolledToEnd(resultTextBox))
+                resultTextBox.ScrollToEnd();
         }
     }
 }

@@ -42,8 +42,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 ## Known Issues
 
-- Setting `youtube-dl` path won't update button status.
-- Changing window size when texts are wrapped in the `resultTextBox` results in an enlarged TextBox that won't scale down.
+- Setting `youtube-dl` path won't update the download button status.
 
 ## Build
 

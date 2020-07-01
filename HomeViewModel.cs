@@ -12,7 +12,7 @@ namespace youtube_dl_wpf
         public HomeViewModel()
         {
             _link = "";
-            _overrideFormats = AppSettings.settings!.OverrideFormats;
+            _overrideFormats = AppSettings.settings.OverrideFormats;
             _videoFormat = AppSettings.settings.VideoFormat;
             _audioFormat = AppSettings.settings.AudioFormat;
             _metadata = true;
@@ -45,10 +45,10 @@ namespace youtube_dl_wpf
         private string _downloadPath;
         private string _output;
 
-        private StringBuilder? outputString;
+        private StringBuilder outputString = null!;
         private bool _freezeButton = false; // true for freezing the button
-        private BackgroundWorker? worker;
-        private Process? dlProcess;
+        private BackgroundWorker worker = null!;
+        private Process dlProcess = null!;
 
         private readonly DelegateCommand _browseFolder;
         private readonly DelegateCommand _openFolder;
@@ -65,7 +65,7 @@ namespace youtube_dl_wpf
         private void PrepareDlProcess()
         {
             dlProcess = new Process();
-            dlProcess.StartInfo.FileName = AppSettings.settings!.DlPath;
+            dlProcess.StartInfo.FileName = AppSettings.settings.DlPath;
             dlProcess.StartInfo.CreateNoWindow = true;
             dlProcess.StartInfo.UseShellExecute = false;
             dlProcess.StartInfo.RedirectStandardError = true;
@@ -108,7 +108,7 @@ namespace youtube_dl_wpf
         {
             try
             {
-                Process.Start("explorer.exe", _downloadPath);
+                Utilities.OpenLink(_downloadPath);
             }
             catch (Exception ex)
             {
@@ -137,37 +137,37 @@ namespace youtube_dl_wpf
             try
             {
                 // make parameter list
-                if (!String.IsNullOrEmpty(AppSettings.settings!.Proxy))
+                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
                 {
-                    dlProcess!.StartInfo.ArgumentList.Add("--proxy");
+                    dlProcess.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
                 }
                 if (!String.IsNullOrEmpty(AppSettings.settings.FfmpegPath))
                 {
-                    dlProcess!.StartInfo.ArgumentList.Add("--ffmpeg-location");
+                    dlProcess.StartInfo.ArgumentList.Add("--ffmpeg-location");
                     dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.FfmpegPath}");
                 }
                 if (_overrideFormats && !String.IsNullOrEmpty(_videoFormat) && !String.IsNullOrEmpty(_audioFormat))
                 {
-                    dlProcess!.StartInfo.ArgumentList.Add("-f");
+                    dlProcess.StartInfo.ArgumentList.Add("-f");
                     dlProcess.StartInfo.ArgumentList.Add($"{_videoFormat}+{_audioFormat}");
                 }
                 if (_metadata)
-                    dlProcess!.StartInfo.ArgumentList.Add("--add-metadata");
+                    dlProcess.StartInfo.ArgumentList.Add("--add-metadata");
                 if (_thumbnail)
-                    dlProcess!.StartInfo.ArgumentList.Add("--embed-thumbnail");
+                    dlProcess.StartInfo.ArgumentList.Add("--embed-thumbnail");
                 if (_subtitles)
                 {
-                    dlProcess!.StartInfo.ArgumentList.Add("--write-sub");
+                    dlProcess.StartInfo.ArgumentList.Add("--write-sub");
                     dlProcess.StartInfo.ArgumentList.Add("--embed-subs");
                 }
                 if (_playlist)
                 {
-                    dlProcess!.StartInfo.ArgumentList.Add("--yes-playlist");
+                    dlProcess.StartInfo.ArgumentList.Add("--yes-playlist");
                 }
                 else
                 {
-                    dlProcess!.StartInfo.ArgumentList.Add("--no-playlist");
+                    dlProcess.StartInfo.ArgumentList.Add("--no-playlist");
                 }
                 if (_customPath)
                 {
@@ -189,7 +189,7 @@ namespace youtube_dl_wpf
             }
             finally
             {
-                dlProcess!.Dispose();
+                dlProcess.Dispose();
             }
         }
 
@@ -214,12 +214,12 @@ namespace youtube_dl_wpf
             try
             {
                 // make parameter list
-                if (!String.IsNullOrEmpty(AppSettings.settings!.Proxy))
+                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
                 {
-                    dlProcess!.StartInfo.ArgumentList.Add("--proxy");
+                    dlProcess.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
                 }
-                dlProcess!.StartInfo.ArgumentList.Add($"-F");
+                dlProcess.StartInfo.ArgumentList.Add($"-F");
                 dlProcess.StartInfo.ArgumentList.Add($"{_link}");
                 // start download
                 dlProcess.Start();
@@ -235,7 +235,7 @@ namespace youtube_dl_wpf
             }
             finally
             {
-                dlProcess!.Dispose();
+                dlProcess.Dispose();
             }
         }
 
@@ -250,8 +250,8 @@ namespace youtube_dl_wpf
                 // we need to use Win32 APIs.
                 // see https://stackoverflow.com/questions/283128/how-do-i-send-ctrlc-to-a-process-in-c
                 // I would prefer not to use Win32 APIs in the application.
-                dlProcess!.Kill();
-                outputString!.Append("🛑 Aborted.");
+                dlProcess.Kill();
+                outputString.Append("🛑 Aborted.");
                 outputString.Append(Environment.NewLine);
                 Output = outputString.ToString();
             }
@@ -268,7 +268,7 @@ namespace youtube_dl_wpf
 
         private bool CanStartDownload(object commandParameter)
         {
-            return !String.IsNullOrEmpty(Link) && !String.IsNullOrEmpty(AppSettings.settings!.DlPath) && !_freezeButton;
+            return !String.IsNullOrEmpty(Link) && !String.IsNullOrEmpty(AppSettings.settings.DlPath) && !_freezeButton;
         }
 
         private void UpdateDl()
@@ -292,12 +292,12 @@ namespace youtube_dl_wpf
             try
             {
                 // make parameter list
-                if (!String.IsNullOrEmpty(AppSettings.settings!.Proxy))
+                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
                 {
-                    dlProcess!.StartInfo.ArgumentList.Add("--proxy");
+                    dlProcess.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
                 }
-                dlProcess!.StartInfo.ArgumentList.Add($"-U");
+                dlProcess.StartInfo.ArgumentList.Add($"-U");
                 // start update
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
@@ -312,7 +312,7 @@ namespace youtube_dl_wpf
             }
             finally
             {
-                dlProcess!.Dispose();
+                dlProcess.Dispose();
             }
         }
 
@@ -320,7 +320,7 @@ namespace youtube_dl_wpf
         {
             if (!String.IsNullOrEmpty(outLine.Data))
             {
-                outputString!.Append(outLine.Data);
+                outputString.Append(outLine.Data);
                 outputString.Append(Environment.NewLine);
                 Output = outputString.ToString();
             }
@@ -343,7 +343,7 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _overrideFormats, value);
-                AppSettings.settings!.OverrideFormats = _overrideFormats;
+                AppSettings.settings.OverrideFormats = _overrideFormats;
                 AppSettings.SaveSettings();
             }
         }
@@ -354,7 +354,7 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _videoFormat, value);
-                AppSettings.settings!.VideoFormat = _videoFormat;
+                AppSettings.settings.VideoFormat = _videoFormat;
                 AppSettings.SaveSettings();
             }
         }
@@ -365,7 +365,7 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _audioFormat, value);
-                AppSettings.settings!.AudioFormat = _audioFormat;
+                AppSettings.settings.AudioFormat = _audioFormat;
                 AppSettings.SaveSettings();
             }
         }
@@ -400,7 +400,7 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _customPath, value);
-                AppSettings.settings!.CustomPath = _customPath;
+                AppSettings.settings.CustomPath = _customPath;
                 AppSettings.SaveSettings();
             }
         }
@@ -412,7 +412,7 @@ namespace youtube_dl_wpf
             {
                 SetProperty(ref _downloadPath, value);
                 _openFolder.InvokeCanExecuteChanged();
-                AppSettings.settings!.DownloadPath = _downloadPath;
+                AppSettings.settings.DownloadPath = _downloadPath;
                 AppSettings.SaveSettings();
             }
         }

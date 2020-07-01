@@ -9,7 +9,7 @@ namespace youtube_dl_wpf
     {
         public SettingsViewModel()
         {
-            _darkMode = AppSettings.settings!.DarkMode;
+            _darkMode = AppSettings.settings.DarkMode;
             _autoUpdateDl = AppSettings.settings.AutoUpdateDl;
             _colorMode = "Light Mode";
             _dlPath = AppSettings.settings.DlPath;
@@ -78,7 +78,7 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _darkMode, value);
-                AppSettings.settings!.DarkMode = _darkMode;
+                AppSettings.settings.DarkMode = _darkMode;
                 AppSettings.SaveSettings();
             }
         }
@@ -89,7 +89,7 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _autoUpdateDl, value);
-                AppSettings.settings!.AutoUpdateDl = _autoUpdateDl;
+                AppSettings.settings.AutoUpdateDl = _autoUpdateDl;
                 AppSettings.SaveSettings();
             }
         }
@@ -106,7 +106,7 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _dlPath, value);
-                AppSettings.settings!.DlPath = _dlPath;
+                AppSettings.settings.DlPath = _dlPath;
                 AppSettings.SaveSettings();
             }
         }
@@ -117,7 +117,7 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _ffmpegPath, value);
-                AppSettings.settings!.FfmpegPath = _ffmpegPath;
+                AppSettings.settings.FfmpegPath = _ffmpegPath;
                 AppSettings.SaveSettings();
             }
         }
@@ -128,7 +128,7 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _proxy, value);
-                AppSettings.settings!.Proxy = _proxy;
+                AppSettings.settings.Proxy = _proxy;
                 AppSettings.SaveSettings();
             }
         }

@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace youtube_dl_wpf
@@ -10,13 +11,16 @@ namespace youtube_dl_wpf
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
             _drawerItems = GenerateItems(snackbarMessageQueue);
+            _selectedItem = _drawerItems.First();
             _openMessageDialog = new DelegateCommand(OnOpenMessageDialog, (object commandParameter) => true);
         }
 
         private ObservableCollection<DrawerItem> _drawerItems;
-        private DrawerItem? _selectedItem;
+        private DrawerItem _selectedItem;
 
         private readonly DelegateCommand _openMessageDialog;
+
+        public ICommand OpenMessageDialog => _openMessageDialog;
 
         private async void OnOpenMessageDialog(object commandParameter)
         {
@@ -27,8 +31,6 @@ namespace youtube_dl_wpf
             await DialogHost.Show(aboutDialog, "RootDialog");
         }
 
-        public ICommand OpenMessageDialog => _openMessageDialog;
-
         public ObservableCollection<DrawerItem> DrawerItems
         {
             get => _drawerItems;
@@ -37,7 +39,7 @@ namespace youtube_dl_wpf
 
         public DrawerItem SelectedItem
         {
-            get => _selectedItem!;
+            get => _selectedItem;
             set => SetProperty(ref _selectedItem, value);
         }
 

@@ -15,7 +15,7 @@ namespace youtube_dl_wpf
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Link.OpenInBrowser(e.Uri.AbsoluteUri);
+            Utilities.OpenLink(e.Uri.AbsoluteUri);
         }
     }
 }
