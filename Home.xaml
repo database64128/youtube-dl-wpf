@@ -17,116 +17,121 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Margin="8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Start your download</TextBlock>
-        <StackPanel Grid.Row="1">
-            <StackPanel Orientation="Horizontal" >
-                <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8">Video Link</TextBlock>
-                <TextBox
-                    x:Name="linkTextBox"
-                    materialDesign:HintAssist.Hint="e.g. https://www.youtube.com/watch?v=b2390GAm4d0"
-                    Margin="8"
-                    Width="384"
-                    Text="{Binding Link, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button
-                    x:Name="downloadButton"
-                    Margin="8 0 8 0"
-                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
-                    materialDesign:ButtonProgressAssist.IsIndeterminate="True"
-                    Command="{Binding StartDownload}">_Download</Button>
-                <Button
-                    x:Name="listFormatsButton"
-                    Margin="8 0 8 0"
-                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
-                    materialDesign:ButtonProgressAssist.IsIndeterminate="True"
-                    Style="{StaticResource MaterialDesignRaisedAccentButton}"
-                    Command="{Binding ListFormats}">_List Formats</Button>
-                <Button
-                    x:Name="abortButton"
-                    Margin="8 0 8 0"
-                    Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                    Command="{Binding AbortDl}">_Abort</Button>
+        <ScrollViewer Grid.Row="1"
+                      materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" >
+                    <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8">Video Link</TextBlock>
+                    <TextBox
+                        x:Name="linkTextBox"
+                        materialDesign:HintAssist.Hint="e.g. https://www.youtube.com/watch?v=b2390GAm4d0"
+                        Margin="8"
+                        Width="384"
+                        Text="{Binding Link, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Button
+                        x:Name="downloadButton"
+                        Margin="8 0 8 0"
+                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                        Command="{Binding StartDownload}">_Download</Button>
+                    <Button
+                        x:Name="listFormatsButton"
+                        Margin="8 0 8 0"
+                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                        Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                        Command="{Binding ListFormats}">_List Formats</Button>
+                    <Button
+                        x:Name="abortButton"
+                        Margin="8 0 8 0"
+                        Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                        Command="{Binding AbortDl}">_Abort</Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Margin="8">Options</TextBlock>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton
+                                x:Name="overrideFormatsToggle"
+                                Margin="8"
+                                IsChecked="{Binding OverrideFormats}"/>
+                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Override Formats</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Margin="8">Video Format</TextBlock>
+                            <TextBox
+                                x:Name="videoTextBox"
+                                Margin="0,8,8,8"
+                                Width="50"
+                                IsEnabled="{Binding Path=IsChecked, ElementName=overrideFormatsToggle}"
+                                TextAlignment="Right"
+                                Text="{Binding VideoFormat}"/>
+                            <TextBlock VerticalAlignment="Center" Margin="8">Audio Format</TextBlock>
+                            <TextBox
+                                x:Name="audioTextBox"
+                                Margin="0,8,8,8"
+                                Width="50"
+                                IsEnabled="{Binding Path=IsChecked, ElementName=overrideFormatsToggle}"
+                                TextAlignment="Right"
+                                Text="{Binding AudioFormat}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1">
+                            <ToggleButton
+                                x:Name="metadataToggle"
+                                Margin="8"
+                                IsChecked="{Binding Metadata}"/>
+                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Add Metadata</TextBlock>
+                            <ToggleButton
+                                x:Name="thumbnailToggle"
+                                Margin="8"
+                                IsChecked="{Binding Thumbnail}"/>
+                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Thumbnail</TextBlock>
+                            <ToggleButton
+                                x:Name="subtitlesToggle"
+                                Margin="8"
+                                IsChecked="{Binding Subtitles}"/>
+                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Subtitles</TextBlock>
+                            <ToggleButton
+                                x:Name="playlistToggle"
+                                Margin="8"
+                                IsChecked="{Binding Playlist}"/>
+                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Playlist</TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2">
+                            <ToggleButton
+                                x:Name="pathToggle"
+                                Margin="8"
+                                IsChecked="{Binding CustomPath}"/>
+                            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Custom Download Path</TextBlock>
+                            <TextBox
+                                x:Name="pathTextBox"
+                                Margin="8,8,1,8"
+                                Width="384"
+                                IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}"
+                                Text="{Binding DownloadPath, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button
+                                x:Name="browseButton"
+                                Margin="1,0,1,0"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}"
+                                Command="{Binding BrowseFolder}"
+                                CommandParameter="DownloadPath">Browse</Button>
+                            <Button
+                                x:Name="openFolderButton"
+                                Margin="1,0,1,0"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Command="{Binding OpenFolder}">Open Folder</Button>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Margin="8">Options</TextBlock>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <StackPanel Orientation="Horizontal">
-                        <ToggleButton
-                            x:Name="overrideFormatsToggle"
-                            Margin="8"
-                            IsChecked="{Binding OverrideFormats}"/>
-                        <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Override Formats</TextBlock>
-                        <TextBlock VerticalAlignment="Center" Margin="8">Video Format</TextBlock>
-                        <TextBox
-                            x:Name="videoTextBox"
-                            Margin="0,8,8,8"
-                            Width="50"
-                            IsEnabled="{Binding Path=IsChecked, ElementName=overrideFormatsToggle}"
-                            TextAlignment="Right"
-                            Text="{Binding VideoFormat}"/>
-                        <TextBlock VerticalAlignment="Center" Margin="8">Audio Format</TextBlock>
-                        <TextBox
-                            x:Name="audioTextBox"
-                            Margin="0,8,8,8"
-                            Width="50"
-                            IsEnabled="{Binding Path=IsChecked, ElementName=overrideFormatsToggle}"
-                            TextAlignment="Right"
-                            Text="{Binding AudioFormat}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1">
-                        <ToggleButton
-                            x:Name="metadataToggle"
-                            Margin="8"
-                            IsChecked="{Binding Metadata}"/>
-                        <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Add Metadata</TextBlock>
-                        <ToggleButton
-                            x:Name="thumbnailToggle"
-                            Margin="8"
-                            IsChecked="{Binding Thumbnail}"/>
-                        <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Thumbnail</TextBlock>
-                        <ToggleButton
-                            x:Name="subtitlesToggle"
-                            Margin="8"
-                            IsChecked="{Binding Subtitles}"/>
-                        <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Subtitles</TextBlock>
-                        <ToggleButton
-                            x:Name="playlistToggle"
-                            Margin="8"
-                            IsChecked="{Binding Playlist}"/>
-                        <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Playlist</TextBlock>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2">
-                        <ToggleButton
-                            x:Name="pathToggle"
-                            Margin="8"
-                            IsChecked="{Binding CustomPath}"/>
-                        <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Custom Download Path</TextBlock>
-                        <TextBox
-                            x:Name="pathTextBox"
-                            Margin="8,8,1,8"
-                            Width="384"
-                            IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}"
-                            Text="{Binding DownloadPath, UpdateSourceTrigger=PropertyChanged}"/>
-                        <Button
-                            x:Name="browseButton"
-                            Margin="1,0,1,0"
-                            Style="{StaticResource MaterialDesignFlatButton}"
-                            IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}"
-                            Command="{Binding BrowseFolder}"
-                            CommandParameter="DownloadPath">Browse</Button>
-                        <Button
-                            x:Name="openFolderButton"
-                            Margin="1,0,1,0"
-                            Style="{StaticResource MaterialDesignFlatButton}"
-                            Command="{Binding OpenFolder}">Open Folder</Button>
-                    </StackPanel>
-                </Grid>
-            </StackPanel>
-        </StackPanel>
-        <TextBlock Grid.Row="2" Margin="8,24,8,8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Results</TextBlock>
+        </ScrollViewer>
+        <TextBlock Grid.Row="2" Margin="8,20,8,8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Results</TextBlock>
         <TextBox
             Grid.Row="3"
             x:Name="resultTextBox"

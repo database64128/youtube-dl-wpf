@@ -7,87 +7,91 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="960">
-    <Grid Margin="24">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Margin="8" FontSize="28">Settings</TextBlock>
-        <TextBlock Grid.Row="1" Grid.Column="0" Margin="8" Style="{StaticResource MaterialDesignHeadline6TextBlock}">UI</TextBlock>
-        <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8">Color Mode</TextBlock>
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+    <ScrollViewer materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
+                  HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto">
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="8" FontSize="28">Settings</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="8" Style="{StaticResource MaterialDesignHeadline6TextBlock}">UI</TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8">Color Mode</TextBlock>
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                <ToggleButton
+                    x:Name="darkModeToggle"
+                    Margin="8"
+                    IsChecked="{Binding DarkMode}"
+                    Command="{Binding ChangeColorMode}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}"/>
+                <TextBlock VerticalAlignment="Center" Margin="0,8,8,8" Text="{Binding ColorMode}" />
+            </StackPanel>
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="8" Style="{StaticResource MaterialDesignHeadline6TextBlock}">Backend</TextBlock>
+            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Update <Span FontWeight="Medium">youtube-dl</Span> on Startup</TextBlock>
             <ToggleButton
-                x:Name="darkModeToggle"
+                Grid.Row="4"
+                Grid.Column="1"
+                x:Name="autoUpdateDlToggle"
                 Margin="8"
-                IsChecked="{Binding DarkMode}"
-                Command="{Binding ChangeColorMode}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}"/>
-            <TextBlock VerticalAlignment="Center" Margin="0,8,8,8" Text="{Binding ColorMode}" />
-        </StackPanel>
-        <TextBlock Grid.Row="3" Grid.Column="0" Margin="8" Style="{StaticResource MaterialDesignHeadline6TextBlock}">Backend</TextBlock>
-        <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Update <Span FontWeight="Medium">youtube-dl</Span> on Startup</TextBlock>
-        <ToggleButton
-            Grid.Row="4"
-            Grid.Column="1"
-            x:Name="autoUpdateDlToggle"
-            Margin="8"
-            IsChecked="{Binding AutoUpdateDl}"
-            HorizontalAlignment="Left"/>
-        <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8"><Span FontWeight="Medium">youtube-dl</Span> Path</TextBlock>
-        <TextBox
-            Grid.Row="5"
-            Grid.Column="1"
-            x:Name="dlPathTextBox"
-            Margin="2,8,2,8"
-            Width="400"
-            materialDesign:HintAssist.Hint="Required"
-            Text="{Binding DlPath}"/>
-        <Button
-            Grid.Row="5"
-            Grid.Column="2"
-            x:Name="dlPathBrowseButton"
-            Margin="2,0,8,0"
-            Style="{StaticResource MaterialDesignFlatButton}"
-            Command="{Binding BrowseExe}"
-            CommandParameter="youtube-dl">Browse</Button>
-        <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8"><Span FontWeight="Medium">ffmpeg</Span> Path</TextBlock>
-        <TextBox
-            Grid.Row="6"
-            Grid.Column="1"
-            x:Name="ffmpegPathTextBox"
-            Margin="2,8,2,8"
-            Width="400"
-            materialDesign:HintAssist.Hint="Optional but recommended"
-            Text="{Binding FfmpegPath}"/>
-        <Button
-            Grid.Row="6"
-            Grid.Column="2"
-            x:Name="ffmpegPathBrowseButton"
-            Margin="2,0,8,0"
-            Style="{StaticResource MaterialDesignFlatButton}"
-            Command="{Binding BrowseExe}"
-            CommandParameter="ffmpeg">Browse</Button>
-        <TextBlock Grid.Row="7" Grid.Column="0" Margin="8" Style="{StaticResource MaterialDesignHeadline6TextBlock}">Network</TextBlock>
-        <TextBlock Grid.Row="8" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Proxy</TextBlock>
-        <TextBox
-            Grid.Row="8"
-            Grid.Column="1"
-            x:Name="proxyTextBox"
-            Margin="2,8,2,8"
-            Width="400"
-            materialDesign:HintAssist.Hint="e.g. socks5://localhost:1080. Leave empty to use system proxy."
-            Text="{Binding Proxy}"/>
-    </Grid>
+                IsChecked="{Binding AutoUpdateDl}"
+                HorizontalAlignment="Left"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8"><Span FontWeight="Medium">youtube-dl</Span> Path</TextBlock>
+            <TextBox
+                Grid.Row="5"
+                Grid.Column="1"
+                x:Name="dlPathTextBox"
+                Margin="2,8,2,8"
+                Width="400"
+                materialDesign:HintAssist.Hint="Required"
+                Text="{Binding DlPath}"/>
+            <Button
+                Grid.Row="5"
+                Grid.Column="2"
+                x:Name="dlPathBrowseButton"
+                Margin="2,0,8,0"
+                Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding BrowseExe}"
+                CommandParameter="youtube-dl">Browse</Button>
+            <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8"><Span FontWeight="Medium">ffmpeg</Span> Path</TextBlock>
+            <TextBox
+                Grid.Row="6"
+                Grid.Column="1"
+                x:Name="ffmpegPathTextBox"
+                Margin="2,8,2,8"
+                Width="400"
+                materialDesign:HintAssist.Hint="Optional but recommended"
+                Text="{Binding FfmpegPath}"/>
+            <Button
+                Grid.Row="6"
+                Grid.Column="2"
+                x:Name="ffmpegPathBrowseButton"
+                Margin="2,0,8,0"
+                Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding BrowseExe}"
+                CommandParameter="ffmpeg">Browse</Button>
+            <TextBlock Grid.Row="7" Grid.Column="0" Margin="8" Style="{StaticResource MaterialDesignHeadline6TextBlock}">Network</TextBlock>
+            <TextBlock Grid.Row="8" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Proxy</TextBlock>
+            <TextBox
+                Grid.Row="8"
+                Grid.Column="1"
+                x:Name="proxyTextBox"
+                Margin="2,8,2,8"
+                Width="400"
+                materialDesign:HintAssist.Hint="e.g. socks5://localhost:1080. Leave empty to use system proxy."
+                Text="{Binding Proxy}"/>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

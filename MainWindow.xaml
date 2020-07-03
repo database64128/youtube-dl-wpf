@@ -12,7 +12,7 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{materialDesign:MaterialDesignFont}"
-        Title="Cube YouTube Downloader" Height="680" Width="960" MinHeight="680" MinWidth="960">
+        Title="Cube YouTube Downloader" Height="680" Width="960" MinHeight="540" MinWidth="620">
     <materialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
         <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
             <materialDesign:DrawerHost.LeftDrawerContent>
