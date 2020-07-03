@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -9,8 +10,10 @@ namespace youtube_dl_wpf
 {
     public class HomeViewModel : ViewModelBase
     {
-        public HomeViewModel()
+        public HomeViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
+            _snackbarMessageQueue = snackbarMessageQueue ?? throw new ArgumentNullException(nameof(snackbarMessageQueue));
+
             _link = "";
             _overrideFormats = AppSettings.settings.OverrideFormats;
             _videoFormat = AppSettings.settings.VideoFormat;
@@ -50,6 +53,7 @@ namespace youtube_dl_wpf
         private BackgroundWorker worker = null!;
         private Process dlProcess = null!;
 
+        private readonly ISnackbarMessageQueue _snackbarMessageQueue;
         private readonly DelegateCommand _browseFolder;
         private readonly DelegateCommand _openFolder;
         private readonly DelegateCommand _startDownload;
@@ -334,6 +338,8 @@ namespace youtube_dl_wpf
                 SetProperty(ref _link, value);
                 _startDownload.InvokeCanExecuteChanged();
                 _listFormats.InvokeCanExecuteChanged();
+                if (String.IsNullOrEmpty(AppSettings.settings.DlPath))
+                    _snackbarMessageQueue.Enqueue("youtube-dl path is not set. Go to settings and set the path.");
             }
         }
 

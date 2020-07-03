@@ -50,8 +50,8 @@ namespace youtube_dl_wpf
 
             return new ObservableCollection<DrawerItem>
             {
-                new DrawerItem("Home", new Home()),
-                new DrawerItem("Settings", new Settings())
+                new DrawerItem("Home", new Home(snackbarMessageQueue)),
+                new DrawerItem("Settings", new Settings(snackbarMessageQueue))
             };
         }
     }

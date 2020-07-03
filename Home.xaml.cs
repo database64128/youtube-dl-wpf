@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using MaterialDesignThemes.Wpf;
+using System.Windows.Controls;
 
 namespace youtube_dl_wpf
 {
@@ -7,11 +8,14 @@ namespace youtube_dl_wpf
     /// </summary>
     public partial class Home : UserControl
     {
-        public Home()
+        public Home(ISnackbarMessageQueue snackbarMessageQueue)
         {
             InitializeComponent();
-            DataContext = new HomeViewModel();
+            _snackbarMessageQueue = snackbarMessageQueue;
+            DataContext = new HomeViewModel(_snackbarMessageQueue);
         }
+
+        private readonly ISnackbarMessageQueue _snackbarMessageQueue;
 
         private bool IsScrolledToEnd(TextBox textBox) => textBox.VerticalOffset > textBox.ExtentHeight - textBox.ViewportHeight - textBox.FontSize * textBox.FontFamily.LineSpacing;
 

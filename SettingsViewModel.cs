@@ -7,8 +7,10 @@ namespace youtube_dl_wpf
 {
     public class SettingsViewModel : ViewModelBase
     {
-        public SettingsViewModel()
+        public SettingsViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
+            _snackbarMessageQueue = snackbarMessageQueue ?? throw new ArgumentNullException(nameof(snackbarMessageQueue));
+
             _darkMode = AppSettings.settings.DarkMode;
             _autoUpdateDl = AppSettings.settings.AutoUpdateDl;
             _colorMode = "Light Mode";
@@ -31,6 +33,7 @@ namespace youtube_dl_wpf
         private string _ffmpegPath;
         private string _proxy;
 
+        private readonly ISnackbarMessageQueue _snackbarMessageQueue;
         private readonly PaletteHelper _paletteHelper;
         private readonly DelegateCommand _changeColorMode;
         private readonly DelegateCommand _browseExe;

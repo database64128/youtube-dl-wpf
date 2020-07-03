@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using MaterialDesignThemes.Wpf;
+using System.Windows.Controls;
 
 namespace youtube_dl_wpf
 {
@@ -7,10 +8,13 @@ namespace youtube_dl_wpf
     /// </summary>
     public partial class Settings : UserControl
     {
-        public Settings()
+        public Settings(ISnackbarMessageQueue snackbarMessageQueue)
         {
             InitializeComponent();
-            DataContext = new SettingsViewModel();
+            _snackbarMessageQueue = snackbarMessageQueue;
+            DataContext = new SettingsViewModel(_snackbarMessageQueue);
         }
+
+        private readonly ISnackbarMessageQueue _snackbarMessageQueue;
     }
 }
