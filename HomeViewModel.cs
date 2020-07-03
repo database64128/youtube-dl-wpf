@@ -23,7 +23,7 @@ namespace youtube_dl_wpf
             _downloadPath = AppSettings.settings.DownloadPath;
             _output = "";
 
-            _browseFolder = new DelegateCommand(OnBrowseFolder, (object commandParameter) => true);
+            _browseFolder = new DelegateCommand(OnBrowseFolder);
             _openFolder = new DelegateCommand(OnOpenFolder, CanOpenFolder);
             _startDownload = new DelegateCommand(OnStartDownload, CanStartDownload);
             _listFormats = new DelegateCommand(OnListFormats, CanStartDownload);

@@ -8,6 +8,12 @@ namespace youtube_dl_wpf
         private readonly Action<object> _executeAction;
         private readonly Func<object, bool> _canExecuteAction;
 
+        public DelegateCommand(Action<object> executeAction)
+        {
+            _executeAction = executeAction;
+            _canExecuteAction = x => true;
+        }
+
         public DelegateCommand(Action<object> executeAction, Func<object, bool> canExecuteAction)
         {
             _executeAction = executeAction;

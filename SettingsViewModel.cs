@@ -17,8 +17,8 @@ namespace youtube_dl_wpf
             _proxy = AppSettings.settings.Proxy;
 
             _paletteHelper = new PaletteHelper();
-            _changeColorMode = new DelegateCommand(OnChangeColorMode, (object commandParameter) => true);
-            _browseExe = new DelegateCommand(OnBrowseExe, (object commandParameter) => true);
+            _changeColorMode = new DelegateCommand(OnChangeColorMode);
+            _browseExe = new DelegateCommand(OnBrowseExe);
 
             if (_darkMode == true)
                 OnChangeColorMode(true);
