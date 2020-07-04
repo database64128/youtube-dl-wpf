@@ -12,17 +12,17 @@ namespace youtube_dl_wpf
         {
             _drawerItems = GenerateItems(snackbarMessageQueue);
             _selectedItem = _drawerItems.First();
-            _openMessageDialog = new DelegateCommand(OnOpenMessageDialog, (object commandParameter) => true);
+            _openAboutDialog = new DelegateCommand(OnOpenAboutDialog, (object commandParameter) => true);
         }
 
         private ObservableCollection<DrawerItem> _drawerItems;
         private DrawerItem _selectedItem;
 
-        private readonly DelegateCommand _openMessageDialog;
+        private readonly DelegateCommand _openAboutDialog;
 
-        public ICommand OpenMessageDialog => _openMessageDialog;
+        public ICommand OpenAboutDialog => _openAboutDialog;
 
-        private async void OnOpenMessageDialog(object commandParameter)
+        private async void OnOpenAboutDialog(object commandParameter)
         {
             var aboutDialog = new AboutDialog
             {

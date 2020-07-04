@@ -56,7 +56,7 @@
                             DockPanel.Dock="Right"
                             PlacementMode="BottomAndAlignRightEdges">
                             <StackPanel>
-                                <Button Content="About" Command="{Binding OpenMessageDialog}"/>
+                                <Button Content="About" Command="{Binding OpenAboutDialog}"/>
                             </StackPanel>
                         </materialDesign:PopupBox>
                         <TextBlock
