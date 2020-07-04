@@ -51,11 +51,17 @@ namespace youtube_dl_wpf
             if (!File.Exists("Settings.json"))
             {
                 settings = new SettingsJson();
-                SaveSettings();
                 return;
             }
-            using var _settingsJson = new FileStream("Settings.json", FileMode.OpenOrCreate);
-            settings = JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson).Result;
+            try
+            {
+                var _settingsJson = new FileStream("Settings.json", FileMode.Open);
+                settings = JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson).Result;
+            }
+            catch
+            {
+                settings = new SettingsJson();
+            }
         }
 
         public static async Task LoadSettingsAsync()
@@ -63,21 +69,22 @@ namespace youtube_dl_wpf
             if (!File.Exists("Settings.json"))
             {
                 settings = new SettingsJson();
-                await SaveSettingsAsync();
                 return;
             }
-            using var _settingsJson = new FileStream("Settings.json", FileMode.OpenOrCreate);
-            settings = await JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson);
+            try
+            {
+                var _settingsJson = new FileStream("Settings.json", FileMode.Open);
+                settings = await JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson);
+            }
+            catch
+            {
+                settings = new SettingsJson();
+            }
         }
 
         public static void SaveSettings()
         {
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-            using var _settingsJson = new FileStream("Settings.json", FileMode.Create);
-            JsonSerializer.SerializeAsync<SettingsJson>(_settingsJson, settings!, jsonSerializerOptions).Wait();
+            Task.Run(SaveSettingsAsync);
         }
 
         public static async Task SaveSettingsAsync()
@@ -87,7 +94,7 @@ namespace youtube_dl_wpf
                 WriteIndented = true
             };
             using var _settingsJson = new FileStream("Settings.json", FileMode.Create);
-            await JsonSerializer.SerializeAsync<SettingsJson>(_settingsJson, settings!, jsonSerializerOptions);
+            await JsonSerializer.SerializeAsync(_settingsJson, settings!, jsonSerializerOptions);
         }
     }
 }
