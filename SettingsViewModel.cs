@@ -1,6 +1,9 @@
 ﻿using MaterialDesignThemes.Wpf;
+using PeanutButter.TinyEventAggregator;
 using System;
 using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace youtube_dl_wpf
@@ -11,20 +14,30 @@ namespace youtube_dl_wpf
         {
             _snackbarMessageQueue = snackbarMessageQueue ?? throw new ArgumentNullException(nameof(snackbarMessageQueue));
 
-            _darkMode = AppSettings.settings.DarkMode;
-            _autoUpdateDl = AppSettings.settings.AutoUpdateDl;
+            _darkMode = false;
+            _autoUpdateDl = true;
             _colorMode = "Light Mode";
-            _dlPath = AppSettings.settings.DlPath;
-            _ffmpegPath = AppSettings.settings.FfmpegPath;
-            _proxy = AppSettings.settings.Proxy;
+            _dlPath = "";
+            _ffmpegPath = "";
+            _proxy = "";
 
             _paletteHelper = new PaletteHelper();
             _changeColorMode = new DelegateCommand(OnChangeColorMode);
             _browseExe = new DelegateCommand(OnBrowseExe);
 
-            if (_darkMode == true)
-                OnChangeColorMode(true);
+            settingsChangedEvent = EventAggregator.Instance.GetEvent<SettingsChangedEvent>();
+            // subscribe to settings changes published by HomeViewModel
+            EventAggregator.Instance.GetEvent<SettingsFromHomeEvent>().Subscribe(async x =>
+            {
+                _settings = x;
+                await SaveSettingsAsync();
+            });
+            // load and apply settings from json
+            Task.Run(LoadSettingsAsync).ContinueWith(x => ApplySettings());
         }
+
+        private SettingsJson _settings = null!;
+        private readonly SettingsChangedEvent settingsChangedEvent;
 
         private bool _darkMode; // default to light mode
         private bool _autoUpdateDl; // auto update youtube-dl by default
@@ -75,14 +88,98 @@ namespace youtube_dl_wpf
             }
         }
 
+        /// <summary>
+        /// Load settings from Settings.json and save to the _settings field.
+        /// </summary>
+        /// <returns></returns>
+        private async Task LoadSettingsAsync()
+        {
+            if (!File.Exists("Settings.json"))
+            {
+                _settings = new SettingsJson();
+            }
+            else
+            {
+                FileStream _settingsJson = null!;
+                try
+                {
+                    _settingsJson = new FileStream("Settings.json", FileMode.Open);
+                    _settings = await JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson);
+                }
+                catch
+                {
+                    _settings = new SettingsJson();
+                    _snackbarMessageQueue.Enqueue("Failed to load settings. All settings have been reset.");
+                }
+                finally
+                {
+                    if (_settingsJson != null)
+                        await _settingsJson.DisposeAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Apply loaded settings from _settings.
+        /// </summary>
+        /// <returns></returns>
+        private async Task ApplySettings()
+        {
+            SetProperty(ref _darkMode, _settings.DarkMode);
+            SetProperty(ref _autoUpdateDl, _settings.AutoUpdateDl);
+            SetProperty(ref _dlPath, _settings.DlPath);
+            SetProperty(ref _ffmpegPath, _settings.FfmpegPath);
+            SetProperty(ref _proxy, _settings.Proxy);
+
+            if (_darkMode == true)
+                OnChangeColorMode(true);
+
+            await settingsChangedEvent.PublishAsync(_settings);
+        }
+
+        /// <summary>
+        /// Publish _settings for other ViewModels.
+        /// </summary>
+        private void PublishSettings() => Task.Run(() => settingsChangedEvent.PublishAsync(_settings));
+
+        private void SaveSettings() => Task.Run(SaveSettingsAsync);
+
+        /// <summary>
+        /// Serialize _settings to Settings.json.
+        /// </summary>
+        /// <returns></returns>
+        private async Task SaveSettingsAsync()
+        {
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            FileStream _settingsJson = null!;
+            try
+            {
+                _settingsJson = new FileStream("Settings.json", FileMode.Create);
+                await JsonSerializer.SerializeAsync(_settingsJson, _settings, jsonSerializerOptions);
+            }
+            catch
+            {
+                _snackbarMessageQueue.Enqueue("Failed to save settings. Please check the executable directory's permissions.");
+            }
+            finally
+            {
+                if (_settingsJson != null)
+                    await _settingsJson.DisposeAsync();
+            }
+        }
+
         public bool DarkMode
         {
             get => _darkMode;
             set
             {
                 SetProperty(ref _darkMode, value);
-                AppSettings.settings.DarkMode = _darkMode;
-                AppSettings.SaveSettings();
+                _settings.DarkMode = _darkMode;
+                SaveSettings();
+                PublishSettings();
             }
         }
 
@@ -92,8 +189,8 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _autoUpdateDl, value);
-                AppSettings.settings.AutoUpdateDl = _autoUpdateDl;
-                AppSettings.SaveSettings();
+                _settings.AutoUpdateDl = _autoUpdateDl;
+                SaveSettings();
             }
         }
 
@@ -109,8 +206,9 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _dlPath, value);
-                AppSettings.settings.DlPath = _dlPath;
-                AppSettings.SaveSettings();
+                _settings.DlPath = _dlPath;
+                SaveSettings();
+                PublishSettings();
             }
         }
 
@@ -120,8 +218,9 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _ffmpegPath, value);
-                AppSettings.settings.FfmpegPath = _ffmpegPath;
-                AppSettings.SaveSettings();
+                _settings.FfmpegPath = _ffmpegPath;
+                SaveSettings();
+                PublishSettings();
             }
         }
 
@@ -131,9 +230,17 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _proxy, value);
-                AppSettings.settings.Proxy = _proxy;
-                AppSettings.SaveSettings();
+                _settings.Proxy = _proxy;
+                SaveSettings();
+                PublishSettings();
             }
         }
+    }
+
+    /// <summary>
+    /// Raised by SettingsViewModel when settings are loaded or changed in SettingsViewModel.
+    /// </summary>
+    public class SettingsChangedEvent : EventBase<SettingsJson>
+    {
     }
 }
