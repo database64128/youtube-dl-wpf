@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 
 namespace youtube_dl_wpf
@@ -48,9 +49,8 @@ namespace youtube_dl_wpf
         private string _downloadPath;
         private string _output;
 
+        private bool _freezeButton; // true when youtube-dl is started
         private StringBuilder outputString = null!;
-        private bool _freezeButton = false; // true for freezing the button
-        private BackgroundWorker worker = null!;
         private Process dlProcess = null!;
 
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
@@ -74,16 +74,24 @@ namespace youtube_dl_wpf
             dlProcess.StartInfo.UseShellExecute = false;
             dlProcess.StartInfo.RedirectStandardError = true;
             dlProcess.StartInfo.RedirectStandardOutput = true;
+            dlProcess.EnableRaisingEvents = true;
             dlProcess.ErrorDataReceived += DlOutputHandler;
             dlProcess.OutputDataReceived += DlOutputHandler;
+            dlProcess.Exited += DlProcess_Exited;
         }
 
-        private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void UpdateButtons()
         {
-            FreezeButton = false;
             _startDownload.InvokeCanExecuteChanged();
             _listFormats.InvokeCanExecuteChanged();
             _abortDl.InvokeCanExecuteChanged();
+        }
+
+        private void DlProcess_Exited(object? sender, EventArgs e)
+        {
+            dlProcess.Dispose();
+            FreezeButton = false;
+            Application.Current.Dispatcher.Invoke(UpdateButtons);
         }
 
         private void OnBrowseFolder(object commandParameter)
@@ -123,18 +131,8 @@ namespace youtube_dl_wpf
         private void OnStartDownload(object commandParameter)
         {
             FreezeButton = true;
-            _startDownload.InvokeCanExecuteChanged();
-            _listFormats.InvokeCanExecuteChanged();
-            _abortDl.InvokeCanExecuteChanged();
+            UpdateButtons();
 
-            worker = new BackgroundWorker();
-            worker.DoWork += DoStartDownload;
-            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
-            worker.RunWorkerAsync();
-        }
-
-        private void DoStartDownload(object sender, DoWorkEventArgs e)
-        {
             outputString = new StringBuilder();
             PrepareDlProcess();
 
@@ -183,7 +181,6 @@ namespace youtube_dl_wpf
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
                 dlProcess.BeginOutputReadLine();
-                dlProcess.WaitForExit();
             }
             catch (Exception ex)
             {
@@ -193,25 +190,14 @@ namespace youtube_dl_wpf
             }
             finally
             {
-                dlProcess.Dispose();
             }
         }
 
         private void OnListFormats(object commandParameter)
         {
             FreezeButton = true;
-            _startDownload.InvokeCanExecuteChanged();
-            _listFormats.InvokeCanExecuteChanged();
-            _abortDl.InvokeCanExecuteChanged();
+            UpdateButtons();
 
-            worker = new BackgroundWorker();
-            worker.DoWork += DoListFormats;
-            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
-            worker.RunWorkerAsync();
-        }
-
-        private void DoListFormats(object sender, DoWorkEventArgs e)
-        {
             outputString = new StringBuilder();
             PrepareDlProcess();
 
@@ -229,7 +215,6 @@ namespace youtube_dl_wpf
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
                 dlProcess.BeginOutputReadLine();
-                dlProcess.WaitForExit();
             }
             catch (Exception ex)
             {
@@ -239,7 +224,6 @@ namespace youtube_dl_wpf
             }
             finally
             {
-                dlProcess.Dispose();
             }
         }
 
@@ -278,18 +262,8 @@ namespace youtube_dl_wpf
         private void UpdateDl()
         {
             FreezeButton = true;
-            _startDownload.InvokeCanExecuteChanged();
-            _listFormats.InvokeCanExecuteChanged();
-            _abortDl.InvokeCanExecuteChanged();
+            UpdateButtons();
 
-            worker = new BackgroundWorker();
-            worker.DoWork += DoUpdateDl;
-            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
-            worker.RunWorkerAsync();
-        }
-
-        private void DoUpdateDl(object sender, DoWorkEventArgs e)
-        {
             outputString = new StringBuilder();
             PrepareDlProcess();
 
@@ -306,7 +280,6 @@ namespace youtube_dl_wpf
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
                 dlProcess.BeginOutputReadLine();
-                dlProcess.WaitForExit();
             }
             catch (Exception ex)
             {
@@ -316,7 +289,6 @@ namespace youtube_dl_wpf
             }
             finally
             {
-                dlProcess.Dispose();
             }
         }
 
