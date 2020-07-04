@@ -84,29 +84,29 @@
                             <ToggleButton
                                 x:Name="metadataToggle"
                                 Margin="8"
-                                IsChecked="{Binding Metadata}"/>
+                                IsChecked="{Binding AddMetadata}"/>
                             <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Add Metadata</TextBlock>
                             <ToggleButton
                                 x:Name="thumbnailToggle"
                                 Margin="8"
-                                IsChecked="{Binding Thumbnail}"/>
+                                IsChecked="{Binding DownloadThumbnail}"/>
                             <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Thumbnail</TextBlock>
                             <ToggleButton
                                 x:Name="subtitlesToggle"
                                 Margin="8"
-                                IsChecked="{Binding Subtitles}"/>
+                                IsChecked="{Binding DownloadSubtitles}"/>
                             <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Subtitles</TextBlock>
                             <ToggleButton
                                 x:Name="playlistToggle"
                                 Margin="8"
-                                IsChecked="{Binding Playlist}"/>
+                                IsChecked="{Binding DownloadPlaylist}"/>
                             <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Playlist</TextBlock>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Row="2">
                             <ToggleButton
                                 x:Name="pathToggle"
                                 Margin="8"
-                                IsChecked="{Binding CustomPath}"/>
+                                IsChecked="{Binding UseCustomPath}"/>
                             <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Custom Download Path</TextBlock>
                             <TextBox
                                 x:Name="pathTextBox"

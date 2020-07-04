@@ -42,7 +42,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 ## Known Issues
 
-- Setting `youtube-dl` path won't update the download button status.
+- 🎉 No known issues!
 
 ## Build
 
@@ -69,3 +69,5 @@ $ git clone --recursive https://github.com/database64128/youtube-dl-wpf.git
 [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) is licensed under [The Unlicense](https://github.com/ytdl-org/youtube-dl/blob/master/LICENSE).
 
 [Material Design Themes](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit) is licensed under [MIT](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/blob/master/LICENSE).
+
+[PeanutButter.TinyEventAggregator](https://github.com/fluffynuts/PeanutButter) is licensed under [BSD-3-Clause License](https://github.com/fluffynuts/PeanutButter/blob/master/LICENSE).

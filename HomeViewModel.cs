@@ -1,9 +1,11 @@
 ﻿using MaterialDesignThemes.Wpf;
+using PeanutButter.TinyEventAggregator;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -16,15 +18,15 @@ namespace youtube_dl_wpf
             _snackbarMessageQueue = snackbarMessageQueue ?? throw new ArgumentNullException(nameof(snackbarMessageQueue));
 
             _link = "";
-            _overrideFormats = AppSettings.settings.OverrideFormats;
-            _videoFormat = AppSettings.settings.VideoFormat;
-            _audioFormat = AppSettings.settings.AudioFormat;
-            _metadata = true;
-            _thumbnail = true;
-            _subtitles = true;
-            _playlist = false;
-            _customPath = AppSettings.settings.CustomPath;
-            _downloadPath = AppSettings.settings.DownloadPath;
+            _overrideFormats = false;
+            _videoFormat = "248";
+            _audioFormat = "251";
+            _addMetadata = true;
+            _downloadThumbnail = true;
+            _downloadSubtitles = true;
+            _downloadPlaylist = false;
+            _useCustomPath = false;
+            _downloadPath = "";
             _output = "";
 
             _browseFolder = new DelegateCommand(OnBrowseFolder);
@@ -33,19 +35,28 @@ namespace youtube_dl_wpf
             _listFormats = new DelegateCommand(OnListFormats, CanStartDownload);
             _abortDl = new DelegateCommand(OnAbortDl, (object commandParameter) => _freezeButton);
 
-            if (!String.IsNullOrEmpty(AppSettings.settings.DlPath) && AppSettings.settings.AutoUpdateDl)
-                UpdateDl();
+            settingsFromHomeEvent = EventAggregator.Instance.GetEvent<SettingsFromHomeEvent>();
+            // subscribe to settings changes from SettingsViewModel
+            EventAggregator.Instance.GetEvent<SettingsChangedEvent>().Subscribe(x =>
+            {
+                _settings = x;
+                ApplySettings();
+            });
         }
+
+        private SettingsJson _settings = null!;
+        private bool _updated;
+        private readonly SettingsFromHomeEvent settingsFromHomeEvent;
 
         private string _link;
         private bool _overrideFormats;
         private string _videoFormat;
         private string _audioFormat;
-        private bool _metadata;
-        private bool _thumbnail;
-        private bool _subtitles;
-        private bool _playlist;
-        private bool _customPath;
+        private bool _addMetadata;
+        private bool _downloadThumbnail;
+        private bool _downloadSubtitles;
+        private bool _downloadPlaylist;
+        private bool _useCustomPath;
         private string _downloadPath;
         private string _output;
 
@@ -66,10 +77,46 @@ namespace youtube_dl_wpf
         public ICommand ListFormats => _listFormats;
         public ICommand AbortDl => _abortDl;
 
+        /// <summary>
+        /// Apply new settings published by SettingsViewModel.
+        /// </summary>
+        private void ApplySettings()
+        {
+            SetProperty(ref _overrideFormats, _settings.OverrideFormats);
+            SetProperty(ref _videoFormat, _settings.VideoFormat);
+            SetProperty(ref _audioFormat, _settings.AudioFormat);
+            SetProperty(ref _addMetadata, _settings.AddMetadata);
+            SetProperty(ref _downloadThumbnail, _settings.DownloadThumbnail);
+            SetProperty(ref _downloadSubtitles, _settings.DownloadSubtitles);
+            SetProperty(ref _downloadPlaylist, _settings.DownloadPlaylist);
+            SetProperty(ref _useCustomPath, _settings.UseCustomPath);
+            SetProperty(ref _downloadPath, _settings.DownloadPath);
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _openFolder.InvokeCanExecuteChanged();
+                _startDownload.InvokeCanExecuteChanged();
+                _listFormats.InvokeCanExecuteChanged();
+                if (!_updated && !String.IsNullOrEmpty(_settings.DlPath) && _settings.AutoUpdateDl)
+                {
+                    UpdateDl();
+                }
+                _updated = true;
+            });
+        }
+
+        /// <summary>
+        /// Publish settings to SettingsViewModel.
+        /// </summary>
+        private void PublishSettings() => Task.Run(() => settingsFromHomeEvent.PublishAsync(_settings));
+
+        /// <summary>
+        /// Initialize dlProcess with common properties.
+        /// </summary>
         private void PrepareDlProcess()
         {
             dlProcess = new Process();
-            dlProcess.StartInfo.FileName = AppSettings.settings.DlPath;
+            dlProcess.StartInfo.FileName = _settings.DlPath;
             dlProcess.StartInfo.CreateNoWindow = true;
             dlProcess.StartInfo.UseShellExecute = false;
             dlProcess.StartInfo.RedirectStandardError = true;
@@ -139,31 +186,31 @@ namespace youtube_dl_wpf
             try
             {
                 // make parameter list
-                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
+                if (!String.IsNullOrEmpty(_settings.Proxy))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
-                    dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
+                    dlProcess.StartInfo.ArgumentList.Add($"{_settings.Proxy}");
                 }
-                if (!String.IsNullOrEmpty(AppSettings.settings.FfmpegPath))
+                if (!String.IsNullOrEmpty(_settings.FfmpegPath))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--ffmpeg-location");
-                    dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.FfmpegPath}");
+                    dlProcess.StartInfo.ArgumentList.Add($"{_settings.FfmpegPath}");
                 }
                 if (_overrideFormats && !String.IsNullOrEmpty(_videoFormat) && !String.IsNullOrEmpty(_audioFormat))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-f");
                     dlProcess.StartInfo.ArgumentList.Add($"{_videoFormat}+{_audioFormat}");
                 }
-                if (_metadata)
+                if (_addMetadata)
                     dlProcess.StartInfo.ArgumentList.Add("--add-metadata");
-                if (_thumbnail)
+                if (_downloadThumbnail)
                     dlProcess.StartInfo.ArgumentList.Add("--embed-thumbnail");
-                if (_subtitles)
+                if (_downloadSubtitles)
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--write-sub");
                     dlProcess.StartInfo.ArgumentList.Add("--embed-subs");
                 }
-                if (_playlist)
+                if (_downloadPlaylist)
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--yes-playlist");
                 }
@@ -171,7 +218,7 @@ namespace youtube_dl_wpf
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--no-playlist");
                 }
-                if (_customPath)
+                if (_useCustomPath)
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-o");
                     dlProcess.StartInfo.ArgumentList.Add($@"{_downloadPath}\%(title)s-%(id)s.%(ext)s");
@@ -204,10 +251,10 @@ namespace youtube_dl_wpf
             try
             {
                 // make parameter list
-                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
+                if (!String.IsNullOrEmpty(_settings.Proxy))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
-                    dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
+                    dlProcess.StartInfo.ArgumentList.Add($"{_settings.Proxy}");
                 }
                 dlProcess.StartInfo.ArgumentList.Add($"-F");
                 dlProcess.StartInfo.ArgumentList.Add($"{_link}");
@@ -256,7 +303,7 @@ namespace youtube_dl_wpf
 
         private bool CanStartDownload(object commandParameter)
         {
-            return !String.IsNullOrEmpty(Link) && !String.IsNullOrEmpty(AppSettings.settings.DlPath) && !_freezeButton;
+            return !String.IsNullOrEmpty(Link) && !String.IsNullOrEmpty(_settings.DlPath) && !_freezeButton;
         }
 
         private void UpdateDl()
@@ -270,10 +317,10 @@ namespace youtube_dl_wpf
             try
             {
                 // make parameter list
-                if (!String.IsNullOrEmpty(AppSettings.settings.Proxy))
+                if (!String.IsNullOrEmpty(_settings.Proxy))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
-                    dlProcess.StartInfo.ArgumentList.Add($"{AppSettings.settings.Proxy}");
+                    dlProcess.StartInfo.ArgumentList.Add($"{_settings.Proxy}");
                 }
                 dlProcess.StartInfo.ArgumentList.Add($"-U");
                 // start update
@@ -310,7 +357,7 @@ namespace youtube_dl_wpf
                 SetProperty(ref _link, value);
                 _startDownload.InvokeCanExecuteChanged();
                 _listFormats.InvokeCanExecuteChanged();
-                if (String.IsNullOrEmpty(AppSettings.settings.DlPath))
+                if (String.IsNullOrEmpty(_settings.DlPath))
                     _snackbarMessageQueue.Enqueue("youtube-dl path is not set. Go to settings and set the path.");
             }
         }
@@ -321,8 +368,8 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _overrideFormats, value);
-                AppSettings.settings.OverrideFormats = _overrideFormats;
-                AppSettings.SaveSettings();
+                _settings.OverrideFormats = _overrideFormats;
+                PublishSettings();
             }
         }
 
@@ -332,8 +379,8 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _videoFormat, value);
-                AppSettings.settings.VideoFormat = _videoFormat;
-                AppSettings.SaveSettings();
+                _settings.VideoFormat = _videoFormat;
+                PublishSettings();
             }
         }
 
@@ -343,43 +390,63 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _audioFormat, value);
-                AppSettings.settings.AudioFormat = _audioFormat;
-                AppSettings.SaveSettings();
+                _settings.AudioFormat = _audioFormat;
+                PublishSettings();
             }
         }
 
-        public bool Metadata
+        public bool AddMetadata
         {
-            get => _metadata;
-            set => SetProperty(ref _metadata, value);
-        }
-
-        public bool Thumbnail
-        {
-            get => _thumbnail;
-            set => SetProperty(ref _thumbnail, value);
-        }
-
-        public bool Subtitles
-        {
-            get => _subtitles;
-            set => SetProperty(ref _subtitles, value);
-        }
-
-        public bool Playlist
-        {
-            get => _playlist;
-            set => SetProperty(ref _playlist, value);
-        }
-
-        public bool CustomPath
-        {
-            get => _customPath;
+            get => _addMetadata;
             set
             {
-                SetProperty(ref _customPath, value);
-                AppSettings.settings.CustomPath = _customPath;
-                AppSettings.SaveSettings();
+                SetProperty(ref _addMetadata, value);
+                _settings.AddMetadata = _addMetadata;
+                PublishSettings();
+            }
+        }
+
+        public bool DownloadThumbnail
+        {
+            get => _downloadThumbnail;
+            set
+            {
+                SetProperty(ref _downloadThumbnail, value);
+                _settings.DownloadThumbnail = _downloadThumbnail;
+                PublishSettings();
+            }
+        }
+
+        public bool DownloadSubtitles
+        {
+            get => _downloadSubtitles;
+            set
+            {
+                SetProperty(ref _downloadSubtitles, value);
+                _settings.DownloadSubtitles = _downloadSubtitles;
+                PublishSettings();
+            }
+        }
+
+        public bool DownloadPlaylist
+        {
+            get => _downloadPlaylist;
+            set
+            {
+                SetProperty(ref _downloadPlaylist, value);
+                _settings.DownloadPlaylist = _downloadPlaylist;
+                PublishSettings();
+            }
+        }
+
+        public bool UseCustomPath
+        {
+            get => _useCustomPath;
+            set
+            {
+                SetProperty(ref _useCustomPath, value);
+                _settings.UseCustomPath = _useCustomPath;
+                PublishSettings();
             }
         }
 
@@ -390,8 +457,8 @@ namespace youtube_dl_wpf
             {
                 SetProperty(ref _downloadPath, value);
                 _openFolder.InvokeCanExecuteChanged();
-                AppSettings.settings.DownloadPath = _downloadPath;
-                AppSettings.SaveSettings();
+                _settings.DownloadPath = _downloadPath;
+                PublishSettings();
             }
         }
 
@@ -406,5 +473,12 @@ namespace youtube_dl_wpf
             get => _freezeButton;
             set => SetProperty(ref _freezeButton, value);
         }
+    }
+
+    /// <summary>
+    /// Raised by HomeViewModel when settings are changed.
+    /// </summary>
+    public class SettingsFromHomeEvent : EventBase<SettingsJson>
+    {
     }
 }
