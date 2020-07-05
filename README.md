@@ -44,23 +44,23 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 - 🎉 No known issues!
 
+## To-Do
+
+- ☕ All done!
+
 ## Build
 
 - IDE: Visual Studio 2019
 - Language: C# 8.0
-- Framework: .NET Core 3.1
+- SDK: .NET Core 3.1
 
-### Steps
+### Build Steps
 
 1. Clone the repository recursively.
 ```bash
 $ git clone --recursive https://github.com/database64128/youtube-dl-wpf.git
 ```
 2. Open the repository in VS2019, switch to the _Release_ configuration, and build the solution.
-
-## To-Do
-
-- Re-implement `AppSettings`.
 
 ## License
 
