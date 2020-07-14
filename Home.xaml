@@ -42,11 +42,15 @@
                         materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
                         materialDesign:ButtonProgressAssist.IsIndeterminate="True"
                         Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                        Foreground="White"
                         Command="{Binding ListFormats}">_List Formats</Button>
                     <Button
                         x:Name="abortButton"
                         Margin="8 0 8 0"
                         Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                        Background="Red"
+                        BorderBrush="Red"
+                        Foreground="White"
                         Command="{Binding AbortDl}">_Abort</Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
