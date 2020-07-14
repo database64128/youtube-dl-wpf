@@ -31,13 +31,30 @@
             <TextBlock Grid.Row="1" Grid.Column="0" Margin="8" Style="{StaticResource MaterialDesignHeadline6TextBlock}">UI</TextBlock>
             <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8">Color Mode</TextBlock>
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-                <ToggleButton
-                    x:Name="darkModeToggle"
-                    Margin="8"
+                <RadioButton
+                    Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                    IsChecked="{Binding FollowOSColorMode}"
+                    Command="{Binding ChangeColorMode}"
+                    CommandParameter="{x:Static local:ColorMode.System}"
+                    GroupName="ColorMode">
+                    System
+                </RadioButton>
+                <RadioButton
+                    Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                    IsChecked="{Binding LightMode}"
+                    Command="{Binding ChangeColorMode}"
+                    CommandParameter="{x:Static local:ColorMode.Light}"
+                    GroupName="ColorMode">
+                    Light
+                </RadioButton>
+                <RadioButton
+                    Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
                     IsChecked="{Binding DarkMode}"
                     Command="{Binding ChangeColorMode}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}"/>
-                <TextBlock VerticalAlignment="Center" Margin="0,8,8,8" Text="{Binding ColorMode}" />
+                    CommandParameter="{x:Static local:ColorMode.Dark}"
+                    GroupName="ColorMode">
+                    Dark
+                </RadioButton>
             </StackPanel>
             <TextBlock Grid.Row="3" Grid.Column="0" Margin="8" Style="{StaticResource MaterialDesignHeadline6TextBlock}">Backend</TextBlock>
             <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource MaterialDesignBody2TextBlock}" VerticalAlignment="Center" Margin="8,8,8,8">Update <Span FontWeight="Medium">youtube-dl</Span> on Startup</TextBlock>

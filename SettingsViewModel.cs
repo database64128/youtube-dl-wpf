@@ -14,9 +14,10 @@ namespace youtube_dl_wpf
         {
             _snackbarMessageQueue = snackbarMessageQueue ?? throw new ArgumentNullException(nameof(snackbarMessageQueue));
 
+            _followOSColorMode = true;
+            _lightMode = false;
             _darkMode = false;
             _autoUpdateDl = true;
-            _colorMode = "Light Mode";
             _dlPath = "";
             _ffmpegPath = "";
             _proxy = "";
@@ -39,9 +40,10 @@ namespace youtube_dl_wpf
         private SettingsJson _settings = null!;
         private readonly SettingsChangedEvent settingsChangedEvent;
 
-        private bool _darkMode; // default to light mode
+        private bool _followOSColorMode; // default to true
+        private bool _lightMode;
+        private bool _darkMode;
         private bool _autoUpdateDl; // auto update youtube-dl by default
-        private string _colorMode; // color mode text for TextBlock
         private string _dlPath; // youtube-dl path
         private string _ffmpegPath;
         private string _proxy;
@@ -57,10 +59,36 @@ namespace youtube_dl_wpf
         private void OnChangeColorMode(object commandParameter)
         {
             ITheme theme = _paletteHelper.GetTheme();
-            IBaseTheme baseTheme = (bool)commandParameter ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
-            theme.SetBaseTheme(baseTheme);
+            switch (commandParameter)
+            {
+                case ColorMode.System:
+                    var systemTheme = Theme.GetSystemTheme();
+                    switch (systemTheme)
+                    {
+                        case BaseTheme.Dark:
+                            theme.SetBaseTheme(Theme.Dark);
+                            break;
+                        case BaseTheme.Light:
+                        default:
+                            theme.SetBaseTheme(Theme.Light);
+                            break;
+                    }
+                    break;
+                case ColorMode.Light:
+                    theme.SetBaseTheme(Theme.Light);
+                    break;
+                case ColorMode.Dark:
+                    theme.SetBaseTheme(Theme.Dark);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid AppColorMode");
+            }
             _paletteHelper.SetTheme(theme);
-            ColorMode = (bool)commandParameter ? "Dark Mode" : "Light Mode";
+            if (_settings.AppColorMode != (ColorMode)commandParameter)
+            {
+                _settings.AppColorMode = (ColorMode)commandParameter;
+                SaveSettings();
+            }
         }
 
         private void OnBrowseExe(object commandParameter)
@@ -125,14 +153,31 @@ namespace youtube_dl_wpf
         /// <returns></returns>
         private async Task ApplySettings()
         {
-            SetProperty(ref _darkMode, _settings.DarkMode);
+            switch (_settings.AppColorMode)
+            {
+                case ColorMode.System:
+                    SetProperty(ref _followOSColorMode, true);
+                    SetProperty(ref _lightMode, false);
+                    SetProperty(ref _darkMode, false);
+                    break;
+                case ColorMode.Light:
+                    SetProperty(ref _followOSColorMode, false);
+                    SetProperty(ref _lightMode, true);
+                    SetProperty(ref _darkMode, false);
+                    break;
+                case ColorMode.Dark:
+                    SetProperty(ref _followOSColorMode, false);
+                    SetProperty(ref _lightMode, false);
+                    SetProperty(ref _darkMode, true);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid AppColorMode");
+            }
+            OnChangeColorMode(_settings.AppColorMode);
             SetProperty(ref _autoUpdateDl, _settings.AutoUpdateDl);
             SetProperty(ref _dlPath, _settings.DlPath);
             SetProperty(ref _ffmpegPath, _settings.FfmpegPath);
             SetProperty(ref _proxy, _settings.Proxy);
-
-            if (_darkMode == true)
-                OnChangeColorMode(true);
 
             await settingsChangedEvent.PublishAsync(_settings);
         }
@@ -171,16 +216,22 @@ namespace youtube_dl_wpf
             }
         }
 
+        public bool FollowOSColorMode
+        {
+            get => _followOSColorMode;
+            set => SetProperty(ref _followOSColorMode, value);
+        }
+
+        public bool LightMode
+        {
+            get => _lightMode;
+            set => SetProperty(ref _lightMode, value);
+        }
+
         public bool DarkMode
         {
             get => _darkMode;
-            set
-            {
-                SetProperty(ref _darkMode, value);
-                _settings.DarkMode = _darkMode;
-                SaveSettings();
-                PublishSettings();
-            }
+            set => SetProperty(ref _darkMode, value);
         }
 
         public bool AutoUpdateDl
@@ -192,12 +243,6 @@ namespace youtube_dl_wpf
                 _settings.AutoUpdateDl = _autoUpdateDl;
                 SaveSettings();
             }
-        }
-
-        public string ColorMode
-        {
-            get => _colorMode;
-            set => SetProperty(ref _colorMode, value);
         }
 
         public string DlPath

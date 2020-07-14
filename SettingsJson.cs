@@ -4,8 +4,7 @@
     {
         public SettingsJson()
         {
-            // define default settings
-            DarkMode = false;
+            AppColorMode = ColorMode.System;
             AutoUpdateDl = true;
             DlPath = "";
             FfmpegPath = "";
@@ -22,7 +21,7 @@
             DownloadPath = "";
         }
         
-        public bool DarkMode { get; set; }
+        public ColorMode AppColorMode { get; set; }
         public bool AutoUpdateDl { get; set; }
         public string DlPath { get; set; }
         public string FfmpegPath { get; set; }
@@ -37,5 +36,12 @@
         public bool DownloadPlaylist { get; set; }
         public bool UseCustomPath { get; set; }
         public string DownloadPath { get; set; }
+    }
+
+    public enum ColorMode
+    {
+        System,
+        Light,
+        Dark
     }
 }

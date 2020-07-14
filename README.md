@@ -7,7 +7,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 ## Features
 
-- Toggle 🌃 Dark Mode and 🔆 Light Mode.
+- Toggle between 🎨 system color mode, 🌃 dark mode, and 🔆 light mode.
 - Update `youtube-dl` on startup.
 - List available formats.
 - Override video and audio formats.
