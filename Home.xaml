@@ -69,9 +69,11 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
                     <TextBlock VerticalAlignment="Center" Margin="8">Container</TextBlock>
                     <ComboBox ItemsSource="{Binding ContainerList}"
-                              SelectedValue="{Binding Container}"
+                              Text="{Binding Container}"
                               IsEditable="True"
                               IsReadOnly="False"
+                              IsTextSearchCaseSensitive="True"
+                              StaysOpenOnEdit="True"
                               Margin="0 8 8 8">
                         <ComboBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -81,10 +83,11 @@
                     </ComboBox>
                     <TextBlock VerticalAlignment="Center" Margin="8">Format</TextBlock>
                     <ComboBox ItemsSource="{Binding FormatList}"
-                              SelectedValue="{Binding Format}"
+                              Text="{Binding Format}"
                               IsEnabled="{Binding EnableFormatSelection}"
                               IsEditable="True"
                               IsReadOnly="False"
+                              StaysOpenOnEdit="True"
                               Margin="0 8 8 8">
                         <ComboBox.ItemsPanel>
                             <ItemsPanelTemplate>

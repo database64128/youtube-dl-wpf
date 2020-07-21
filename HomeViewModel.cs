@@ -2,7 +2,6 @@
 using PeanutButter.TinyEventAggregator;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -247,7 +246,30 @@ namespace youtube_dl_wpf
                 else if (_format != "Auto")
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-f");
-                    dlProcess.StartInfo.ArgumentList.Add($"{_format}");
+                    switch (_format)
+                    {
+                        case "YouTube 4K 60fps HDR webm (337+251)":
+                            dlProcess.StartInfo.ArgumentList.Add($"337+251");
+                            break;
+                        case "YouTube 4K 60fps webm (315+251)":
+                            dlProcess.StartInfo.ArgumentList.Add($"315+251");
+                            break;
+                        case "YouTube 4K 60fps AV1 (401+140)":
+                            dlProcess.StartInfo.ArgumentList.Add($"401+140");
+                            break;
+                        case "YouTube 4K webm (313+251)":
+                            dlProcess.StartInfo.ArgumentList.Add($"313+251");
+                            break;
+                        case "YouTube 1080p60 webm (303+251)":
+                            dlProcess.StartInfo.ArgumentList.Add($"303+251");
+                            break;
+                        case "YouTube 1080p webm (248+251)":
+                            dlProcess.StartInfo.ArgumentList.Add($"248+251");
+                            break;
+                        default:
+                            dlProcess.StartInfo.ArgumentList.Add($"{_format}");
+                            break;
+                    }
                 }
                 if (_addMetadata)
                     dlProcess.StartInfo.ArgumentList.Add("--add-metadata");
@@ -351,7 +373,7 @@ namespace youtube_dl_wpf
 
         private bool CanStartDownload(object commandParameter)
         {
-            return !String.IsNullOrEmpty(Link) && !String.IsNullOrEmpty(_settings.DlPath) && !_freezeButton;
+            return !String.IsNullOrEmpty(_link) && !String.IsNullOrEmpty(_container) && !String.IsNullOrEmpty(_format) && !String.IsNullOrEmpty(_settings.DlPath) && !_freezeButton;
         }
 
         private void UpdateDl()
@@ -422,9 +444,12 @@ namespace youtube_dl_wpf
                     EnableFormatSelection = true;
                 else
                 {
+                    SetProperty(ref _format, "Auto", "Format");
+                    _settings.Format = _format;
                     EnableFormatSelection = false;
-                    Format = "Auto";
                 }
+                _startDownload.InvokeCanExecuteChanged();
+                _listFormats.InvokeCanExecuteChanged();
                 _settings.Container = _container;
                 PublishSettings();
             }
@@ -438,6 +463,8 @@ namespace youtube_dl_wpf
             set
             {
                 SetProperty(ref _format, value);
+                _startDownload.InvokeCanExecuteChanged();
+                _listFormats.InvokeCanExecuteChanged();
                 _settings.Format = _format;
                 PublishSettings();
             }
