@@ -22,14 +22,19 @@
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <StackPanel Orientation="Horizontal" >
+                <StackPanel Orientation="Horizontal">
                     <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center" Margin="8">Video Link</TextBlock>
                     <TextBox
                         x:Name="linkTextBox"
                         materialDesign:HintAssist.Hint="e.g. https://www.youtube.com/watch?v=b2390GAm4d0"
                         Margin="8"
                         Width="384"
-                        Text="{Binding Link, UpdateSourceTrigger=PropertyChanged}"/>
+                        Text="{Binding Link, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Gesture="Enter"
+                                        Command="{Binding StartDownload}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
                     <Button
                         x:Name="downloadButton"
                         Margin="8 0 8 0"
