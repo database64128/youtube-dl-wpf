@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using PeanutButter.TinyEventAggregator;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -18,9 +19,9 @@ namespace youtube_dl_wpf
             _snackbarMessageQueue = snackbarMessageQueue ?? throw new ArgumentNullException(nameof(snackbarMessageQueue));
 
             _link = "";
-            _overrideFormats = false;
-            _videoFormat = "248";
-            _audioFormat = "251";
+            _container = "Auto";
+            _format = "Auto";
+            _enableFormatSelection = true;
             _addMetadata = true;
             _downloadThumbnail = true;
             _downloadSubtitles = true;
@@ -34,6 +35,44 @@ namespace youtube_dl_wpf
             _startDownload = new DelegateCommand(OnStartDownload, CanStartDownload);
             _listFormats = new DelegateCommand(OnListFormats, CanStartDownload);
             _abortDl = new DelegateCommand(OnAbortDl, (object commandParameter) => _freezeButton);
+
+            ContainerList = new ObservableCollection<string>()
+            {
+                "Auto",
+                "webm",
+                "mp4",
+                "mkv",
+                "opus",
+                "flac",
+                "ogg",
+                "m4a",
+                "mp3"
+            };
+
+            FormatList = new ObservableCollection<string>()
+            {
+                "Auto",
+                "bestvideo+bestaudio/best",
+                "bestvideo+bestaudio",
+                "bestvideo+worstaudio",
+                "worstvideo+bestaudio",
+                "worstvideo+worstaudio",
+                "worstvideo+worstaudio/worst",
+                "best",
+                "worst",
+                "bestvideo",
+                "worstvideo",
+                "bestaudio",
+                "worstaudio",
+                "YouTube 4K 60fps HDR webm (337+251)",
+                "YouTube 4K 60fps webm (315+251)",
+                "YouTube 4K 60fps AV1 (401+140)",
+                "YouTube 4K webm (313+251)",
+                "YouTube 1080p60 webm (303+251)",
+                "YouTube 1080p webm (248+251)",
+                "1080p",
+                "720p"
+            };
 
             settingsFromHomeEvent = EventAggregator.Instance.GetEvent<SettingsFromHomeEvent>();
             // subscribe to settings changes from SettingsViewModel
@@ -49,9 +88,9 @@ namespace youtube_dl_wpf
         private readonly SettingsFromHomeEvent settingsFromHomeEvent;
 
         private string _link;
-        private bool _overrideFormats;
-        private string _videoFormat;
-        private string _audioFormat;
+        private string _container;
+        private string _format;
+        private bool _enableFormatSelection;
         private bool _addMetadata;
         private bool _downloadThumbnail;
         private bool _downloadSubtitles;
@@ -82,15 +121,19 @@ namespace youtube_dl_wpf
         /// </summary>
         private void ApplySettings()
         {
-            SetProperty(ref _overrideFormats, _settings.OverrideFormats);
-            SetProperty(ref _videoFormat, _settings.VideoFormat);
-            SetProperty(ref _audioFormat, _settings.AudioFormat);
+            SetProperty(ref _container, _settings.Container);
+            SetProperty(ref _format, _settings.Format);
             SetProperty(ref _addMetadata, _settings.AddMetadata);
             SetProperty(ref _downloadThumbnail, _settings.DownloadThumbnail);
             SetProperty(ref _downloadSubtitles, _settings.DownloadSubtitles);
             SetProperty(ref _downloadPlaylist, _settings.DownloadPlaylist);
             SetProperty(ref _useCustomPath, _settings.UseCustomPath);
             SetProperty(ref _downloadPath, _settings.DownloadPath);
+
+            if (_container == "Auto")
+                EnableFormatSelection = true;
+            else
+                EnableFormatSelection = false;
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -196,10 +239,15 @@ namespace youtube_dl_wpf
                     dlProcess.StartInfo.ArgumentList.Add("--ffmpeg-location");
                     dlProcess.StartInfo.ArgumentList.Add($"{_settings.FfmpegPath}");
                 }
-                if (_overrideFormats && !String.IsNullOrEmpty(_videoFormat) && !String.IsNullOrEmpty(_audioFormat))
+                if (_container != "Auto")
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-f");
-                    dlProcess.StartInfo.ArgumentList.Add($"{_videoFormat}+{_audioFormat}");
+                    dlProcess.StartInfo.ArgumentList.Add($"{_container}");
+                }
+                else if (_format != "Auto")
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("-f");
+                    dlProcess.StartInfo.ArgumentList.Add($"{_format}");
                 }
                 if (_addMetadata)
                     dlProcess.StartInfo.ArgumentList.Add("--add-metadata");
@@ -362,37 +410,43 @@ namespace youtube_dl_wpf
             }
         }
 
-        public bool OverrideFormats
+        public ObservableCollection<string> ContainerList { get; }
+
+        public string Container
         {
-            get => _overrideFormats;
+            get => _container;
             set
             {
-                SetProperty(ref _overrideFormats, value);
-                _settings.OverrideFormats = _overrideFormats;
+                SetProperty(ref _container, value);
+                if (_container == "Auto")
+                    EnableFormatSelection = true;
+                else
+                {
+                    EnableFormatSelection = false;
+                    Format = "Auto";
+                }
+                _settings.Container = _container;
                 PublishSettings();
             }
         }
 
-        public string VideoFormat
+        public ObservableCollection<string> FormatList { get; }
+
+        public string Format
         {
-            get => _videoFormat;
+            get => _format;
             set
             {
-                SetProperty(ref _videoFormat, value);
-                _settings.VideoFormat = _videoFormat;
+                SetProperty(ref _format, value);
+                _settings.Format = _format;
                 PublishSettings();
             }
         }
 
-        public string AudioFormat
+        public bool EnableFormatSelection
         {
-            get => _audioFormat;
-            set
-            {
-                SetProperty(ref _audioFormat, value);
-                _settings.AudioFormat = _audioFormat;
-                PublishSettings();
-            }
+            get => _enableFormatSelection;
+            set => SetProperty(ref _enableFormatSelection, value);
         }
 
         public bool AddMetadata
