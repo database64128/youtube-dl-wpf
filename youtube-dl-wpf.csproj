@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="3.2.0-ci1773" />
+    <PackageReference Include="MaterialDesignThemes" Version="3.2.0-ci1779" />
     <PackageReference Include="PeanutButter.TinyEventAggregator" Version="1.2.375" />
   </ItemGroup>
 

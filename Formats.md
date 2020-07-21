@@ -1,20 +1,20 @@
 # Format Selection Design Goals
 
-## Container Selections (editable):
+## Container Selection (editable):
 
 ```
 - Auto
-- .webm
-- .mp4
-- .mkv
-- .opus
-- .flac
-- .ogg
-- .m4a
-- .mp3
+- webm
+- mp4
+- mkv
+- opus
+- flac
+- ogg
+- m4a
+- mp3
 ```
 
-## Quality Selections (non-editable):
+## Format Selection (editable):
 
 ```
 - Auto
@@ -31,18 +31,25 @@
 - worstvideo
 - bestaudio
 - worstaudio
+- YouTube 4K 60fps HDR webm (337+251)
+- YouTube 4K 60fps webm (315+251)
+- YouTube 4K 60fps AV1 (401+140)
+- YouTube 4K webm (313+251)
+- YouTube 1080p60 webm (303+251)
+- YouTube 1080p webm (248+251)
+- 1080p
+- 720p
 ```
 
 ## Generated Format Selection Strings:
 
 - `Auto + bestvideo+bestaudio/best == bestvideo+bestaudio/best`
-- `Auto + Custom + 248 + 251 == 248 + 251`
-- `.webm + Auto == webm`
-- `.webm + bestvideo+bestaudio/best == (bestvideo+bestaudio/best)[ext=webm]`
-- `.webm + Custom + 248 + 251 == (248+251)[ext=webm]`
-- `.mp4 + Custom + 137 + 140 == 137[ext=mp4]+140[ext=m4a]`
+- `Auto + "248+251" == 248+251`
+- `webm + Auto == webm`
+- `webm + bestvideo+bestaudio/best == (bestvideo+bestaudio/best)[ext=webm]`
+- `webm + "248+251" == (248+251)[ext=webm]`
+- `mp4 + Custom + "137+140" == 137[ext=mp4]+140[ext=m4a]`
 
 ## Rules
 
-- Can select quality and custom formats ONLY WHEN container is `Auto`.
-- Can specify custom formats ONLY WHEN quality is `Custom`.
+- Can select format ONLY WHEN container is `Auto`.
