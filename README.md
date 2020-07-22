@@ -31,8 +31,8 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 - _Q:_ The __Download__ button is grayed out and I can't click it!
 - _A:_ `youtube-dl-wpf` is a simple GUI wrapper. It doesn't embed any downloader in it. You have to download `youtube-dl` from the upstream. The `ffmpeg` binary is required by `youtube-dl` when downloading and merging separate video and audio tracks, which is the case for any video resolution higher than 360p.
 
-- _Q:_ How can I specify video and audio tracks to download?
-- _A:_ First use the "List Formats" button to ask youtube-dl to list all available formats. To specify the video and audio format, toggle "Override Formats" and fill in the format numbers, as shown in the screenshots above.
+- _Q:_ Why can't I specify custom container and custom format at the same time?
+- _A:_ Currently `youtube-dl`'s format matching algorithm doesn't handle this very well. And I don't want to see workarounds for it in my code. So it is blocked intentionally to prevent issues.
 
 - _Q:_ How can I use a proxy to download?
 - _A:_ Leave the proxy field empty to use system proxy settings. Otherwise the format is similar to how `curl` accepts proxy strings. Examples are, `socks5://localhost:1080/`, `http://localhost:8080/`. Currently the upstream doesn't accept `socks5h` protocol and treat `socks5` as `socks5h` by always resolving the hostname using the proxy. This is tracked in [this issue](https://github.com/ytdl-org/youtube-dl/issues/22618).
@@ -70,4 +70,4 @@ $ git clone --recursive https://github.com/database64128/youtube-dl-wpf.git
 
 [Material Design Themes](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit) is licensed under [MIT](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/blob/master/LICENSE).
 
-[PeanutButter.TinyEventAggregator](https://github.com/fluffynuts/PeanutButter) is licensed under [BSD-3-Clause License](https://github.com/fluffynuts/PeanutButter/blob/master/LICENSE).
+[`PeanutButter.TinyEventAggregator`](https://github.com/fluffynuts/PeanutButter) is licensed under [BSD-3-Clause License](https://github.com/fluffynuts/PeanutButter/blob/master/LICENSE).

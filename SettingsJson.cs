@@ -10,9 +10,8 @@
             FfmpegPath = "";
             Proxy = "";
 
-            OverrideFormats = false;
-            VideoFormat = "248";
-            AudioFormat = "251";
+            Container = "Auto";
+            Format = "Auto";
             AddMetadata = true;
             DownloadThumbnail = true;
             DownloadSubtitles = true;
@@ -27,9 +26,8 @@
         public string FfmpegPath { get; set; }
         public string Proxy { get; set; }
 
-        public bool OverrideFormats { get; set; }
-        public string VideoFormat { get; set; }
-        public string AudioFormat { get; set; }
+        public string Container { get; set; }
+        public string Format { get; set; }
         public bool AddMetadata { get; set; }
         public bool DownloadThumbnail { get; set; }
         public bool DownloadSubtitles { get; set; }
