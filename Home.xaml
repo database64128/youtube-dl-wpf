@@ -156,7 +156,7 @@
             x:Name="resultTextBox"
             Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
             Margin="8"
-            TextWrapping="Wrap"
+            TextWrapping="NoWrap"
             IsReadOnly="True"
             VerticalAlignment="Stretch"
             VerticalScrollBarVisibility="Auto"
