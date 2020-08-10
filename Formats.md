@@ -33,10 +33,26 @@
 - worstaudio
 - YouTube 4K 60fps HDR webm (337+251)
 - YouTube 4K 60fps webm (315+251)
-- YouTube 4K 60fps AV1 (401+140)
+- YouTube 4K 60fps AV1 + AAC (401+140)
 - YouTube 4K webm (313+251)
+- YouTube 4K AV1 + AAC (401+140)
+- YouTube 1440p60 HDR webm (336+251)
+- YouTube 1440p60 webm (308+251)
+- YouTube 1440p60 AV1 + AAC (400+140)
+- YouTube 1440p webm (271+251)
+- YouTube 1440p AV1 + AAC (400+140)
 - YouTube 1080p60 webm (303+251)
+- YouTube 1080p60 AV1 + AAC (399+140)
+- YouTube 1080p60 AVC + AAC (299+140)
 - YouTube 1080p webm (248+251)
+- YouTube 1080p AV1 + AAC (399+140)
+- YouTube 1080p AVC + AAC (137+140)
+- YouTube 720p60 webm (302+251)
+- YouTube 720p60 AV1 + AAC (398+140)
+- YouTube 720p60 AVC + AAC (298+140)
+- YouTube 720p webm (247+251)
+- YouTube 720p AV1 + AAC (398+140)
+- YouTube 720p AVC + AAC (136+140)
 - 1080p
 - 720p
 ```

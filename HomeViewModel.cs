@@ -65,10 +65,26 @@ namespace youtube_dl_wpf
                 "worstaudio",
                 "YouTube 4K 60fps HDR webm (337+251)",
                 "YouTube 4K 60fps webm (315+251)",
-                "YouTube 4K 60fps AV1 (401+140)",
+                "YouTube 4K 60fps AV1 + AAC (401+140)",
                 "YouTube 4K webm (313+251)",
+                "YouTube 4K AV1 + AAC (401+140)",
+                "YouTube 1440p60 HDR webm (336+251)",
+                "YouTube 1440p60 webm (308+251)",
+                "YouTube 1440p60 AV1 + AAC (400+140)",
+                "YouTube 1440p webm (271+251)",
+                "YouTube 1440p AV1 + AAC (400+140)",
                 "YouTube 1080p60 webm (303+251)",
+                "YouTube 1080p60 AV1 + AAC (399+140)",
+                "YouTube 1080p60 AVC + AAC (299+140)",
                 "YouTube 1080p webm (248+251)",
+                "YouTube 1080p AV1 + AAC (399+140)",
+                "YouTube 1080p AVC + AAC (137+140)",
+                "YouTube 720p60 webm (302+251)",
+                "YouTube 720p60 AV1 + AAC (398+140)",
+                "YouTube 720p60 AVC + AAC (298+140)",
+                "YouTube 720p webm (247+251)",
+                "YouTube 720p AV1 + AAC (398+140)",
+                "YouTube 720p AVC + AAC (136+140)",
                 "1080p",
                 "720p"
             };
@@ -246,29 +262,13 @@ namespace youtube_dl_wpf
                 else if (_format != "Auto")
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-f");
-                    switch (_format)
+                    if (_format.Contains("YouTube "))
                     {
-                        case "YouTube 4K 60fps HDR webm (337+251)":
-                            dlProcess.StartInfo.ArgumentList.Add($"337+251");
-                            break;
-                        case "YouTube 4K 60fps webm (315+251)":
-                            dlProcess.StartInfo.ArgumentList.Add($"315+251");
-                            break;
-                        case "YouTube 4K 60fps AV1 (401+140)":
-                            dlProcess.StartInfo.ArgumentList.Add($"401+140");
-                            break;
-                        case "YouTube 4K webm (313+251)":
-                            dlProcess.StartInfo.ArgumentList.Add($"313+251");
-                            break;
-                        case "YouTube 1080p60 webm (303+251)":
-                            dlProcess.StartInfo.ArgumentList.Add($"303+251");
-                            break;
-                        case "YouTube 1080p webm (248+251)":
-                            dlProcess.StartInfo.ArgumentList.Add($"248+251");
-                            break;
-                        default:
-                            dlProcess.StartInfo.ArgumentList.Add($"{_format}");
-                            break;
+                        dlProcess.StartInfo.ArgumentList.Add($"{_format.Split(new char[] { '(', ')' })[1]}");
+                    }
+                    else
+                    {
+                        dlProcess.StartInfo.ArgumentList.Add($"{_format}");
                     }
                 }
                 if (_addMetadata)

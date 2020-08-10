@@ -26,7 +26,7 @@
                    Style="{StaticResource MaterialDesignHeadline6TextBlock}"
                    TextWrapping="Wrap"
                    VerticalAlignment="Center">
-            About - v1.2 Build 20200722
+            About - v1.3 Build 20200811
         </TextBlock>
         <TextBlock Grid.Row="1"
                    Grid.Column="1"
