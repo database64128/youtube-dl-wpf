@@ -46,7 +46,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 ## To-Do
 
-- ☕ All done!
+- [ ] v2.0 - The Parallel Update: download management and download queue for parallel downloads.
 
 ## Build
 
