@@ -19,6 +19,7 @@
     <RepositoryUrl>https://github.com/database64128/youtube-dl-wpf</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
     <Nullable>enable</Nullable>
+    <AssemblyName>youtube-dl-wpf</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

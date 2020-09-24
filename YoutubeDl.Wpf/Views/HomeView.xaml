@@ -50,13 +50,15 @@
                         x:Name="downloadButton"
                         Margin="8 0 8 0"
                         materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
-                        materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding FreezeButton}"
-                        Command="{Binding StartDownload}">_Download</Button>
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding DownloadButtonProgressIndeterminate}"
+                        materialDesign:ButtonProgressAssist.Value="{Binding DownloadButtonProgressPercentageValue}"
+                        Command="{Binding StartDownload}"
+                        Content="{Binding DownloadButtonProgressPercentageString}"/>
                     <Button
                         x:Name="listFormatsButton"
                         Margin="8 0 8 0"
                         materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
-                        materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding FreezeButton}"
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding FormatsButtonProgressIndeterminate}"
                         Style="{StaticResource MaterialDesignRaisedAccentButton}"
                         Foreground="White"
                         Command="{Binding ListFormats}">_List Formats</Button>

@@ -31,6 +31,24 @@ namespace YoutubeDl.Wpf.ViewModels
             _downloadPath = "";
             _output = "";
 
+            _freezeButton = false;
+            _downloadButtonProgressIndeterminate = false;
+            _formatsButtonProgressIndeterminate = false;
+            _downloadButtonProgressPercentageValue = 0.0; // 99 for 99%
+            _downloadButtonProgressPercentageString = "_Download";
+            _fileSizeString = "";
+            _downloadSpeedString = "";
+            _downloadETAString = "";
+
+            outputSeparators = new string[]
+            {
+                "[download]",
+                "of",
+                "at",
+                "ETA",
+                " "
+            };
+
             _browseFolder = new DelegateCommand(OnBrowseFolder);
             _openFolder = new DelegateCommand(OnOpenFolder, CanOpenFolder);
             _startDownload = new DelegateCommand(OnStartDownload, CanStartDownload);
@@ -116,7 +134,16 @@ namespace YoutubeDl.Wpf.ViewModels
         private string _downloadPath;
         private string _output;
 
-        private bool _freezeButton; // true when youtube-dl is started
+        private bool _freezeButton;
+        private bool _downloadButtonProgressIndeterminate;
+        private bool _formatsButtonProgressIndeterminate;
+        private double _downloadButtonProgressPercentageValue;
+        private string _downloadButtonProgressPercentageString;
+        private string _fileSizeString;
+        private string _downloadSpeedString;
+        private string _downloadETAString;
+
+        private readonly string[] outputSeparators;
         private StringBuilder outputString = null!;
         private Process dlProcess = null!;
 
@@ -198,6 +225,9 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             dlProcess.Dispose();
             FreezeButton = false;
+            DownloadButtonProgressIndeterminate = false;
+            FormatsButtonProgressIndeterminate = false;
+            DownloadButtonProgressPercentageString = "_Download";
             Application.Current.Dispatcher.Invoke(UpdateButtons);
         }
 
@@ -238,6 +268,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private void OnStartDownload(object commandParameter)
         {
             FreezeButton = true;
+            DownloadButtonProgressIndeterminate = true;
             UpdateButtons();
 
             outputString = new StringBuilder();
@@ -315,6 +346,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private void OnListFormats(object commandParameter)
         {
             FreezeButton = true;
+            FormatsButtonProgressIndeterminate = true;
             UpdateButtons();
 
             outputString = new StringBuilder();
@@ -381,6 +413,8 @@ namespace YoutubeDl.Wpf.ViewModels
         private void UpdateDl()
         {
             FreezeButton = true;
+            DownloadButtonProgressIndeterminate = true;
+            FormatsButtonProgressIndeterminate = true;
             UpdateButtons();
 
             outputString = new StringBuilder();
@@ -413,11 +447,41 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private void DlOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!String.IsNullOrEmpty(outLine.Data))
+            if (!string.IsNullOrEmpty(outLine.Data))
             {
+                ParseDlOutput(outLine.Data);
                 outputString.Append(outLine.Data);
                 outputString.Append(Environment.NewLine);
                 Output = outputString.ToString();
+            }
+        }
+
+        private void ParseDlOutput(string output)
+        {
+            var parsedStringArray = output.Split(outputSeparators, StringSplitOptions.RemoveEmptyEntries);
+            if (parsedStringArray.Length == 4) // valid [download] line
+            {
+                var parsedPercentageString = parsedStringArray[0];
+                if (parsedPercentageString.EndsWith('%')) // actual percentage
+                {
+                    // show percentage on button
+                    DownloadButtonProgressPercentageString = parsedPercentageString;
+                    // get percentage value for progress bar
+                    parsedPercentageString = parsedPercentageString.TrimEnd('%');
+                    try
+                    {
+                        DownloadButtonProgressPercentageValue = double.Parse(parsedPercentageString);
+                        DownloadButtonProgressIndeterminate = false;
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                // save other info
+                FileSizeString = parsedStringArray[1];
+                DownloadSpeedString = parsedStringArray[2];
+                DownloadETAString = parsedStringArray[3];
             }
         }
 
@@ -555,6 +619,48 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             get => _freezeButton;
             set => SetProperty(ref _freezeButton, value);
+        }
+
+        public bool DownloadButtonProgressIndeterminate
+        {
+            get => _downloadButtonProgressIndeterminate;
+            set => SetProperty(ref _downloadButtonProgressIndeterminate, value);
+        }
+
+        public bool FormatsButtonProgressIndeterminate
+        {
+            get => _formatsButtonProgressIndeterminate;
+            set => SetProperty(ref _formatsButtonProgressIndeterminate, value);
+        }
+
+        public double DownloadButtonProgressPercentageValue
+        {
+            get => _downloadButtonProgressPercentageValue;
+            set => SetProperty(ref _downloadButtonProgressPercentageValue, value);
+        }
+
+        public string DownloadButtonProgressPercentageString
+        {
+            get => _downloadButtonProgressPercentageString;
+            set => SetProperty(ref _downloadButtonProgressPercentageString, value);
+        }
+
+        public string FileSizeString
+        {
+            get => _fileSizeString;
+            set => SetProperty(ref _fileSizeString, value);
+        }
+
+        public string DownloadSpeedString
+        {
+            get => _downloadSpeedString;
+            set => SetProperty(ref _downloadSpeedString, value);
+        }
+
+        public string DownloadETAString
+        {
+            get => _downloadETAString;
+            set => SetProperty(ref _downloadETAString, value);
         }
     }
 
