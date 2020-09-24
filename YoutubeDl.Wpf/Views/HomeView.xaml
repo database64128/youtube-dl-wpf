@@ -163,6 +163,7 @@
             HorizontalScrollBarVisibility="Auto"
             materialDesign:HintAssist.Hint="Output from youtube-dl"
             Text="{Binding Output}"
-            TextChanged="resultTextBox_TextChanged"/>
+            TextChanged="resultTextBox_TextChanged"
+            FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"/>
     </Grid>
 </UserControl>

@@ -22,6 +22,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\RobotoMono\RobotoMono-Bold.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-BoldItalic.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-ExtraLight.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-ExtraLightItalic.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-Italic.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-Light.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-LightItalic.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-Medium.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-MediumItalic.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-Regular.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-SemiBold.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-SemiBoldItalic.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-Thin.ttf" />
+    <None Remove="Resources\RobotoMono\RobotoMono-ThinItalic.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
     <PackageReference Include="PeanutButter.TinyEventAggregator" Version="1.2.378" />
   </ItemGroup>
@@ -35,6 +52,23 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\RobotoMono\RobotoMono-Bold.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-BoldItalic.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-ExtraLight.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-ExtraLightItalic.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-Italic.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-Light.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-LightItalic.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-Medium.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-MediumItalic.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-Regular.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-SemiBold.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-SemiBoldItalic.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-Thin.ttf" />
+    <Resource Include="Resources\RobotoMono\RobotoMono-ThinItalic.ttf" />
   </ItemGroup>
 
 </Project>
