@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf.Behaviors
 {
     public static class Utilities
     {

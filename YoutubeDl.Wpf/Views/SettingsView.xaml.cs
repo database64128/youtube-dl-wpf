@@ -1,14 +1,15 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System.Windows.Controls;
+using YoutubeDl.Wpf.ViewModels;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf.Views
 {
     /// <summary>
     /// Interaction logic for Settings.xaml
     /// </summary>
-    public partial class Settings : UserControl
+    public partial class SettingsView : UserControl
     {
-        public Settings(ISnackbarMessageQueue snackbarMessageQueue)
+        public SettingsView(ISnackbarMessageQueue snackbarMessageQueue)
         {
             InitializeComponent();
             _snackbarMessageQueue = snackbarMessageQueue;

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf
 {
     /// <summary>
     /// Interaction logic for App.xaml

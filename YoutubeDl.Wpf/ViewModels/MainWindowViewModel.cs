@@ -3,8 +3,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using YoutubeDl.Wpf.Views;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
@@ -50,8 +51,8 @@ namespace youtube_dl_wpf
 
             return new ObservableCollection<DrawerItem>
             {
-                new DrawerItem("Home", new Home(snackbarMessageQueue)),
-                new DrawerItem("Settings", new Settings(snackbarMessageQueue))
+                new DrawerItem("Home", new HomeView(snackbarMessageQueue)),
+                new DrawerItem("Settings", new SettingsView(snackbarMessageQueue))
             };
         }
     }

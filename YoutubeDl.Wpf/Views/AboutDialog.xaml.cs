@@ -1,7 +1,8 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Navigation;
+using YoutubeDl.Wpf.Behaviors;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf.Views
 {
     /// <summary>
     /// Interaction logic for AboutDialog.xaml

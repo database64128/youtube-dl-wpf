@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf.ViewModels
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {

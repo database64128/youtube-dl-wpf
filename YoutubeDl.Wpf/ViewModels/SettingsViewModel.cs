@@ -5,8 +5,9 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using YoutubeDl.Wpf.Models;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {

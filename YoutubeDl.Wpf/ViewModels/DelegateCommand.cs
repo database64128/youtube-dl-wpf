@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf.ViewModels
 {
     public class DelegateCommand : ICommand
     {

@@ -5,8 +5,9 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using YoutubeDl.Wpf.ViewModels;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

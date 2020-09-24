@@ -1,14 +1,15 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System.Windows.Controls;
+using YoutubeDl.Wpf.ViewModels;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf.Views
 {
     /// <summary>
     /// Interaction logic for Home.xaml
     /// </summary>
-    public partial class Home : UserControl
+    public partial class HomeView : UserControl
     {
-        public Home(ISnackbarMessageQueue snackbarMessageQueue)
+        public HomeView(ISnackbarMessageQueue snackbarMessageQueue)
         {
             InitializeComponent();
             _snackbarMessageQueue = snackbarMessageQueue;

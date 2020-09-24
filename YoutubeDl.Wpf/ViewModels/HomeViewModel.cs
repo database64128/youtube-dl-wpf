@@ -8,8 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using YoutubeDl.Wpf.Behaviors;
+using YoutubeDl.Wpf.Models;
 
-namespace youtube_dl_wpf
+namespace YoutubeDl.Wpf.ViewModels
 {
     public class HomeViewModel : ViewModelBase
     {

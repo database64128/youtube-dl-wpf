@@ -1,4 +1,4 @@
-﻿namespace youtube_dl_wpf
+﻿namespace YoutubeDl.Wpf.ViewModels
 {
     public class DrawerItem : ViewModelBase
     {
