@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,7 +8,7 @@ using YoutubeDl.Wpf.Views;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ReactiveObject
     {
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
@@ -35,13 +36,13 @@ namespace YoutubeDl.Wpf.ViewModels
         public ObservableCollection<DrawerItem> DrawerItems
         {
             get => _drawerItems;
-            set => SetProperty(ref _drawerItems, value);
+            set => this.RaiseAndSetIfChanged(ref _drawerItems, value);
         }
 
         public DrawerItem SelectedItem
         {
             get => _selectedItem;
-            set => SetProperty(ref _selectedItem, value);
+            set => this.RaiseAndSetIfChanged(ref _selectedItem, value);
         }
 
         private ObservableCollection<DrawerItem> GenerateItems(ISnackbarMessageQueue snackbarMessageQueue)

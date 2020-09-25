@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using PeanutButter.TinyEventAggregator;
+using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -13,7 +14,7 @@ using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public class HomeViewModel : ViewModelBase
+    public class HomeViewModel : ReactiveObject
     {
         public HomeViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
@@ -165,14 +166,14 @@ namespace YoutubeDl.Wpf.ViewModels
         /// </summary>
         private void ApplySettings()
         {
-            SetProperty(ref _container, _settings.Container);
-            SetProperty(ref _format, _settings.Format);
-            SetProperty(ref _addMetadata, _settings.AddMetadata);
-            SetProperty(ref _downloadThumbnail, _settings.DownloadThumbnail);
-            SetProperty(ref _downloadSubtitles, _settings.DownloadSubtitles);
-            SetProperty(ref _downloadPlaylist, _settings.DownloadPlaylist);
-            SetProperty(ref _useCustomPath, _settings.UseCustomPath);
-            SetProperty(ref _downloadPath, _settings.DownloadPath);
+            this.RaiseAndSetIfChanged(ref _container, _settings.Container);
+            this.RaiseAndSetIfChanged(ref _format, _settings.Format);
+            this.RaiseAndSetIfChanged(ref _addMetadata, _settings.AddMetadata);
+            this.RaiseAndSetIfChanged(ref _downloadThumbnail, _settings.DownloadThumbnail);
+            this.RaiseAndSetIfChanged(ref _downloadSubtitles, _settings.DownloadSubtitles);
+            this.RaiseAndSetIfChanged(ref _downloadPlaylist, _settings.DownloadPlaylist);
+            this.RaiseAndSetIfChanged(ref _useCustomPath, _settings.UseCustomPath);
+            this.RaiseAndSetIfChanged(ref _downloadPath, _settings.DownloadPath);
 
             if (_container == "Auto")
                 EnableFormatSelection = true;
@@ -490,7 +491,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _link;
             set
             {
-                SetProperty(ref _link, value);
+                this.RaiseAndSetIfChanged(ref _link, value);
                 _startDownload.InvokeCanExecuteChanged();
                 _listFormats.InvokeCanExecuteChanged();
                 if (String.IsNullOrEmpty(_settings.DlPath))
@@ -505,12 +506,12 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _container;
             set
             {
-                SetProperty(ref _container, value);
+                this.RaiseAndSetIfChanged(ref _container, value);
                 if (_container == "Auto")
                     EnableFormatSelection = true;
                 else
                 {
-                    SetProperty(ref _format, "Auto", "Format");
+                    this.RaiseAndSetIfChanged(ref _format, "Auto", "Format");
                     _settings.Format = _format;
                     EnableFormatSelection = false;
                 }
@@ -528,7 +529,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _format;
             set
             {
-                SetProperty(ref _format, value);
+                this.RaiseAndSetIfChanged(ref _format, value);
                 _startDownload.InvokeCanExecuteChanged();
                 _listFormats.InvokeCanExecuteChanged();
                 _settings.Format = _format;
@@ -539,7 +540,7 @@ namespace YoutubeDl.Wpf.ViewModels
         public bool EnableFormatSelection
         {
             get => _enableFormatSelection;
-            set => SetProperty(ref _enableFormatSelection, value);
+            set => this.RaiseAndSetIfChanged(ref _enableFormatSelection, value);
         }
 
         public bool AddMetadata
@@ -547,7 +548,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _addMetadata;
             set
             {
-                SetProperty(ref _addMetadata, value);
+                this.RaiseAndSetIfChanged(ref _addMetadata, value);
                 _settings.AddMetadata = _addMetadata;
                 PublishSettings();
             }
@@ -558,7 +559,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _downloadThumbnail;
             set
             {
-                SetProperty(ref _downloadThumbnail, value);
+                this.RaiseAndSetIfChanged(ref _downloadThumbnail, value);
                 _settings.DownloadThumbnail = _downloadThumbnail;
                 PublishSettings();
             }
@@ -569,7 +570,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _downloadSubtitles;
             set
             {
-                SetProperty(ref _downloadSubtitles, value);
+                this.RaiseAndSetIfChanged(ref _downloadSubtitles, value);
                 _settings.DownloadSubtitles = _downloadSubtitles;
                 PublishSettings();
             }
@@ -580,7 +581,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _downloadPlaylist;
             set
             {
-                SetProperty(ref _downloadPlaylist, value);
+                this.RaiseAndSetIfChanged(ref _downloadPlaylist, value);
                 _settings.DownloadPlaylist = _downloadPlaylist;
                 PublishSettings();
             }
@@ -591,7 +592,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _useCustomPath;
             set
             {
-                SetProperty(ref _useCustomPath, value);
+                this.RaiseAndSetIfChanged(ref _useCustomPath, value);
                 _settings.UseCustomPath = _useCustomPath;
                 PublishSettings();
             }
@@ -602,7 +603,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _downloadPath;
             set
             {
-                SetProperty(ref _downloadPath, value);
+                this.RaiseAndSetIfChanged(ref _downloadPath, value);
                 _openFolder.InvokeCanExecuteChanged();
                 _settings.DownloadPath = _downloadPath;
                 PublishSettings();
@@ -612,55 +613,55 @@ namespace YoutubeDl.Wpf.ViewModels
         public string Output
         {
             get => _output;
-            set => SetProperty(ref _output, value);
+            set => this.RaiseAndSetIfChanged(ref _output, value);
         }
 
         public bool FreezeButton
         {
             get => _freezeButton;
-            set => SetProperty(ref _freezeButton, value);
+            set => this.RaiseAndSetIfChanged(ref _freezeButton, value);
         }
 
         public bool DownloadButtonProgressIndeterminate
         {
             get => _downloadButtonProgressIndeterminate;
-            set => SetProperty(ref _downloadButtonProgressIndeterminate, value);
+            set => this.RaiseAndSetIfChanged(ref _downloadButtonProgressIndeterminate, value);
         }
 
         public bool FormatsButtonProgressIndeterminate
         {
             get => _formatsButtonProgressIndeterminate;
-            set => SetProperty(ref _formatsButtonProgressIndeterminate, value);
+            set => this.RaiseAndSetIfChanged(ref _formatsButtonProgressIndeterminate, value);
         }
 
         public double DownloadButtonProgressPercentageValue
         {
             get => _downloadButtonProgressPercentageValue;
-            set => SetProperty(ref _downloadButtonProgressPercentageValue, value);
+            set => this.RaiseAndSetIfChanged(ref _downloadButtonProgressPercentageValue, value);
         }
 
         public string DownloadButtonProgressPercentageString
         {
             get => _downloadButtonProgressPercentageString;
-            set => SetProperty(ref _downloadButtonProgressPercentageString, value);
+            set => this.RaiseAndSetIfChanged(ref _downloadButtonProgressPercentageString, value);
         }
 
         public string FileSizeString
         {
             get => _fileSizeString;
-            set => SetProperty(ref _fileSizeString, value);
+            set => this.RaiseAndSetIfChanged(ref _fileSizeString, value);
         }
 
         public string DownloadSpeedString
         {
             get => _downloadSpeedString;
-            set => SetProperty(ref _downloadSpeedString, value);
+            set => this.RaiseAndSetIfChanged(ref _downloadSpeedString, value);
         }
 
         public string DownloadETAString
         {
             get => _downloadETAString;
-            set => SetProperty(ref _downloadETAString, value);
+            set => this.RaiseAndSetIfChanged(ref _downloadETAString, value);
         }
     }
 

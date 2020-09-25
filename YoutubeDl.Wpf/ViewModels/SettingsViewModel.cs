@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using PeanutButter.TinyEventAggregator;
+using ReactiveUI;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -9,7 +10,7 @@ using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public class SettingsViewModel : ViewModelBase
+    public class SettingsViewModel : ReactiveObject
     {
         public SettingsViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
@@ -157,28 +158,28 @@ namespace YoutubeDl.Wpf.ViewModels
             switch (_settings.AppColorMode)
             {
                 case ColorMode.System:
-                    SetProperty(ref _followOSColorMode, true);
-                    SetProperty(ref _lightMode, false);
-                    SetProperty(ref _darkMode, false);
+                    this.RaiseAndSetIfChanged(ref _followOSColorMode, true);
+                    this.RaiseAndSetIfChanged(ref _lightMode, false);
+                    this.RaiseAndSetIfChanged(ref _darkMode, false);
                     break;
                 case ColorMode.Light:
-                    SetProperty(ref _followOSColorMode, false);
-                    SetProperty(ref _lightMode, true);
-                    SetProperty(ref _darkMode, false);
+                    this.RaiseAndSetIfChanged(ref _followOSColorMode, false);
+                    this.RaiseAndSetIfChanged(ref _lightMode, true);
+                    this.RaiseAndSetIfChanged(ref _darkMode, false);
                     break;
                 case ColorMode.Dark:
-                    SetProperty(ref _followOSColorMode, false);
-                    SetProperty(ref _lightMode, false);
-                    SetProperty(ref _darkMode, true);
+                    this.RaiseAndSetIfChanged(ref _followOSColorMode, false);
+                    this.RaiseAndSetIfChanged(ref _lightMode, false);
+                    this.RaiseAndSetIfChanged(ref _darkMode, true);
                     break;
                 default:
                     throw new ArgumentException("Invalid AppColorMode");
             }
             OnChangeColorMode(_settings.AppColorMode);
-            SetProperty(ref _autoUpdateDl, _settings.AutoUpdateDl);
-            SetProperty(ref _dlPath, _settings.DlPath);
-            SetProperty(ref _ffmpegPath, _settings.FfmpegPath);
-            SetProperty(ref _proxy, _settings.Proxy);
+            this.RaiseAndSetIfChanged(ref _autoUpdateDl, _settings.AutoUpdateDl);
+            this.RaiseAndSetIfChanged(ref _dlPath, _settings.DlPath);
+            this.RaiseAndSetIfChanged(ref _ffmpegPath, _settings.FfmpegPath);
+            this.RaiseAndSetIfChanged(ref _proxy, _settings.Proxy);
 
             await settingsChangedEvent.PublishAsync(_settings);
         }
@@ -220,19 +221,19 @@ namespace YoutubeDl.Wpf.ViewModels
         public bool FollowOSColorMode
         {
             get => _followOSColorMode;
-            set => SetProperty(ref _followOSColorMode, value);
+            set => this.RaiseAndSetIfChanged(ref _followOSColorMode, value);
         }
 
         public bool LightMode
         {
             get => _lightMode;
-            set => SetProperty(ref _lightMode, value);
+            set => this.RaiseAndSetIfChanged(ref _lightMode, value);
         }
 
         public bool DarkMode
         {
             get => _darkMode;
-            set => SetProperty(ref _darkMode, value);
+            set => this.RaiseAndSetIfChanged(ref _darkMode, value);
         }
 
         public bool AutoUpdateDl
@@ -240,7 +241,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _autoUpdateDl;
             set
             {
-                SetProperty(ref _autoUpdateDl, value);
+                this.RaiseAndSetIfChanged(ref _autoUpdateDl, value);
                 _settings.AutoUpdateDl = _autoUpdateDl;
                 SaveSettings();
             }
@@ -251,7 +252,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _dlPath;
             set
             {
-                SetProperty(ref _dlPath, value);
+                this.RaiseAndSetIfChanged(ref _dlPath, value);
                 _settings.DlPath = _dlPath;
                 SaveSettings();
                 PublishSettings();
@@ -263,7 +264,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _ffmpegPath;
             set
             {
-                SetProperty(ref _ffmpegPath, value);
+                this.RaiseAndSetIfChanged(ref _ffmpegPath, value);
                 _settings.FfmpegPath = _ffmpegPath;
                 SaveSettings();
                 PublishSettings();
@@ -275,7 +276,7 @@ namespace YoutubeDl.Wpf.ViewModels
             get => _proxy;
             set
             {
-                SetProperty(ref _proxy, value);
+                this.RaiseAndSetIfChanged(ref _proxy, value);
                 _settings.Proxy = _proxy;
                 SaveSettings();
                 PublishSettings();

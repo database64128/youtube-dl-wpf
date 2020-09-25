@@ -1,6 +1,8 @@
-﻿namespace YoutubeDl.Wpf.ViewModels
+﻿using ReactiveUI;
+
+namespace YoutubeDl.Wpf.ViewModels
 {
-    public class DrawerItem : ViewModelBase
+    public class DrawerItem : ReactiveObject
     {
         private string _name;
         private object _content;
@@ -14,13 +16,13 @@
         public string Name
         {
             get => _name;
-            set => SetProperty(ref _name, value);
+            set => this.RaiseAndSetIfChanged(ref _name, value);
         }
 
         public object Content
         {
             get => _content;
-            set => SetProperty(ref _content, value);
+            set => this.RaiseAndSetIfChanged(ref _content, value);
         }
     }
 }

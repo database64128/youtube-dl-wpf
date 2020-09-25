@@ -9,7 +9,7 @@
     <Product>Cube YouTube Downloader</Product>
     <Company>database64128</Company>
     <Authors>database64128</Authors>
-    <Version>1.4.0</Version>
+    <Version>1.5.0</Version>
     <ApplicationIcon>CubeYouTubeDownloader.ico</ApplicationIcon>
     <Description>A simple GUI wrapper for https://github.com/ytdl-org/youtube-dl.</Description>
     <Copyright>© 2020 database64128</Copyright>
@@ -42,6 +42,8 @@
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
     <PackageReference Include="PeanutButter.TinyEventAggregator" Version="1.2.378" />
+    <PackageReference Include="ReactiveUI.Events.WPF" Version="11.5.35" />
+    <PackageReference Include="ReactiveUI.WPF" Version="11.5.35" />
   </ItemGroup>
 
   <ItemGroup>
