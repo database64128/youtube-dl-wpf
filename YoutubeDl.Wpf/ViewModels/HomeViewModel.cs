@@ -54,7 +54,7 @@ namespace YoutubeDl.Wpf.ViewModels
             _openFolder = new DelegateCommand(OnOpenFolder, CanOpenFolder);
             _startDownload = new DelegateCommand(OnStartDownload, CanStartDownload);
             _listFormats = new DelegateCommand(OnListFormats, CanStartDownload);
-            _abortDl = new DelegateCommand(OnAbortDl, (object commandParameter) => _freezeButton);
+            _abortDl = new DelegateCommand(OnAbortDl, (object? commandParameter) => _freezeButton);
 
             ContainerList = new ObservableCollection<string>()
             {
@@ -232,8 +232,14 @@ namespace YoutubeDl.Wpf.ViewModels
             Application.Current.Dispatcher.Invoke(UpdateButtons);
         }
 
-        private void OnBrowseFolder(object commandParameter)
+        private void OnBrowseFolder(object? commandParameter)
         {
+            if (commandParameter == null)
+                throw new ArgumentNullException(nameof(commandParameter));
+
+            if (commandParameter is not string parameter)
+                throw new ArgumentException("Command parameter is not a string.", nameof(commandParameter));
+
             Microsoft.Win32.OpenFileDialog folderDialog = new Microsoft.Win32.OpenFileDialog
             {
                 FileName = "Folder Selection.",
@@ -242,19 +248,19 @@ namespace YoutubeDl.Wpf.ViewModels
                 CheckPathExists = true
             };
 
-            if ((string)commandParameter == "DownloadPath")
+            if (parameter == "DownloadPath")
                 folderDialog.InitialDirectory = DownloadPath;
 
             bool? result = folderDialog.ShowDialog();
 
             if (result == true)
             {
-                if ((string)commandParameter == "DownloadPath")
+                if (parameter == "DownloadPath")
                     DownloadPath = Path.GetDirectoryName(folderDialog.FileName) ?? "";
             }
         }
 
-        private void OnOpenFolder(object commandParameter)
+        private void OnOpenFolder(object? commandParameter)
         {
             try
             {
@@ -266,7 +272,7 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private void OnStartDownload(object commandParameter)
+        private void OnStartDownload(object? commandParameter)
         {
             FreezeButton = true;
             DownloadButtonProgressIndeterminate = true;
@@ -344,7 +350,7 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private void OnListFormats(object commandParameter)
+        private void OnListFormats(object? commandParameter)
         {
             FreezeButton = true;
             FormatsButtonProgressIndeterminate = true;
@@ -379,7 +385,7 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private void OnAbortDl(object commandParameter)
+        private void OnAbortDl(object? commandParameter)
         {
             try
             {
@@ -401,12 +407,12 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private bool CanOpenFolder(object commandParameter)
+        private bool CanOpenFolder(object? commandParameter)
         {
             return !String.IsNullOrEmpty(_downloadPath) && Directory.Exists(_downloadPath);
         }
 
-        private bool CanStartDownload(object commandParameter)
+        private bool CanStartDownload(object? commandParameter)
         {
             return !String.IsNullOrEmpty(_link) && !String.IsNullOrEmpty(_container) && !String.IsNullOrEmpty(_format) && !String.IsNullOrEmpty(_settings.DlPath) && !_freezeButton;
         }
@@ -446,7 +452,7 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private void DlOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        private void DlOutputHandler(object? sendingProcess, DataReceivedEventArgs outLine)
         {
             if (!string.IsNullOrEmpty(outLine.Data))
             {
@@ -511,7 +517,7 @@ namespace YoutubeDl.Wpf.ViewModels
                     EnableFormatSelection = true;
                 else
                 {
-                    this.RaiseAndSetIfChanged(ref _format, "Auto", "Format");
+                    this.RaiseAndSetIfChanged(ref _format, "Auto", nameof(Format));
                     _settings.Format = _format;
                     EnableFormatSelection = false;
                 }

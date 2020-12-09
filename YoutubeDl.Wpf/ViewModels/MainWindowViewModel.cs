@@ -14,7 +14,7 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             _drawerItems = GenerateItems(snackbarMessageQueue);
             _selectedItem = _drawerItems.First();
-            _openAboutDialog = new DelegateCommand(OnOpenAboutDialog, (object commandParameter) => true);
+            _openAboutDialog = new DelegateCommand(OnOpenAboutDialog, (object? commandParameter) => true);
         }
 
         private ObservableCollection<DrawerItem> _drawerItems;
@@ -24,7 +24,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public ICommand OpenAboutDialog => _openAboutDialog;
 
-        private async void OnOpenAboutDialog(object commandParameter)
+        private async void OnOpenAboutDialog(object? commandParameter)
         {
             var aboutDialog = new AboutDialog
             {
@@ -45,7 +45,7 @@ namespace YoutubeDl.Wpf.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedItem, value);
         }
 
-        private ObservableCollection<DrawerItem> GenerateItems(ISnackbarMessageQueue snackbarMessageQueue)
+        private static ObservableCollection<DrawerItem> GenerateItems(ISnackbarMessageQueue snackbarMessageQueue)
         {
             if (snackbarMessageQueue == null)
                 throw new ArgumentNullException(nameof(snackbarMessageQueue));

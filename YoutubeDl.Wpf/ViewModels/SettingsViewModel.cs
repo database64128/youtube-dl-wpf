@@ -58,7 +58,7 @@ namespace YoutubeDl.Wpf.ViewModels
         public ICommand ChangeColorMode => _changeColorMode;
         public ICommand BrowseExe => _browseExe;
 
-        private void OnChangeColorMode(object commandParameter)
+        private void OnChangeColorMode(object? commandParameter)
         {
             ITheme theme = _paletteHelper.GetTheme();
             switch (commandParameter)
@@ -93,27 +93,33 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private void OnBrowseExe(object commandParameter)
+        private void OnBrowseExe(object? commandParameter)
         {
+            if (commandParameter == null)
+                throw new ArgumentNullException(nameof(commandParameter));
+
+            if (commandParameter is not string parameter)
+                throw new ArgumentException("Command parameter is not a string.", nameof(commandParameter));
+
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
-                FileName = (string)commandParameter,
+                FileName = parameter,
                 DefaultExt = ".exe",
                 Filter = "Executables (.exe)|*.exe"
             };
 
-            if ((string)commandParameter == "youtube-dl")
+            if (parameter == "youtube-dl")
                 openFileDialog.InitialDirectory = Path.GetDirectoryName(_dlPath);
-            else if ((string)commandParameter == "ffmpeg")
+            else if (parameter == "ffmpeg")
                 openFileDialog.InitialDirectory = Path.GetDirectoryName(_ffmpegPath);
             
             bool? result = openFileDialog.ShowDialog();
 
             if (result == true)
             {
-                if ((string)commandParameter == "youtube-dl")
+                if (parameter == "youtube-dl")
                     DlPath = openFileDialog.FileName;
-                else if ((string)commandParameter == "ffmpeg")
+                else if (parameter == "ffmpeg")
                     FfmpegPath = openFileDialog.FileName;
             }
         }
@@ -134,7 +140,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 try
                 {
                     _settingsJson = new FileStream("Settings.json", FileMode.Open);
-                    _settings = await JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson);
+                    _settings = await JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson) ?? new();
                 }
                 catch
                 {

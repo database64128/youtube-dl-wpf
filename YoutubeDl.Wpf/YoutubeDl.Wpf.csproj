@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
     <RootNamespace>YoutubeDl.Wpf</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -41,9 +41,11 @@
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
-    <PackageReference Include="PeanutButter.TinyEventAggregator" Version="1.2.378" />
-    <PackageReference Include="ReactiveUI.Events.WPF" Version="11.5.35" />
-    <PackageReference Include="ReactiveUI.WPF" Version="11.5.35" />
+    <PackageReference Include="PeanutButter.TinyEventAggregator" Version="1.2.380" />
+    <PackageReference Include="ReactiveUI.Events.WPF" Version="13.0.1" />
+    <PackageReference Include="ReactiveUI.Fody" Version="13.0.1" />
+    <PackageReference Include="ReactiveUI.Validation" Version="1.8.6" />
+    <PackageReference Include="ReactiveUI.WPF" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
