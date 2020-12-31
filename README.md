@@ -70,3 +70,5 @@ $ git clone --recursive https://github.com/database64128/youtube-dl-wpf.git
 - [`PeanutButter.TinyEventAggregator`](https://github.com/fluffynuts/PeanutButter) is licensed under [BSD-3-Clause License](https://github.com/fluffynuts/PeanutButter/blob/master/LICENSE).
 - [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono) is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 - [ReactiveUI](https://github.com/reactiveui/ReactiveUI) is licensed under [MIT](https://github.com/reactiveui/ReactiveUI/blob/main/LICENSE).
+
+© 2021 database64128

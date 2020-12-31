@@ -12,7 +12,7 @@
     <Version>1.5.0</Version>
     <ApplicationIcon>CubeYouTubeDownloader.ico</ApplicationIcon>
     <Description>A simple GUI wrapper for https://github.com/ytdl-org/youtube-dl.</Description>
-    <Copyright>© 2020 database64128</Copyright>
+    <Copyright>© 2021 database64128</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/database64128/youtube-dl-wpf</PackageProjectUrl>
     <PackageIcon>CubeYouTubeDownloader.png</PackageIcon>
