@@ -33,7 +33,13 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="8">Video Link</TextBlock>
+                <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                           Grid.Row="0"
+                           Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Margin="8">
+                    Video Link
+                </TextBlock>
                 <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
                     <TextBox
                         x:Name="linkTextBox"
