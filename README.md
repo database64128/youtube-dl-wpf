@@ -1,5 +1,8 @@
 # 🎞⬇ Cube YouTube Downloader - `youtube-dl-wpf`
 
+[![Build](https://github.com/database64128/youtube-dl-wpf/workflows/Build/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions?query=workflow%3ABuild)
+[![Release](https://github.com/database64128/youtube-dl-wpf/workflows/Release/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions?query=workflow%3ARelease)
+
 A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl). _A ported cross-platform version is available as [`youtube-dl-avalonia`](https://github.com/database64128/youtube-dl-avalonia)._
 
 ![Light Mode](LightMode.png "Light Mode")
