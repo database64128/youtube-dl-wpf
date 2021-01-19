@@ -41,7 +41,7 @@
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
-    <PackageReference Include="PeanutButter.TinyEventAggregator" Version="1.2.388" />
+    <PackageReference Include="PeanutButter.TinyEventAggregator" Version="1.2.389" />
     <PackageReference Include="ReactiveUI.Events.WPF" Version="13.0.38" />
     <PackageReference Include="ReactiveUI.Fody" Version="13.0.38" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.0.1" />
