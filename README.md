@@ -3,7 +3,7 @@
 [![Build](https://github.com/database64128/youtube-dl-wpf/workflows/Build/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions?query=workflow%3ABuild)
 [![Release](https://github.com/database64128/youtube-dl-wpf/workflows/Release/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions?query=workflow%3ARelease)
 
-A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl). _A ported cross-platform version is available as [`youtube-dl-avalonia`](https://github.com/database64128/youtube-dl-avalonia)._
+A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 ![Light Mode](LightMode.png "Light Mode")
 ![Dark Mode](DarkMode.png "Dark Mode")
@@ -25,7 +25,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 1. Download the pre-built binary or build it from source.
 2. Download [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) from the upstream. _Optionally but recommended_, get `ffmpeg` either by [building from source](https://www.ffmpeg.org/) or downloading [pre-built binaries](https://ffmpeg.zeranoe.com/builds/) for Windows.
-3. Make sure you have [.NET Core 3.1 Runtime](https://dotnet.microsoft.com/download/dotnet-core/current/runtime) installed to run our app. The upstream `youtube-dl` binary requires [MSVC++ 2010 runtime](https://www.microsoft.com/en-us/download/details.aspx?id=13523).
+3. Make sure you have [.NET 5 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0) installed to run our app. The upstream `youtube-dl` binary requires [MSVC++ 2010 runtime](https://www.microsoft.com/en-us/download/details.aspx?id=13523).
 4. Run `youtube-dl-wpf.exe`. Open the left drawer and go to __Settings__. Set the path to `youtube-dl` and `ffmpeg`.
 5. Go back to the home tab. Paste a URL and start downloading! 🚀
 
@@ -54,8 +54,8 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 ## Build
 
 - IDE: Visual Studio 2019
-- Language: C# 8.0
-- SDK: .NET Core 3.1
+- Language: C# 9.0
+- SDK: .NET 5
 
 ### Build Steps
 
