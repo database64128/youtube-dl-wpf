@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:HomeViewModel}"
              d:DesignHeight="680" d:DesignWidth="960">
     <Grid Margin="24">
         <Grid.RowDefinitions>
@@ -162,7 +164,7 @@
         <TextBox
             Grid.Row="3"
             x:Name="resultTextBox"
-            Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+            Style="{StaticResource MaterialDesignOutlinedTextBox}"
             Margin="8"
             TextWrapping="NoWrap"
             IsReadOnly="True"
@@ -171,7 +173,7 @@
             HorizontalScrollBarVisibility="Auto"
             materialDesign:HintAssist.Hint="Output from youtube-dl"
             Text="{Binding Output}"
-            TextChanged="resultTextBox_TextChanged"
+            TextChanged="ResultTextBox_TextChanged"
             FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"/>
     </Grid>
 </UserControl>

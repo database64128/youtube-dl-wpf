@@ -18,9 +18,9 @@ namespace YoutubeDl.Wpf.Views
 
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
 
-        private bool IsScrolledToEnd(TextBox textBox) => textBox.VerticalOffset > textBox.ExtentHeight - textBox.ViewportHeight - textBox.FontSize * textBox.FontFamily.LineSpacing;
+        private static bool IsScrolledToEnd(TextBox textBox) => textBox.VerticalOffset > textBox.ExtentHeight - textBox.ViewportHeight - textBox.FontSize * textBox.FontFamily.LineSpacing;
 
-        private void resultTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void ResultTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (IsScrolledToEnd(resultTextBox))
                 resultTextBox.ScrollToEnd();

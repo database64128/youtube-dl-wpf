@@ -14,15 +14,11 @@ namespace YoutubeDl.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static Snackbar? Snackbar;
-
         public MainWindow()
         {
             InitializeComponent();
-
-            DataContext = new MainWindowViewModel(MainSnackbar.MessageQueue);
-
-            Snackbar = this.MainSnackbar;
+            DataContext = new MainWindowViewModel(MainSnackbar.MessageQueue!); // Null forgiving reason: following upstream
+            MainSnackbar.MessageQueue.DiscardDuplicates = true;
         }
 
         private void UIElement_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

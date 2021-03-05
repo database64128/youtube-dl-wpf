@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:YoutubeDl.Wpf"
              xmlns:models="clr-namespace:YoutubeDl.Wpf.Models"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
              d:DesignHeight="700" d:DesignWidth="960">
     <ScrollViewer materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
                   HorizontalScrollBarVisibility="Auto"
