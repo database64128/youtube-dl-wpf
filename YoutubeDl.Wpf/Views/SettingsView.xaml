@@ -1,15 +1,18 @@
-﻿<UserControl x:Class="YoutubeDl.Wpf.Views.SettingsView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:YoutubeDl.Wpf"
-             xmlns:models="clr-namespace:YoutubeDl.Wpf.Models"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
-             mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
-             d:DesignHeight="700" d:DesignWidth="960">
+﻿<reactiveui:ReactiveUserControl
+    x:Class="YoutubeDl.Wpf.Views.SettingsView"
+    x:TypeArguments="viewmodels:SettingsViewModel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:YoutubeDl.Wpf"
+    xmlns:models="clr-namespace:YoutubeDl.Wpf.Models"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:reactiveui="http://reactiveui.net"
+    xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
+    d:DesignHeight="700" d:DesignWidth="960">
     <ScrollViewer materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
                   HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
@@ -52,26 +55,20 @@
             </TextBlock>
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
                 <RadioButton
+                    x:Name="systemColorModeRadioButton"
                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
-                    IsChecked="{Binding FollowOSColorMode}"
-                    Command="{Binding ChangeColorMode}"
-                    CommandParameter="{x:Static models:ColorMode.System}"
                     GroupName="ColorMode">
                     System
                 </RadioButton>
                 <RadioButton
+                    x:Name="lightColorModeRadioButton"
                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
-                    IsChecked="{Binding LightMode}"
-                    Command="{Binding ChangeColorMode}"
-                    CommandParameter="{x:Static models:ColorMode.Light}"
                     GroupName="ColorMode">
                     Light
                 </RadioButton>
                 <RadioButton
+                    x:Name="darkColorModeRadioButton"
                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
-                    IsChecked="{Binding DarkMode}"
-                    Command="{Binding ChangeColorMode}"
-                    CommandParameter="{x:Static models:ColorMode.Dark}"
                     GroupName="ColorMode">
                     Dark
                 </RadioButton>
@@ -96,7 +93,6 @@
                 Grid.Column="1"
                 x:Name="autoUpdateDlToggle"
                 Margin="8"
-                IsChecked="{Binding AutoUpdateDl}"
                 HorizontalAlignment="Left"/>
             
             <TextBlock Grid.Row="5"
@@ -112,16 +108,15 @@
                 x:Name="dlPathTextBox"
                 Margin="2,8,2,8"
                 Width="400"
-                materialDesign:HintAssist.Hint="Required"
-                Text="{Binding DlPath}"/>
+                materialDesign:HintAssist.Hint="Required"/>
             <Button
                 Grid.Row="5"
                 Grid.Column="2"
                 x:Name="dlPathBrowseButton"
                 Margin="2,0,8,0"
-                Style="{StaticResource MaterialDesignFlatButton}"
-                Command="{Binding BrowseExe}"
-                CommandParameter="youtube-dl">Browse</Button>
+                Style="{StaticResource MaterialDesignFlatButton}">
+                Browse
+            </Button>
             
             <TextBlock Grid.Row="6"
                        Grid.Column="0"
@@ -136,16 +131,15 @@
                 x:Name="ffmpegPathTextBox"
                 Margin="2,8,2,8"
                 Width="400"
-                materialDesign:HintAssist.Hint="Optional but recommended"
-                Text="{Binding FfmpegPath}"/>
+                materialDesign:HintAssist.Hint="Optional but recommended"/>
             <Button
                 Grid.Row="6"
                 Grid.Column="2"
                 x:Name="ffmpegPathBrowseButton"
                 Margin="2,0,8,0"
-                Style="{StaticResource MaterialDesignFlatButton}"
-                Command="{Binding BrowseExe}"
-                CommandParameter="ffmpeg">Browse</Button>
+                Style="{StaticResource MaterialDesignFlatButton}">
+                Browse
+            </Button>
             
             <TextBlock Grid.Row="7"
                        Grid.Column="0"
@@ -167,8 +161,7 @@
                 x:Name="proxyTextBox"
                 Margin="2,8,2,8"
                 Width="400"
-                materialDesign:HintAssist.Hint="e.g. socks5://localhost:1080/. Leave empty to use system proxy."
-                Text="{Binding Proxy}"/>
+                materialDesign:HintAssist.Hint="e.g. socks5://localhost:1080/. Leave empty to use system proxy."/>
         </Grid>
     </ScrollViewer>
-</UserControl>
+</reactiveui:ReactiveUserControl>

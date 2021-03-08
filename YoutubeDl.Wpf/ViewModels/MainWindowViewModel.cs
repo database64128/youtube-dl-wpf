@@ -1,9 +1,10 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-using System;
+using ReactiveUI.Fody.Helpers;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
+using System.Reactive;
+using System.Threading.Tasks;
 using YoutubeDl.Wpf.Views;
 
 namespace YoutubeDl.Wpf.ViewModels
@@ -12,19 +13,14 @@ namespace YoutubeDl.Wpf.ViewModels
     {
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
-            _drawerItems = GenerateItems(snackbarMessageQueue);
-            _selectedItem = _drawerItems.First();
-            _openAboutDialog = new DelegateCommand(OnOpenAboutDialog, (object? commandParameter) => true);
+            DrawerItems = GenerateItems(snackbarMessageQueue);
+            SelectedItem = DrawerItems.First();
+            OpenAboutDialog = ReactiveCommand.CreateFromTask(OnOpenAboutDialog);
         }
 
-        private ObservableCollection<DrawerItem> _drawerItems;
-        private DrawerItem _selectedItem;
+        public ReactiveCommand<Unit, Unit> OpenAboutDialog { get; }
 
-        private readonly DelegateCommand _openAboutDialog;
-
-        public ICommand OpenAboutDialog => _openAboutDialog;
-
-        private async void OnOpenAboutDialog(object? commandParameter)
+        private async Task OnOpenAboutDialog()
         {
             var aboutDialog = new AboutDialog
             {
@@ -33,28 +29,16 @@ namespace YoutubeDl.Wpf.ViewModels
             await DialogHost.Show(aboutDialog, "RootDialog");
         }
 
-        public ObservableCollection<DrawerItem> DrawerItems
-        {
-            get => _drawerItems;
-            set => this.RaiseAndSetIfChanged(ref _drawerItems, value);
-        }
+        [Reactive]
+        public ObservableCollection<DrawerItem> DrawerItems { get; set; }
 
-        public DrawerItem SelectedItem
-        {
-            get => _selectedItem;
-            set => this.RaiseAndSetIfChanged(ref _selectedItem, value);
-        }
+        [Reactive]
+        public DrawerItem SelectedItem { get; set; }
 
-        private static ObservableCollection<DrawerItem> GenerateItems(ISnackbarMessageQueue snackbarMessageQueue)
+        private static ObservableCollection<DrawerItem> GenerateItems(ISnackbarMessageQueue snackbarMessageQueue) => new()
         {
-            if (snackbarMessageQueue == null)
-                throw new ArgumentNullException(nameof(snackbarMessageQueue));
-
-            return new ObservableCollection<DrawerItem>
-            {
-                new DrawerItem("Home", new HomeView(snackbarMessageQueue)),
-                new DrawerItem("Settings", new SettingsView(snackbarMessageQueue))
-            };
-        }
+            new DrawerItem("Home", new HomeView(snackbarMessageQueue)),
+            new DrawerItem("Settings", new SettingsView(snackbarMessageQueue)),
+        };
     }
 }

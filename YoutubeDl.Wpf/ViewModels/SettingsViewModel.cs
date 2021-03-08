@@ -1,32 +1,56 @@
 ﻿using MaterialDesignThemes.Wpf;
 using PeanutButter.TinyEventAggregator;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 using System;
 using System.IO;
+using System.Reactive;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public class SettingsViewModel : ReactiveObject
+    public class SettingsViewModel : ReactiveValidationObject
     {
         public SettingsViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
             _snackbarMessageQueue = snackbarMessageQueue ?? throw new ArgumentNullException(nameof(snackbarMessageQueue));
 
-            _followOSColorMode = true;
-            _lightMode = false;
-            _darkMode = false;
+            FollowOSColorMode = true;
+            LightMode = false;
+            DarkMode = false;
             _autoUpdateDl = true;
             _dlPath = "";
             _ffmpegPath = "";
             _proxy = "";
 
             _paletteHelper = new PaletteHelper();
-            _changeColorMode = new DelegateCommand(OnChangeColorMode);
-            _browseExe = new DelegateCommand(OnBrowseExe);
+
+            this.ValidationRule(
+                viewModel => viewModel.DlPath,
+                dlPath => File.Exists(dlPath),
+                "Invalid youtube-dl binary path.");
+
+            this.ValidationRule(
+                viewModel => viewModel.FfmpegPath,
+                ffmpegPath => string.IsNullOrEmpty(ffmpegPath) || File.Exists(ffmpegPath),
+                "Invalid ffmpeg binary path.");
+
+            this.ValidationRule(
+                viewModel => viewModel.Proxy,
+                proxy => string.IsNullOrEmpty(proxy) || (Uri.TryCreate(proxy, UriKind.Absolute, out var uri) && (uri.Scheme == "socks5"
+                                                                                                                 || uri.Scheme == "http"
+                                                                                                                 || uri.Scheme == "https")),
+                "Invalid proxy URL.");
+
+            ChangeColorModeToSystem = ReactiveCommand.Create(() => OnChangeColorMode(ColorMode.System));
+            ChangeColorModeToLight = ReactiveCommand.Create(() => OnChangeColorMode(ColorMode.Light));
+            ChangeColorModeToDark = ReactiveCommand.Create(() => OnChangeColorMode(ColorMode.Dark));
+            BrowseDlBinaryCommand = ReactiveCommand.Create(BrowseDlBinary);
+            BrowseFfmpegBinaryCommand = ReactiveCommand.Create(BrowseFfmpegBinary);
 
             settingsChangedEvent = EventAggregator.Instance.GetEvent<SettingsChangedEvent>();
             // subscribe to settings changes published by HomeViewModel
@@ -42,9 +66,6 @@ namespace YoutubeDl.Wpf.ViewModels
         private SettingsJson _settings = null!;
         private readonly SettingsChangedEvent settingsChangedEvent;
 
-        private bool _followOSColorMode; // default to true
-        private bool _lightMode;
-        private bool _darkMode;
         private bool _autoUpdateDl; // auto update youtube-dl by default
         private string _dlPath; // youtube-dl path
         private string _ffmpegPath;
@@ -52,16 +73,17 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
         private readonly PaletteHelper _paletteHelper;
-        private readonly DelegateCommand _changeColorMode;
-        private readonly DelegateCommand _browseExe;
 
-        public ICommand ChangeColorMode => _changeColorMode;
-        public ICommand BrowseExe => _browseExe;
+        public ReactiveCommand<Unit, Unit> ChangeColorModeToSystem { get; }
+        public ReactiveCommand<Unit, Unit> ChangeColorModeToLight { get; }
+        public ReactiveCommand<Unit, Unit> ChangeColorModeToDark { get; }
+        public ReactiveCommand<Unit, Unit> BrowseDlBinaryCommand { get; }
+        public ReactiveCommand<Unit, Unit> BrowseFfmpegBinaryCommand { get; }
 
-        private void OnChangeColorMode(object? commandParameter)
+        private void OnChangeColorMode(ColorMode colorMode)
         {
             ITheme theme = _paletteHelper.GetTheme();
-            switch (commandParameter)
+            switch (colorMode)
             {
                 case ColorMode.System:
                     var systemTheme = Theme.GetSystemTheme();
@@ -86,42 +108,29 @@ namespace YoutubeDl.Wpf.ViewModels
                     throw new ArgumentException("Invalid AppColorMode");
             }
             _paletteHelper.SetTheme(theme);
-            if (_settings.AppColorMode != (ColorMode)commandParameter)
+            if (_settings.AppColorMode != colorMode)
             {
-                _settings.AppColorMode = (ColorMode)commandParameter;
+                _settings.AppColorMode = colorMode;
                 SaveSettings();
             }
         }
 
-        private void OnBrowseExe(object? commandParameter)
+        private void BrowseDlBinary() => DlPath = BrowseBinary("youtube-dl", DlPath);
+
+        private void BrowseFfmpegBinary() => FfmpegPath = BrowseBinary("ffmpeg", FfmpegPath);
+
+        private static string BrowseBinary(string filename, string path)
         {
-            if (commandParameter == null)
-                throw new ArgumentNullException(nameof(commandParameter));
-
-            if (commandParameter is not string parameter)
-                throw new ArgumentException("Command parameter is not a string.", nameof(commandParameter));
-
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
+            Microsoft.Win32.OpenFileDialog openFileDialog = new()
             {
-                FileName = parameter,
+                FileName = filename,
                 DefaultExt = ".exe",
-                Filter = "Executables (.exe)|*.exe"
+                Filter = "Executables (.exe)|*.exe",
+                InitialDirectory = Path.GetDirectoryName(path),
             };
-
-            if (parameter == "youtube-dl")
-                openFileDialog.InitialDirectory = Path.GetDirectoryName(_dlPath);
-            else if (parameter == "ffmpeg")
-                openFileDialog.InitialDirectory = Path.GetDirectoryName(_ffmpegPath);
             
-            bool? result = openFileDialog.ShowDialog();
-
-            if (result == true)
-            {
-                if (parameter == "youtube-dl")
-                    DlPath = openFileDialog.FileName;
-                else if (parameter == "ffmpeg")
-                    FfmpegPath = openFileDialog.FileName;
-            }
+            var result = openFileDialog.ShowDialog();
+            return result == true ? openFileDialog.FileName : path;
         }
 
         /// <summary>
@@ -164,19 +173,19 @@ namespace YoutubeDl.Wpf.ViewModels
             switch (_settings.AppColorMode)
             {
                 case ColorMode.System:
-                    this.RaiseAndSetIfChanged(ref _followOSColorMode, true);
-                    this.RaiseAndSetIfChanged(ref _lightMode, false);
-                    this.RaiseAndSetIfChanged(ref _darkMode, false);
+                    FollowOSColorMode = true;
+                    LightMode = false;
+                    DarkMode = false;
                     break;
                 case ColorMode.Light:
-                    this.RaiseAndSetIfChanged(ref _followOSColorMode, false);
-                    this.RaiseAndSetIfChanged(ref _lightMode, true);
-                    this.RaiseAndSetIfChanged(ref _darkMode, false);
+                    FollowOSColorMode = false;
+                    LightMode = true;
+                    DarkMode = false;
                     break;
                 case ColorMode.Dark:
-                    this.RaiseAndSetIfChanged(ref _followOSColorMode, false);
-                    this.RaiseAndSetIfChanged(ref _lightMode, false);
-                    this.RaiseAndSetIfChanged(ref _darkMode, true);
+                    FollowOSColorMode = false;
+                    LightMode = false;
+                    DarkMode = true;
                     break;
                 default:
                     throw new ArgumentException("Invalid AppColorMode");
@@ -224,23 +233,14 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        public bool FollowOSColorMode
-        {
-            get => _followOSColorMode;
-            set => this.RaiseAndSetIfChanged(ref _followOSColorMode, value);
-        }
+        [Reactive]
+        public bool FollowOSColorMode { get; set; }
 
-        public bool LightMode
-        {
-            get => _lightMode;
-            set => this.RaiseAndSetIfChanged(ref _lightMode, value);
-        }
+        [Reactive]
+        public bool LightMode { get; set; }
 
-        public bool DarkMode
-        {
-            get => _darkMode;
-            set => this.RaiseAndSetIfChanged(ref _darkMode, value);
-        }
+        [Reactive]
+        public bool DarkMode { get; set; }
 
         public bool AutoUpdateDl
         {

@@ -1,6 +1,5 @@
-﻿using MaterialDesignThemes.Wpf;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using ReactiveUI;
+using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -12,13 +11,34 @@ namespace YoutubeDl.Wpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel(MainSnackbar.MessageQueue!); // Null forgiving reason: following upstream
-            MainSnackbar.MessageQueue.DiscardDuplicates = true;
+            ViewModel = new MainWindowViewModel(MainSnackbar.MessageQueue!); // Null forgiving reason: following upstream
+            MainSnackbar.MessageQueue!.DiscardDuplicates = true;
+            this.WhenActivated(disposables =>
+            {
+                this.Bind(ViewModel,
+                    viewModel => viewModel.SelectedItem,
+                    view => view.DrawerItemsListBox.SelectedItem)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.SelectedItem.Content,
+                    view => view.MainContentControl.Content)
+                    .DisposeWith(disposables);
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.DrawerItems,
+                    view => view.DrawerItemsListBox.ItemsSource)
+                    .DisposeWith(disposables);
+
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.OpenAboutDialog,
+                    view => view.aboutButton)
+                    .DisposeWith(disposables);
+            });
         }
 
         private void UIElement_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

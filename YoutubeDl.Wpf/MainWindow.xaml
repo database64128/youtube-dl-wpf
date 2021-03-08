@@ -1,36 +1,38 @@
-﻿<Window x:Class="YoutubeDl.Wpf.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
-        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
-        mc:Ignorable="d"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        TextElement.FontWeight="Regular"
-        TextElement.FontSize="13"
-        TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{materialDesign:MaterialDesignFont}"
-        Title="Cube YouTube Downloader" Height="680" Width="960" MinHeight="540" MinWidth="620">
+﻿<reactiveui:ReactiveWindow
+    x:Class="YoutubeDl.Wpf.MainWindow"
+    x:TypeArguments="viewmodels:MainWindowViewModel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:reactiveui="http://reactiveui.net"
+    xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+    mc:Ignorable="d"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextElement.FontWeight="Regular"
+    TextElement.FontSize="13"
+    TextOptions.TextFormattingMode="Ideal" 
+    TextOptions.TextRenderingMode="Auto"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{materialDesign:MaterialDesignFont}"
+    Title="Cube YouTube Downloader" Height="680" Width="960" MinHeight="540" MinWidth="620">
     <materialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
         <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
             <materialDesign:DrawerHost.LeftDrawerContent>
                 <DockPanel MinWidth="220">
-                    <ToggleButton 
-                        Style="{StaticResource MaterialDesignHamburgerToggleButton}" 
+                    <ToggleButton
+                        x:Name="DrawerCloseButton"
+                        Style="{StaticResource MaterialDesignHamburgerToggleButton}"
                         DockPanel.Dock="Top"
-                        HorizontalAlignment="Right" 
+                        HorizontalAlignment="Right"
                         Margin="16"
                         IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
-                    <ListBox 
+                    <ListBox
                         x:Name="DrawerItemsListBox"
                         Margin="0 16 0 16"
                         SelectedIndex="0"
-                        SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
-                        ItemsSource="{Binding DrawerItems}"
                         PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp">
                         <ListBox.Resources>
                             <Style TargetType="ScrollBar" BasedOn="{StaticResource MaterialDesignScrollBarMinimal}"/>
@@ -58,7 +60,7 @@
                             DockPanel.Dock="Right"
                             PlacementMode="BottomAndAlignRightEdges">
                             <StackPanel>
-                                <Button Content="About" Command="{Binding OpenAboutDialog}"/>
+                                <Button x:Name="aboutButton" Content="About"/>
                             </StackPanel>
                         </materialDesign:PopupBox>
                         <TextBlock
@@ -70,10 +72,10 @@
                     </DockPanel>
                 </materialDesign:ColorZone>
                 <Grid>
-                    <ContentControl Content="{Binding SelectedItem.Content, UpdateSourceTrigger=PropertyChanged}" />
+                    <ContentControl x:Name="MainContentControl" />
                     <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="MainSnackbar" />
                 </Grid>
             </DockPanel>
         </materialDesign:DrawerHost>
     </materialDesign:DialogHost>
-</Window>
+</reactiveui:ReactiveWindow>
