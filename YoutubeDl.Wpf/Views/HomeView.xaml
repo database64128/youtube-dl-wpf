@@ -1,13 +1,16 @@
-﻿<UserControl x:Class="YoutubeDl.Wpf.Views.HomeView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
-             mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance Type=viewmodels:HomeViewModel}"
-             d:DesignHeight="680" d:DesignWidth="960">
+﻿<reactiveui:ReactiveUserControl
+    x:Class="YoutubeDl.Wpf.Views.HomeView"
+    x:TypeArguments="viewmodels:HomeViewModel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:reactiveui="http://reactiveui.net"
+    xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:HomeViewModel}"
+    d:DesignHeight="680" d:DesignWidth="960">
     <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -47,29 +50,16 @@
                         x:Name="linkTextBox"
                         materialDesign:HintAssist.Hint="e.g. https://www.youtube.com/watch?v=b2390GAm4d0"
                         Margin="8"
-                        Width="384"
-                        Text="{Binding Link, UpdateSourceTrigger=PropertyChanged}">
-                        <TextBox.InputBindings>
-                            <KeyBinding Gesture="Enter"
-                                        Command="{Binding StartDownload}" />
-                        </TextBox.InputBindings>
-                    </TextBox>
+                        Width="384"/>
                     <Button
                         x:Name="downloadButton"
-                        Margin="8 0 8 0"
-                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
-                        materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding DownloadButtonProgressIndeterminate}"
-                        materialDesign:ButtonProgressAssist.Value="{Binding DownloadButtonProgressPercentageValue}"
-                        Command="{Binding StartDownload}"
-                        Content="{Binding DownloadButtonProgressPercentageString}"/>
+                        Margin="8 0 8 0"/>
                     <Button
                         x:Name="listFormatsButton"
                         Margin="8 0 8 0"
-                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding FreezeButton}"
-                        materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding FormatsButtonProgressIndeterminate}"
                         Style="{StaticResource MaterialDesignRaisedAccentButton}"
                         Foreground="White"
-                        Command="{Binding ListFormats}">_List Formats</Button>
+                        Content="_List Formats"/>
                     <Button
                         x:Name="abortButton"
                         Margin="8 0 8 0"
@@ -77,14 +67,13 @@
                         Background="Red"
                         BorderBrush="Red"
                         Foreground="White"
-                        Command="{Binding AbortDl}">_Abort</Button>
+                        Content="_Abort"/>
                 </StackPanel>
 
                 <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Grid.Row="1" Grid.Column="0" Margin="8" VerticalAlignment="Center">Options</TextBlock>
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
                     <TextBlock VerticalAlignment="Center" Margin="8">Container</TextBlock>
-                    <ComboBox ItemsSource="{Binding ContainerList}"
-                              Text="{Binding Container}"
+                    <ComboBox x:Name="containerComboBox"
                               IsEditable="True"
                               IsReadOnly="False"
                               IsTextSearchCaseSensitive="True"
@@ -95,11 +84,14 @@
                                 <VirtualizingStackPanel />
                             </ItemsPanelTemplate>
                         </ComboBox.ItemsPanel>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </ComboBox>
                     <TextBlock VerticalAlignment="Center" Margin="8">Format</TextBlock>
-                    <ComboBox ItemsSource="{Binding FormatList}"
-                              Text="{Binding Format}"
-                              IsEnabled="{Binding EnableFormatSelection}"
+                    <ComboBox x:Name="formatComboBox"
                               IsEditable="True"
                               IsReadOnly="False"
                               StaysOpenOnEdit="True"
@@ -109,54 +101,50 @@
                                 <VirtualizingStackPanel />
                             </ItemsPanelTemplate>
                         </ComboBox.ItemsPanel>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
                     <ToggleButton
                         x:Name="metadataToggle"
-                        Margin="8"
-                        IsChecked="{Binding AddMetadata}"/>
+                        Margin="8"/>
                     <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Add Metadata</TextBlock>
                     <ToggleButton
                         x:Name="thumbnailToggle"
-                        Margin="8"
-                        IsChecked="{Binding DownloadThumbnail}"/>
+                        Margin="8"/>
                     <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Thumbnail</TextBlock>
                     <ToggleButton
                         x:Name="subtitlesToggle"
-                        Margin="8"
-                        IsChecked="{Binding DownloadSubtitles}"/>
+                        Margin="8"/>
                     <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Subtitles</TextBlock>
                     <ToggleButton
                         x:Name="playlistToggle"
-                        Margin="8"
-                        IsChecked="{Binding DownloadPlaylist}"/>
+                        Margin="8"/>
                     <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Playlist</TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
                     <ToggleButton
                         x:Name="pathToggle"
-                        Margin="8"
-                        IsChecked="{Binding UseCustomPath}"/>
+                        Margin="8"/>
                     <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Custom Download Path</TextBlock>
                     <TextBox
                         x:Name="pathTextBox"
                         Margin="8,8,1,8"
-                        Width="384"
-                        IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}"
-                        Text="{Binding DownloadPath, UpdateSourceTrigger=PropertyChanged}"/>
+                        Width="384"/>
                     <Button
                         x:Name="browseButton"
                         Margin="1,0,1,0"
                         Style="{StaticResource MaterialDesignFlatButton}"
-                        IsEnabled="{Binding Path=IsChecked, ElementName=pathToggle}"
-                        Command="{Binding BrowseFolder}"
-                        CommandParameter="DownloadPath">Browse</Button>
+                        Content="Browse"/>
                     <Button
                         x:Name="openFolderButton"
                         Margin="1,0,1,0"
                         Style="{StaticResource MaterialDesignFlatButton}"
-                        Command="{Binding OpenFolder}">Open Folder</Button>
+                        Content="Open Folder"/>
                 </StackPanel>
             </Grid>
         </ScrollViewer>
@@ -172,8 +160,7 @@
             VerticalScrollBarVisibility="Auto"
             HorizontalScrollBarVisibility="Auto"
             materialDesign:HintAssist.Hint="Output from youtube-dl"
-            Text="{Binding Output}"
             TextChanged="ResultTextBox_TextChanged"
             FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"/>
     </Grid>
-</UserControl>
+</reactiveui:ReactiveUserControl>

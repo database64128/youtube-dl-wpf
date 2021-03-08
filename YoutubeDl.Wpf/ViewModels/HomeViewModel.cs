@@ -1,45 +1,48 @@
 ﻿using MaterialDesignThemes.Wpf;
 using PeanutButter.TinyEventAggregator;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 using YoutubeDl.Wpf.Behaviors;
 using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public class HomeViewModel : ReactiveObject
+    public class HomeViewModel : ReactiveValidationObject
     {
         public HomeViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
             _snackbarMessageQueue = snackbarMessageQueue ?? throw new ArgumentNullException(nameof(snackbarMessageQueue));
 
+            DlBinaryPath = "";
             _link = "";
             _container = "Auto";
             _format = "Auto";
-            _enableFormatSelection = true;
+            EnableFormatSelection = true;
             _addMetadata = true;
             _downloadThumbnail = true;
             _downloadSubtitles = true;
             _downloadPlaylist = false;
             _useCustomPath = false;
             _downloadPath = "";
-            _output = "";
+            Output = "";
 
-            _freezeButton = false;
-            _downloadButtonProgressIndeterminate = false;
-            _formatsButtonProgressIndeterminate = false;
-            _downloadButtonProgressPercentageValue = 0.0; // 99 for 99%
-            _downloadButtonProgressPercentageString = "_Download";
-            _fileSizeString = "";
-            _downloadSpeedString = "";
-            _downloadETAString = "";
+            FreezeButton = false;
+            DownloadButtonProgressIndeterminate = false;
+            FormatsButtonProgressIndeterminate = false;
+            DownloadButtonProgressPercentageValue = 0.0; // 99 for 99%
+            DownloadButtonProgressPercentageString = "_Download";
+            FileSizeString = "";
+            DownloadSpeedString = "";
+            DownloadETAString = "";
 
             outputSeparators = new string[]
             {
@@ -50,13 +53,25 @@ namespace YoutubeDl.Wpf.ViewModels
                 " "
             };
 
-            _browseFolder = new DelegateCommand(OnBrowseFolder);
-            _openFolder = new DelegateCommand(OnOpenFolder, CanOpenFolder);
-            _startDownload = new DelegateCommand(OnStartDownload, CanStartDownload);
-            _listFormats = new DelegateCommand(OnListFormats, CanStartDownload);
-            _abortDl = new DelegateCommand(OnAbortDl, (object? commandParameter) => _freezeButton);
+            var canOpenDownloadFolder = this.WhenAnyValue(
+                x => x.DownloadPath,
+                path => Directory.Exists(path));
+            var canStartDl = this.WhenAnyValue(
+                x => x.Link,
+                x => x.Container,
+                x => x.Format,
+                x => x.DlBinaryPath,
+                x => x.FreezeButton,
+                (link, container, format, dlBinaryPath, freezeButton) => !string.IsNullOrEmpty(link) && !string.IsNullOrEmpty(container) && !string.IsNullOrEmpty(format) && !string.IsNullOrEmpty(dlBinaryPath) && !freezeButton);
+            var canAbortDl = this.WhenAnyValue(x => x.FreezeButton);
 
-            ContainerList = new ObservableCollection<string>()
+            BrowseDownloadFolderCommand = ReactiveCommand.Create(BrowseDownloadFolder);
+            OpenDownloadFolderCommand = ReactiveCommand.Create(OpenDownloadFolder, canOpenDownloadFolder);
+            StartDownloadCommand = ReactiveCommand.Create(StartDownload, canStartDl);
+            ListFormatsCommand = ReactiveCommand.Create(ListFormats, canStartDl);
+            AbortDlCommand = ReactiveCommand.Create(AbortDl, canAbortDl);
+
+            ContainerList = new()
             {
                 "Auto",
                 "webm",
@@ -69,7 +84,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 "mp3"
             };
 
-            FormatList = new ObservableCollection<string>()
+            FormatList = new()
             {
                 "Auto",
                 "bestvideo+bestaudio/best",
@@ -126,46 +141,31 @@ namespace YoutubeDl.Wpf.ViewModels
         private string _link;
         private string _container;
         private string _format;
-        private bool _enableFormatSelection;
         private bool _addMetadata;
         private bool _downloadThumbnail;
         private bool _downloadSubtitles;
         private bool _downloadPlaylist;
         private bool _useCustomPath;
         private string _downloadPath;
-        private string _output;
-
-        private bool _freezeButton;
-        private bool _downloadButtonProgressIndeterminate;
-        private bool _formatsButtonProgressIndeterminate;
-        private double _downloadButtonProgressPercentageValue;
-        private string _downloadButtonProgressPercentageString;
-        private string _fileSizeString;
-        private string _downloadSpeedString;
-        private string _downloadETAString;
 
         private readonly string[] outputSeparators;
         private StringBuilder outputString = null!;
         private Process dlProcess = null!;
 
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
-        private readonly DelegateCommand _browseFolder;
-        private readonly DelegateCommand _openFolder;
-        private readonly DelegateCommand _startDownload;
-        private readonly DelegateCommand _listFormats;
-        private readonly DelegateCommand _abortDl;
 
-        public ICommand BrowseFolder => _browseFolder;
-        public ICommand OpenFolder => _openFolder;
-        public ICommand StartDownload => _startDownload;
-        public ICommand ListFormats => _listFormats;
-        public ICommand AbortDl => _abortDl;
+        public ReactiveCommand<Unit, Unit> BrowseDownloadFolderCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenDownloadFolderCommand { get; }
+        public ReactiveCommand<Unit, Unit> StartDownloadCommand { get; }
+        public ReactiveCommand<Unit, Unit> ListFormatsCommand { get; }
+        public ReactiveCommand<Unit, Unit> AbortDlCommand { get; }
 
         /// <summary>
         /// Apply new settings published by SettingsViewModel.
         /// </summary>
         private void ApplySettings()
         {
+            DlBinaryPath = _settings.DlPath;
             this.RaiseAndSetIfChanged(ref _container, _settings.Container);
             this.RaiseAndSetIfChanged(ref _format, _settings.Format);
             this.RaiseAndSetIfChanged(ref _addMetadata, _settings.AddMetadata);
@@ -180,12 +180,9 @@ namespace YoutubeDl.Wpf.ViewModels
             else
                 EnableFormatSelection = false;
 
-            Application.Current.Dispatcher.Invoke(() =>
+            RxApp.MainThreadScheduler.Schedule(() =>
             {
-                _openFolder.InvokeCanExecuteChanged();
-                _startDownload.InvokeCanExecuteChanged();
-                _listFormats.InvokeCanExecuteChanged();
-                if (!_updated && !String.IsNullOrEmpty(_settings.DlPath) && _settings.AutoUpdateDl)
+                if (!_updated && !string.IsNullOrEmpty(_settings.DlPath) && _settings.AutoUpdateDl)
                 {
                     UpdateDl();
                 }
@@ -215,56 +212,41 @@ namespace YoutubeDl.Wpf.ViewModels
             dlProcess.Exited += DlProcess_Exited;
         }
 
-        private void UpdateButtons()
-        {
-            _startDownload.InvokeCanExecuteChanged();
-            _listFormats.InvokeCanExecuteChanged();
-            _abortDl.InvokeCanExecuteChanged();
-        }
-
         private void DlProcess_Exited(object? sender, EventArgs e)
         {
             dlProcess.Dispose();
-            FreezeButton = false;
-            DownloadButtonProgressIndeterminate = false;
-            FormatsButtonProgressIndeterminate = false;
-            DownloadButtonProgressPercentageString = "_Download";
-            Application.Current.Dispatcher.Invoke(UpdateButtons);
+            RxApp.MainThreadScheduler.Schedule(() =>
+            {
+                FreezeButton = false;
+                DownloadButtonProgressIndeterminate = false;
+                FormatsButtonProgressIndeterminate = false;
+                DownloadButtonProgressPercentageString = "_Download";
+            });
         }
 
-        private void OnBrowseFolder(object? commandParameter)
+        private void BrowseDownloadFolder()
         {
-            if (commandParameter == null)
-                throw new ArgumentNullException(nameof(commandParameter));
-
-            if (commandParameter is not string parameter)
-                throw new ArgumentException("Command parameter is not a string.", nameof(commandParameter));
-
-            Microsoft.Win32.OpenFileDialog folderDialog = new Microsoft.Win32.OpenFileDialog
+            Microsoft.Win32.OpenFileDialog folderDialog = new()
             {
                 FileName = "Folder Selection.",
                 ValidateNames = false,
                 CheckFileExists = false,
-                CheckPathExists = true
+                CheckPathExists = true,
+                InitialDirectory = DownloadPath,
             };
 
-            if (parameter == "DownloadPath")
-                folderDialog.InitialDirectory = DownloadPath;
-
-            bool? result = folderDialog.ShowDialog();
-
+            var result = folderDialog.ShowDialog();
             if (result == true)
             {
-                if (parameter == "DownloadPath")
-                    DownloadPath = Path.GetDirectoryName(folderDialog.FileName) ?? "";
+                DownloadPath = Path.GetDirectoryName(folderDialog.FileName) ?? "";
             }
         }
 
-        private void OnOpenFolder(object? commandParameter)
+        private void OpenDownloadFolder()
         {
             try
             {
-                Utilities.OpenLink(_downloadPath);
+                Utilities.OpenLink(DownloadPath);
             }
             catch (Exception ex)
             {
@@ -272,11 +254,10 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private void OnStartDownload(object? commandParameter)
+        private void StartDownload()
         {
             FreezeButton = true;
             DownloadButtonProgressIndeterminate = true;
-            UpdateButtons();
 
             outputString = new StringBuilder();
             PrepareDlProcess();
@@ -284,12 +265,12 @@ namespace YoutubeDl.Wpf.ViewModels
             try
             {
                 // make parameter list
-                if (!String.IsNullOrEmpty(_settings.Proxy))
+                if (!string.IsNullOrEmpty(_settings.Proxy))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{_settings.Proxy}");
                 }
-                if (!String.IsNullOrEmpty(_settings.FfmpegPath))
+                if (!string.IsNullOrEmpty(_settings.FfmpegPath))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--ffmpeg-location");
                     dlProcess.StartInfo.ArgumentList.Add($"{_settings.FfmpegPath}");
@@ -350,11 +331,10 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private void OnListFormats(object? commandParameter)
+        private void ListFormats()
         {
             FreezeButton = true;
             FormatsButtonProgressIndeterminate = true;
-            UpdateButtons();
 
             outputString = new StringBuilder();
             PrepareDlProcess();
@@ -362,7 +342,7 @@ namespace YoutubeDl.Wpf.ViewModels
             try
             {
                 // make parameter list
-                if (!String.IsNullOrEmpty(_settings.Proxy))
+                if (!string.IsNullOrEmpty(_settings.Proxy))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{_settings.Proxy}");
@@ -385,7 +365,7 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private void OnAbortDl(object? commandParameter)
+        private void AbortDl()
         {
             try
             {
@@ -407,22 +387,11 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
-        private bool CanOpenFolder(object? commandParameter)
-        {
-            return !String.IsNullOrEmpty(_downloadPath) && Directory.Exists(_downloadPath);
-        }
-
-        private bool CanStartDownload(object? commandParameter)
-        {
-            return !String.IsNullOrEmpty(_link) && !String.IsNullOrEmpty(_container) && !String.IsNullOrEmpty(_format) && !String.IsNullOrEmpty(_settings.DlPath) && !_freezeButton;
-        }
-
         private void UpdateDl()
         {
             FreezeButton = true;
             DownloadButtonProgressIndeterminate = true;
             FormatsButtonProgressIndeterminate = true;
-            UpdateButtons();
 
             outputString = new StringBuilder();
             PrepareDlProcess();
@@ -430,7 +399,7 @@ namespace YoutubeDl.Wpf.ViewModels
             try
             {
                 // make parameter list
-                if (!String.IsNullOrEmpty(_settings.Proxy))
+                if (!string.IsNullOrEmpty(_settings.Proxy))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{_settings.Proxy}");
@@ -454,13 +423,16 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private void DlOutputHandler(object? sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!string.IsNullOrEmpty(outLine.Data))
+            RxApp.MainThreadScheduler.Schedule(() =>
             {
-                ParseDlOutput(outLine.Data);
-                outputString.Append(outLine.Data);
-                outputString.Append(Environment.NewLine);
-                Output = outputString.ToString();
-            }
+                if (!string.IsNullOrEmpty(outLine.Data))
+                {
+                    ParseDlOutput(outLine.Data);
+                    outputString.Append(outLine.Data);
+                    outputString.Append(Environment.NewLine);
+                    Output = outputString.ToString();
+                }
+            });
         }
 
         private void ParseDlOutput(string output)
@@ -468,21 +440,17 @@ namespace YoutubeDl.Wpf.ViewModels
             var parsedStringArray = output.Split(outputSeparators, StringSplitOptions.RemoveEmptyEntries);
             if (parsedStringArray.Length == 4) // valid [download] line
             {
-                var parsedPercentageString = parsedStringArray[0];
-                if (parsedPercentageString.EndsWith('%')) // actual percentage
+                var percentageString = parsedStringArray[0];
+                if (percentageString.EndsWith('%')) // actual percentage
                 {
                     // show percentage on button
-                    DownloadButtonProgressPercentageString = parsedPercentageString;
+                    DownloadButtonProgressPercentageString = percentageString;
                     // get percentage value for progress bar
-                    parsedPercentageString = parsedPercentageString.TrimEnd('%');
-                    try
+                    var percentageNumberString = percentageString.TrimEnd('%');
+                    if (double.TryParse(percentageNumberString, out var percentageNumber))
                     {
-                        DownloadButtonProgressPercentageValue = double.Parse(parsedPercentageString);
+                        DownloadButtonProgressPercentageValue = percentageNumber;
                         DownloadButtonProgressIndeterminate = false;
-                    }
-                    catch
-                    {
-
                     }
                 }
                 // save other info
@@ -492,15 +460,16 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
+        [Reactive]
+        public string DlBinaryPath { get; set; }
+
         public string Link
         {
             get => _link;
             set
             {
                 this.RaiseAndSetIfChanged(ref _link, value);
-                _startDownload.InvokeCanExecuteChanged();
-                _listFormats.InvokeCanExecuteChanged();
-                if (String.IsNullOrEmpty(_settings.DlPath))
+                if (string.IsNullOrEmpty(_settings.DlPath))
                     _snackbarMessageQueue.Enqueue("youtube-dl path is not set. Go to settings and set the path.");
             }
         }
@@ -521,8 +490,6 @@ namespace YoutubeDl.Wpf.ViewModels
                     _settings.Format = _format;
                     EnableFormatSelection = false;
                 }
-                _startDownload.InvokeCanExecuteChanged();
-                _listFormats.InvokeCanExecuteChanged();
                 _settings.Container = _container;
                 PublishSettings();
             }
@@ -536,18 +503,13 @@ namespace YoutubeDl.Wpf.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _format, value);
-                _startDownload.InvokeCanExecuteChanged();
-                _listFormats.InvokeCanExecuteChanged();
                 _settings.Format = _format;
                 PublishSettings();
             }
         }
 
-        public bool EnableFormatSelection
-        {
-            get => _enableFormatSelection;
-            set => this.RaiseAndSetIfChanged(ref _enableFormatSelection, value);
-        }
+        [Reactive]
+        public bool EnableFormatSelection { get; set; }
 
         public bool AddMetadata
         {
@@ -610,65 +572,37 @@ namespace YoutubeDl.Wpf.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _downloadPath, value);
-                _openFolder.InvokeCanExecuteChanged();
                 _settings.DownloadPath = _downloadPath;
                 PublishSettings();
             }
         }
 
-        public string Output
-        {
-            get => _output;
-            set => this.RaiseAndSetIfChanged(ref _output, value);
-        }
+        [Reactive]
+        public string Output { get; set; }
 
-        public bool FreezeButton
-        {
-            get => _freezeButton;
-            set => this.RaiseAndSetIfChanged(ref _freezeButton, value);
-        }
+        [Reactive]
+        public bool FreezeButton { get; set; }
 
-        public bool DownloadButtonProgressIndeterminate
-        {
-            get => _downloadButtonProgressIndeterminate;
-            set => this.RaiseAndSetIfChanged(ref _downloadButtonProgressIndeterminate, value);
-        }
+        [Reactive]
+        public bool DownloadButtonProgressIndeterminate { get; set; }
 
-        public bool FormatsButtonProgressIndeterminate
-        {
-            get => _formatsButtonProgressIndeterminate;
-            set => this.RaiseAndSetIfChanged(ref _formatsButtonProgressIndeterminate, value);
-        }
+        [Reactive]
+        public bool FormatsButtonProgressIndeterminate { get; set; }
 
-        public double DownloadButtonProgressPercentageValue
-        {
-            get => _downloadButtonProgressPercentageValue;
-            set => this.RaiseAndSetIfChanged(ref _downloadButtonProgressPercentageValue, value);
-        }
+        [Reactive]
+        public double DownloadButtonProgressPercentageValue { get; set; }
 
-        public string DownloadButtonProgressPercentageString
-        {
-            get => _downloadButtonProgressPercentageString;
-            set => this.RaiseAndSetIfChanged(ref _downloadButtonProgressPercentageString, value);
-        }
+        [Reactive]
+        public string DownloadButtonProgressPercentageString { get; set; }
 
-        public string FileSizeString
-        {
-            get => _fileSizeString;
-            set => this.RaiseAndSetIfChanged(ref _fileSizeString, value);
-        }
+        [Reactive]
+        public string FileSizeString { get; set; }
 
-        public string DownloadSpeedString
-        {
-            get => _downloadSpeedString;
-            set => this.RaiseAndSetIfChanged(ref _downloadSpeedString, value);
-        }
+        [Reactive]
+        public string DownloadSpeedString { get; set; }
 
-        public string DownloadETAString
-        {
-            get => _downloadETAString;
-            set => this.RaiseAndSetIfChanged(ref _downloadETAString, value);
-        }
+        [Reactive]
+        public string DownloadETAString { get; set; }
     }
 
     /// <summary>
