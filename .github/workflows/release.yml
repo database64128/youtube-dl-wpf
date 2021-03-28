@@ -39,7 +39,8 @@ jobs:
           # cd ../win-arm64/publish
           # 7z a -tzip -mx=9 -mfb=128 ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-arm64.zip .
           # 7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-arm64.7z .
-          cd ../../win-x64/publish
+          # cd ../../win-x64/publish
+          cd ../win-x64/publish
           7z a -tzip -mx=9 -mfb=128 ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-x64.zip .
           7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-x64.7z .
       # Release
