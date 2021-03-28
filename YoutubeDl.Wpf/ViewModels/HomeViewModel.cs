@@ -6,6 +6,7 @@ using ReactiveUI.Validation.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Concurrency;
@@ -20,7 +21,8 @@ namespace YoutubeDl.Wpf.ViewModels
     {
         public HomeViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
-            _snackbarMessageQueue = snackbarMessageQueue ?? throw new ArgumentNullException(nameof(snackbarMessageQueue));
+            _snackbarMessageQueue = snackbarMessageQueue;
+            _settings = new();
 
             DlBinaryPath = "";
             _link = "";
@@ -52,6 +54,8 @@ namespace YoutubeDl.Wpf.ViewModels
                 "ETA",
                 " "
             };
+            outputString = new();
+            PrepareDlProcess();
 
             var canOpenDownloadFolder = this.WhenAnyValue(
                 x => x.DownloadPath,
@@ -134,7 +138,7 @@ namespace YoutubeDl.Wpf.ViewModels
             });
         }
 
-        private SettingsJson _settings = null!;
+        private SettingsJson _settings;
         private bool _updated;
         private readonly SettingsFromHomeEvent settingsFromHomeEvent;
 
@@ -149,8 +153,8 @@ namespace YoutubeDl.Wpf.ViewModels
         private string _downloadPath;
 
         private readonly string[] outputSeparators;
-        private StringBuilder outputString = null!;
-        private Process dlProcess = null!;
+        private readonly StringBuilder outputString;
+        private Process dlProcess;
 
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
 
@@ -166,6 +170,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private void ApplySettings()
         {
             DlBinaryPath = _settings.DlPath;
+            dlProcess.StartInfo.FileName = DlBinaryPath;
             this.RaiseAndSetIfChanged(ref _container, _settings.Container);
             this.RaiseAndSetIfChanged(ref _format, _settings.Format);
             this.RaiseAndSetIfChanged(ref _addMetadata, _settings.AddMetadata);
@@ -198,10 +203,11 @@ namespace YoutubeDl.Wpf.ViewModels
         /// <summary>
         /// Initialize dlProcess with common properties.
         /// </summary>
+        [MemberNotNull(nameof(dlProcess))]
         private void PrepareDlProcess()
         {
-            dlProcess = new Process();
-            dlProcess.StartInfo.FileName = _settings.DlPath;
+            dlProcess = new();
+            dlProcess.StartInfo.FileName = DlBinaryPath;
             dlProcess.StartInfo.CreateNoWindow = true;
             dlProcess.StartInfo.UseShellExecute = false;
             dlProcess.StartInfo.RedirectStandardError = true;
@@ -216,7 +222,8 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private void DlProcess_Exited(object? sender, EventArgs e)
         {
-            dlProcess.Dispose();
+            dlProcess.CancelErrorRead();
+            dlProcess.CancelOutputRead();
             RxApp.MainThreadScheduler.Schedule(() =>
             {
                 FreezeButton = false;
@@ -261,8 +268,8 @@ namespace YoutubeDl.Wpf.ViewModels
             FreezeButton = true;
             DownloadButtonProgressIndeterminate = true;
 
-            outputString = new StringBuilder();
-            PrepareDlProcess();
+            outputString.Clear();
+            dlProcess.StartInfo.ArgumentList.Clear();
 
             try
             {
@@ -338,8 +345,8 @@ namespace YoutubeDl.Wpf.ViewModels
             FreezeButton = true;
             FormatsButtonProgressIndeterminate = true;
 
-            outputString = new StringBuilder();
-            PrepareDlProcess();
+            outputString.Clear();
+            dlProcess.StartInfo.ArgumentList.Clear();
 
             try
             {
@@ -395,8 +402,8 @@ namespace YoutubeDl.Wpf.ViewModels
             DownloadButtonProgressIndeterminate = true;
             FormatsButtonProgressIndeterminate = true;
 
-            outputString = new StringBuilder();
-            PrepareDlProcess();
+            outputString.Clear();
+            dlProcess.StartInfo.ArgumentList.Clear();
 
             try
             {
