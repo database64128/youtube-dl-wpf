@@ -206,6 +206,8 @@ namespace YoutubeDl.Wpf.ViewModels
             dlProcess.StartInfo.UseShellExecute = false;
             dlProcess.StartInfo.RedirectStandardError = true;
             dlProcess.StartInfo.RedirectStandardOutput = true;
+            dlProcess.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+            dlProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             dlProcess.EnableRaisingEvents = true;
             dlProcess.ErrorDataReceived += DlOutputHandler;
             dlProcess.OutputDataReceived += DlOutputHandler;
