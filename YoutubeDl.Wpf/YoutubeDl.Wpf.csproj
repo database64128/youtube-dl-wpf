@@ -3,13 +3,11 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
-    <RootNamespace>YoutubeDl.Wpf</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Product>Cube YouTube Downloader</Product>
-    <Company>database64128</Company>
     <Authors>database64128</Authors>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <ApplicationIcon>CubeYouTubeDownloader.ico</ApplicationIcon>
     <Description>A simple GUI wrapper for https://github.com/ytdl-org/youtube-dl.</Description>
     <Copyright>© 2021 database64128</Copyright>
@@ -20,6 +18,7 @@
     <RepositoryType>Public</RepositoryType>
     <Nullable>enable</Nullable>
     <AssemblyName>youtube-dl-wpf</AssemblyName>
+    <PackageId>YoutubeDl.Wpf</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
