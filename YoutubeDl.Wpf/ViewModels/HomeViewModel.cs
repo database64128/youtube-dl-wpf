@@ -28,7 +28,6 @@ namespace YoutubeDl.Wpf.ViewModels
             _link = "";
             _container = "Auto";
             _format = "Auto";
-            EnableFormatSelection = true;
             _addMetadata = true;
             _downloadThumbnail = true;
             _downloadSubtitles = true;
@@ -103,30 +102,32 @@ namespace YoutubeDl.Wpf.ViewModels
                 "worstvideo",
                 "bestaudio",
                 "worstaudio",
-                "YouTube 4K 60fps HDR webm (337+251)",
-                "YouTube 4K 60fps webm (315+251)",
-                "YouTube 4K 60fps AV1 + AAC (401+140)",
-                "YouTube 4K webm (313+251)",
-                "YouTube 4K AV1 + AAC (401+140)",
-                "YouTube 1440p60 HDR webm (336+251)",
-                "YouTube 1440p60 webm (308+251)",
-                "YouTube 1440p60 AV1 + AAC (400+140)",
-                "YouTube 1440p webm (271+251)",
-                "YouTube 1440p AV1 + AAC (400+140)",
-                "YouTube 1080p60 webm (303+251)",
-                "YouTube 1080p60 AV1 + AAC (399+140)",
-                "YouTube 1080p60 AVC + AAC (299+140)",
-                "YouTube 1080p webm (248+251)",
-                "YouTube 1080p AV1 + AAC (399+140)",
-                "YouTube 1080p AVC + AAC (137+140)",
-                "YouTube 720p60 webm (302+251)",
-                "YouTube 720p60 AV1 + AAC (398+140)",
-                "YouTube 720p60 AVC + AAC (298+140)",
-                "YouTube 720p webm (247+251)",
-                "YouTube 720p AV1 + AAC (398+140)",
+                "YouTube 4K 60fps HDR AV1 + Opus WebM (701+251)",
+                "YouTube 4K 60fps HDR VP9 + Opus WebM (337+251)",
+                "YouTube 4K 60fps AV1 + Opus WebM (401+251)",
+                "YouTube 4K 60fps VP9 + Opus WebM (315+251)",
+                "YouTube 4K AV1 + Opus WebM (401+251)",
+                "YouTube 4K VP9 + Opus WebM (313+251)",
+                "YouTube 1440p60 HDR AV1 + Opus WebM (700+251)",
+                "YouTube 1440p60 HDR VP9 + Opus WebM (336+251)",
+                "YouTube 1440p60 AV1 + Opus WebM (400+251)",
+                "YouTube 1440p60 VP9 + Opus WebM (308+251)",
+                "YouTube 1440p AV1 + Opus WebM (400+251)",
+                "YouTube 1440p VP9 + Opus WebM (271+251)",
+                "YouTube 1080p60 AV1 + Opus WebM (399+251)",
+                "YouTube 1080p60 VP9 + Opus WebM (303+251)",
+                "YouTube 1080p60 AVC + AAC MP4 (299+140)",
+                "YouTube 1080p AV1 + Opus WebM (399+251)",
+                "YouTube 1080p VP9 + Opus WebM (248+251)",
+                "YouTube 1080p AVC + AAC MP4 (137+140)",
+                "YouTube 720p60 AV1 + Opus WebM (398+251)",
+                "YouTube 720p60 VP9 + Opus WebM (302+251)",
+                "YouTube 720p60 AVC + AAC MP4 (298+140)",
+                "YouTube 720p AV1 + Opus WebM (398+251)",
+                "YouTube 720p VP9 + Opus WebM (247+251)",
                 "YouTube 720p AVC + AAC (136+140)",
                 "1080p",
-                "720p"
+                "720p",
             };
 
             settingsFromHomeEvent = EventAggregator.Instance.GetEvent<SettingsFromHomeEvent>();
@@ -179,11 +180,6 @@ namespace YoutubeDl.Wpf.ViewModels
             this.RaiseAndSetIfChanged(ref _downloadPlaylist, _settings.DownloadPlaylist);
             this.RaiseAndSetIfChanged(ref _useCustomPath, _settings.UseCustomPath);
             this.RaiseAndSetIfChanged(ref _downloadPath, _settings.DownloadPath);
-
-            if (_container == "Auto")
-                EnableFormatSelection = true;
-            else
-                EnableFormatSelection = false;
 
             RxApp.MainThreadScheduler.Schedule(() =>
             {
@@ -279,37 +275,54 @@ namespace YoutubeDl.Wpf.ViewModels
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
                     dlProcess.StartInfo.ArgumentList.Add($"{_settings.Proxy}");
                 }
+
                 if (!string.IsNullOrEmpty(_settings.FfmpegPath))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--ffmpeg-location");
                     dlProcess.StartInfo.ArgumentList.Add($"{_settings.FfmpegPath}");
                 }
-                if (_container != "Auto")
+
+                if (_format != "Auto") // custom format
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-f");
-                    dlProcess.StartInfo.ArgumentList.Add($"{_container}");
-                }
-                else if (_format != "Auto")
-                {
-                    dlProcess.StartInfo.ArgumentList.Add("-f");
+
                     if (_format.Contains("YouTube "))
                     {
-                        dlProcess.StartInfo.ArgumentList.Add($"{_format.Split(new char[] { '(', ')' })[1]}");
+                        var parsedFormat = _format.Split(new char[] { '(', ')' });
+                        if (parsedFormat.Length >= 2)
+                            dlProcess.StartInfo.ArgumentList.Add($"{parsedFormat[1]}");
+                        else
+                            dlProcess.StartInfo.ArgumentList.Add($"{_format}");
                     }
                     else
                     {
                         dlProcess.StartInfo.ArgumentList.Add($"{_format}");
                     }
+
+                    if (_container != "Auto") // merge into target container
+                    {
+                        dlProcess.StartInfo.ArgumentList.Add("--merge-output-format");
+                        dlProcess.StartInfo.ArgumentList.Add($"{_container}");
+                    }
                 }
+                else if (_container != "Auto") // custom container
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("-f");
+                    dlProcess.StartInfo.ArgumentList.Add($"{_container}");
+                }
+
                 if (_addMetadata)
                     dlProcess.StartInfo.ArgumentList.Add("--add-metadata");
+
                 if (_downloadThumbnail)
                     dlProcess.StartInfo.ArgumentList.Add("--embed-thumbnail");
+
                 if (_downloadSubtitles)
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--write-sub");
                     dlProcess.StartInfo.ArgumentList.Add("--embed-subs");
                 }
+
                 if (_downloadPlaylist)
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--yes-playlist");
@@ -318,12 +331,15 @@ namespace YoutubeDl.Wpf.ViewModels
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--no-playlist");
                 }
+
                 if (_useCustomPath)
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-o");
                     dlProcess.StartInfo.ArgumentList.Add($@"{_downloadPath}\%(title)s-%(id)s.%(ext)s");
                 }
+
                 dlProcess.StartInfo.ArgumentList.Add($"{_link}");
+
                 // start download
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
@@ -491,14 +507,6 @@ namespace YoutubeDl.Wpf.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _container, value);
-                if (_container == "Auto")
-                    EnableFormatSelection = true;
-                else
-                {
-                    this.RaiseAndSetIfChanged(ref _format, "Auto", nameof(Format));
-                    _settings.Format = _format;
-                    EnableFormatSelection = false;
-                }
                 _settings.Container = _container;
                 PublishSettings();
             }
@@ -512,13 +520,14 @@ namespace YoutubeDl.Wpf.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _format, value);
+                if (_format.Contains("AV1 + Opus WebM"))
+                {
+                    Container = "webm";
+                }
                 _settings.Format = _format;
                 PublishSettings();
             }
         }
-
-        [Reactive]
-        public bool EnableFormatSelection { get; set; }
 
         public bool AddMetadata
         {

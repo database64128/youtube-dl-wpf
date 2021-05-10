@@ -81,10 +81,6 @@ namespace YoutubeDl.Wpf.Views
                     viewModel => viewModel.Format,
                     view => view.formatComboBox.Text)
                     .DisposeWith(disposables);
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.EnableFormatSelection,
-                    view => view.formatComboBox.IsEnabled)
-                    .DisposeWith(disposables);
 
                 // Options
                 this.Bind(ViewModel,
