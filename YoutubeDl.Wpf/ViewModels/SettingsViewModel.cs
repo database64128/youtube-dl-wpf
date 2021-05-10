@@ -7,7 +7,6 @@ using ReactiveUI.Validation.Helpers;
 using System;
 using System.IO;
 using System.Reactive;
-using System.Text.Json;
 using System.Threading.Tasks;
 using YoutubeDl.Wpf.Models;
 
@@ -138,29 +137,11 @@ namespace YoutubeDl.Wpf.ViewModels
         /// <returns></returns>
         private async Task LoadSettingsAsync()
         {
-            if (!File.Exists("Settings.json"))
-            {
-                _settings = new Settings();
-            }
-            else
-            {
-                FileStream _settingsJson = null!;
-                try
-                {
-                    _settingsJson = new FileStream("Settings.json", FileMode.Open);
-                    _settings = await JsonSerializer.DeserializeAsync<Settings>(_settingsJson) ?? new();
-                }
-                catch
-                {
-                    _settings = new Settings();
-                    _snackbarMessageQueue.Enqueue("Failed to load settings. All settings have been reset.");
-                }
-                finally
-                {
-                    if (_settingsJson != null)
-                        await _settingsJson.DisposeAsync();
-                }
-            }
+            (var settings, var errMsg) = await Settings.LoadSettingsAsync();
+            if (errMsg is not null)
+                _snackbarMessageQueue.Enqueue(errMsg);
+
+            _settings = settings;
         }
 
         /// <summary>
@@ -211,25 +192,9 @@ namespace YoutubeDl.Wpf.ViewModels
         /// <returns></returns>
         private async Task SaveSettingsAsync()
         {
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-            FileStream _settingsJson = null!;
-            try
-            {
-                _settingsJson = new FileStream("Settings.json", FileMode.Create);
-                await JsonSerializer.SerializeAsync(_settingsJson, _settings, jsonSerializerOptions);
-            }
-            catch
-            {
-                _snackbarMessageQueue.Enqueue("Failed to save settings. Please check the executable directory's permissions.");
-            }
-            finally
-            {
-                if (_settingsJson != null)
-                    await _settingsJson.DisposeAsync();
-            }
+            var errMsg = await Settings.SaveSettingsAsync(_settings);
+            if (errMsg is not null)
+                _snackbarMessageQueue.Enqueue(errMsg);
         }
 
         [Reactive]
