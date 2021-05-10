@@ -139,7 +139,7 @@ namespace YoutubeDl.Wpf.ViewModels
             });
         }
 
-        private SettingsJson _settings;
+        private Settings _settings;
         private bool _updated;
         private readonly SettingsFromHomeEvent settingsFromHomeEvent;
 
@@ -626,7 +626,7 @@ namespace YoutubeDl.Wpf.ViewModels
     /// <summary>
     /// Raised by HomeViewModel when settings are changed.
     /// </summary>
-    public class SettingsFromHomeEvent : EventBase<SettingsJson>
+    public class SettingsFromHomeEvent : EventBase<Settings>
     {
     }
 }

@@ -1,10 +1,12 @@
-﻿namespace YoutubeDl.Wpf.Models
+﻿using MaterialDesignThemes.Wpf;
+
+namespace YoutubeDl.Wpf.Models
 {
-    public class SettingsJson
+    public class Settings
     {
-        public SettingsJson()
+        public Settings()
         {
-            AppColorMode = ColorMode.System;
+            AppColorMode = BaseTheme.Inherit;
             AutoUpdateDl = true;
             DlPath = "";
             FfmpegPath = "";
@@ -19,8 +21,8 @@
             UseCustomPath = false;
             DownloadPath = "";
         }
-        
-        public ColorMode AppColorMode { get; set; }
+
+        public BaseTheme AppColorMode { get; set; }
         public bool AutoUpdateDl { get; set; }
         public string DlPath { get; set; }
         public string FfmpegPath { get; set; }
@@ -34,12 +36,5 @@
         public bool DownloadPlaylist { get; set; }
         public bool UseCustomPath { get; set; }
         public string DownloadPath { get; set; }
-    }
-
-    public enum ColorMode
-    {
-        System,
-        Light,
-        Dark
     }
 }

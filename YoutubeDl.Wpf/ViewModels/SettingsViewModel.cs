@@ -46,9 +46,9 @@ namespace YoutubeDl.Wpf.ViewModels
                                                                                                                  || uri.Scheme == "https")),
                 "Invalid proxy URL.");
 
-            ChangeColorModeToSystem = ReactiveCommand.Create(() => OnChangeColorMode(ColorMode.System));
-            ChangeColorModeToLight = ReactiveCommand.Create(() => OnChangeColorMode(ColorMode.Light));
-            ChangeColorModeToDark = ReactiveCommand.Create(() => OnChangeColorMode(ColorMode.Dark));
+            ChangeColorModeToSystem = ReactiveCommand.Create(() => OnChangeColorMode(BaseTheme.Inherit));
+            ChangeColorModeToLight = ReactiveCommand.Create(() => OnChangeColorMode(BaseTheme.Light));
+            ChangeColorModeToDark = ReactiveCommand.Create(() => OnChangeColorMode(BaseTheme.Dark));
             BrowseDlBinaryCommand = ReactiveCommand.Create(BrowseDlBinary);
             BrowseFfmpegBinaryCommand = ReactiveCommand.Create(BrowseFfmpegBinary);
 
@@ -63,7 +63,7 @@ namespace YoutubeDl.Wpf.ViewModels
             Task.Run(LoadSettingsAsync).ContinueWith(x => ApplySettings());
         }
 
-        private SettingsJson _settings = null!;
+        private Settings _settings = null!;
         private readonly SettingsChangedEvent settingsChangedEvent;
 
         private bool _autoUpdateDl; // auto update youtube-dl by default
@@ -80,34 +80,33 @@ namespace YoutubeDl.Wpf.ViewModels
         public ReactiveCommand<Unit, Unit> BrowseDlBinaryCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseFfmpegBinaryCommand { get; }
 
-        private void OnChangeColorMode(ColorMode colorMode)
+        private void OnChangeColorMode(BaseTheme colorMode)
         {
-            ITheme theme = _paletteHelper.GetTheme();
-            switch (colorMode)
+            // Get current theme.
+            var theme = _paletteHelper.GetTheme();
+
+            // Get current system theme if required.
+            var targetColorMode = colorMode switch
             {
-                case ColorMode.System:
-                    var systemTheme = Theme.GetSystemTheme();
-                    switch (systemTheme)
-                    {
-                        case BaseTheme.Dark:
-                            theme.SetBaseTheme(Theme.Dark);
-                            break;
-                        case BaseTheme.Light:
-                        default:
-                            theme.SetBaseTheme(Theme.Light);
-                            break;
-                    }
-                    break;
-                case ColorMode.Light:
+                BaseTheme.Inherit => Theme.GetSystemTheme() ?? BaseTheme.Light,
+                _ => colorMode,
+            };
+
+            // Apply base theme
+            switch (targetColorMode)
+            {
+                case BaseTheme.Light:
                     theme.SetBaseTheme(Theme.Light);
                     break;
-                case ColorMode.Dark:
+                case BaseTheme.Dark:
                     theme.SetBaseTheme(Theme.Dark);
                     break;
-                default:
-                    throw new ArgumentException("Invalid AppColorMode");
             }
+
+            // Apply theme
             _paletteHelper.SetTheme(theme);
+
+            // Save setting if changed.
             if (_settings.AppColorMode != colorMode)
             {
                 _settings.AppColorMode = colorMode;
@@ -128,7 +127,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 Filter = "Executables (.exe)|*.exe",
                 InitialDirectory = Path.GetDirectoryName(path),
             };
-            
+
             var result = openFileDialog.ShowDialog();
             return result == true ? openFileDialog.FileName : path;
         }
@@ -141,7 +140,7 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             if (!File.Exists("Settings.json"))
             {
-                _settings = new SettingsJson();
+                _settings = new Settings();
             }
             else
             {
@@ -149,11 +148,11 @@ namespace YoutubeDl.Wpf.ViewModels
                 try
                 {
                     _settingsJson = new FileStream("Settings.json", FileMode.Open);
-                    _settings = await JsonSerializer.DeserializeAsync<SettingsJson>(_settingsJson) ?? new();
+                    _settings = await JsonSerializer.DeserializeAsync<Settings>(_settingsJson) ?? new();
                 }
                 catch
                 {
-                    _settings = new SettingsJson();
+                    _settings = new Settings();
                     _snackbarMessageQueue.Enqueue("Failed to load settings. All settings have been reset.");
                 }
                 finally
@@ -172,25 +171,25 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             switch (_settings.AppColorMode)
             {
-                case ColorMode.System:
+                case BaseTheme.Inherit:
                     FollowOSColorMode = true;
                     LightMode = false;
                     DarkMode = false;
                     break;
-                case ColorMode.Light:
+                case BaseTheme.Light:
                     FollowOSColorMode = false;
                     LightMode = true;
                     DarkMode = false;
                     break;
-                case ColorMode.Dark:
+                case BaseTheme.Dark:
                     FollowOSColorMode = false;
                     LightMode = false;
                     DarkMode = true;
                     break;
-                default:
-                    throw new ArgumentException("Invalid AppColorMode");
             }
+
             OnChangeColorMode(_settings.AppColorMode);
+
             this.RaiseAndSetIfChanged(ref _autoUpdateDl, _settings.AutoUpdateDl);
             this.RaiseAndSetIfChanged(ref _dlPath, _settings.DlPath);
             this.RaiseAndSetIfChanged(ref _ffmpegPath, _settings.FfmpegPath);
@@ -293,7 +292,7 @@ namespace YoutubeDl.Wpf.ViewModels
     /// <summary>
     /// Raised by SettingsViewModel when settings are loaded or changed in SettingsViewModel.
     /// </summary>
-    public class SettingsChangedEvent : EventBase<SettingsJson>
+    public class SettingsChangedEvent : EventBase<Settings>
     {
     }
 }
