@@ -17,65 +17,34 @@
     TextOptions.TextRenderingMode="Auto"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{materialDesign:MaterialDesignFont}"
-    Title="Cube YouTube Downloader" Height="680" Width="960" MinHeight="540" MinWidth="620">
+    Title="Cube YouTube Downloader" Height="720" Width="896" MinHeight="540" MinWidth="620">
     <materialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
-        <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
-            <materialDesign:DrawerHost.LeftDrawerContent>
-                <DockPanel MinWidth="220">
-                    <ToggleButton
-                        x:Name="DrawerCloseButton"
-                        Style="{StaticResource MaterialDesignHamburgerToggleButton}"
-                        DockPanel.Dock="Top"
-                        HorizontalAlignment="Right"
-                        Margin="16"
-                        IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
-                    <ListBox
-                        x:Name="DrawerItemsListBox"
-                        Margin="0 16 0 16"
-                        SelectedIndex="0"
-                        PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp">
-                        <ListBox.Resources>
-                            <Style TargetType="ScrollBar" BasedOn="{StaticResource MaterialDesignScrollBarMinimal}"/>
-                        </ListBox.Resources>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate DataType="DrawerItem">
-                                <TextBlock Text="{Binding Name}" Margin="32 0 32 0" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </DockPanel>
-            </materialDesign:DrawerHost.LeftDrawerContent>
-            <DockPanel>
-                <materialDesign:ColorZone
-                    Mode="PrimaryMid"
-                    materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                    Padding="16"
-                    DockPanel.Dock="Top">
-                    <DockPanel>
-                        <ToggleButton
-                            Style="{DynamicResource MaterialDesignHamburgerToggleButton}"
-                            IsChecked="False"
-                            x:Name="MenuToggleButton"/>
-                        <materialDesign:PopupBox
-                            DockPanel.Dock="Right"
-                            PlacementMode="BottomAndAlignRightEdges">
-                            <StackPanel>
-                                <Button x:Name="aboutButton" Content="About"/>
-                            </StackPanel>
-                        </materialDesign:PopupBox>
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="22">
-                            Cube YouTube Downloader
-                        </TextBlock>
-                    </DockPanel>
-                </materialDesign:ColorZone>
-                <Grid>
-                    <ContentControl x:Name="MainContentControl" />
-                    <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="MainSnackbar" />
-                </Grid>
-            </DockPanel>
-        </materialDesign:DrawerHost>
+        <Grid>
+            <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}">
+                <TabItem x:Name="dashboardTabItem"
+                         Style="{StaticResource MaterialDesignNavigationRailTabItem}"
+                         Height="56"
+                         Width="56">
+                    <TabItem.Header>
+                        <materialDesign:PackIcon
+                            Kind="Download"
+                            Width="24"
+                            Height="24" />
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem x:Name="settingsTabItem"
+                         Style="{StaticResource MaterialDesignNavigationRailTabItem}"
+                         Height="56"
+                         Width="56">
+                    <TabItem.Header>
+                        <materialDesign:PackIcon
+                            Kind="SettingsOutline"
+                            Width="24"
+                            Height="24" />
+                    </TabItem.Header>
+                </TabItem>
+            </TabControl>
+            <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="MainSnackbar" />
+        </Grid>
     </materialDesign:DialogHost>
 </reactiveui:ReactiveWindow>

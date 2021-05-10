@@ -1,6 +1,8 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using System.Reactive.Disposables;
+using System.Windows.Navigation;
+using YoutubeDl.Wpf.Utils;
 using YoutubeDl.Wpf.ViewModels;
 
 namespace YoutubeDl.Wpf.Views
@@ -49,6 +51,11 @@ namespace YoutubeDl.Wpf.Views
                     view => view.proxyTextBox.Text)
                     .DisposeWith(disposables);
 
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.Version,
+                    view => view.versionTextBlock.Text)
+                    .DisposeWith(disposables);
+
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.ChangeColorModeToSystem,
                     view => view.systemColorModeRadioButton)
@@ -74,5 +81,10 @@ namespace YoutubeDl.Wpf.Views
         }
 
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            WpfHelper.OpenLink(e.Uri.AbsoluteUri);
+        }
     }
 }

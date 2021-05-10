@@ -7,6 +7,7 @@ using ReactiveUI.Validation.Helpers;
 using System;
 using System.IO;
 using System.Reactive;
+using System.Reflection;
 using System.Threading.Tasks;
 using YoutubeDl.Wpf.Models;
 
@@ -25,6 +26,8 @@ namespace YoutubeDl.Wpf.ViewModels
             _dlPath = "";
             _ffmpegPath = "";
             _proxy = "";
+
+            Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
 
             _paletteHelper = new PaletteHelper();
 
@@ -252,6 +255,8 @@ namespace YoutubeDl.Wpf.ViewModels
                 PublishSettings();
             }
         }
+
+        public string Version { get; }
     }
 
     /// <summary>

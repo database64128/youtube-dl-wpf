@@ -10,8 +10,8 @@
     xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodels:HomeViewModel}"
-    d:DesignHeight="680" d:DesignWidth="960">
-    <Grid Margin="24">
+    d:DesignHeight="720" d:DesignWidth="840">
+    <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -21,64 +21,73 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Margin="8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Start your download</TextBlock>
+
+        <TextBlock Grid.Row="0"
+                   Margin="8 0 8 8"
+                   Style="{StaticResource MaterialDesignHeadline5TextBlock}">
+            Start your download
+        </TextBlock>
+
         <ScrollViewer Grid.Row="1"
                       materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                           Grid.Row="0"
+                <TextBlock Grid.Row="0"
                            Grid.Column="0"
+                           Margin="8"
                            VerticalAlignment="Center"
-                           Margin="8">
+                           Style="{StaticResource MaterialDesignSubtitle1TextBlock}">
                     Video Link
                 </TextBlock>
                 <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-                    <TextBox
-                        x:Name="linkTextBox"
-                        materialDesign:HintAssist.Hint="e.g. https://www.youtube.com/watch?v=b2390GAm4d0"
-                        Margin="8"
-                        Width="384"/>
-                    <Button
-                        x:Name="downloadButton"
-                        Margin="8 0 8 0"/>
-                    <Button
-                        x:Name="listFormatsButton"
-                        Margin="8 0 8 0"
-                        Style="{StaticResource MaterialDesignRaisedAccentButton}"
-                        Foreground="White"
-                        Content="_List Formats"/>
-                    <Button
-                        x:Name="abortButton"
-                        Margin="8 0 8 0"
-                        Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                        Background="Red"
-                        BorderBrush="Red"
-                        Foreground="White"
-                        Content="_Abort"/>
+                    <TextBox x:Name="linkTextBox"
+                             Margin="4"
+                             Width="384"
+                             VerticalAlignment="Center"
+                             materialDesign:HintAssist.Hint="e.g. https://www.youtube.com/watch?v=b2390GAm4d0"/>
+                    <Button x:Name="downloadButton"
+                            Margin="4"/>
+                    <Button x:Name="listFormatsButton"
+                            Margin="4"
+                            Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                            Foreground="White"
+                            Content="_List Formats"/>
+                    <Button x:Name="abortButton"
+                            Margin="4"
+                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                            Background="Red"
+                            BorderBrush="Red"
+                            Foreground="White"
+                            Content="_Abort"/>
                 </StackPanel>
 
-                <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Grid.Row="1" Grid.Column="0" Margin="8" VerticalAlignment="Center">Options</TextBlock>
+                <TextBlock Grid.Row="1"
+                           Grid.Column="0"
+                           Margin="8"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignSubtitle1TextBlock}">
+                    Options
+                </TextBlock>
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
-                    <TextBlock VerticalAlignment="Center" Margin="8">Container</TextBlock>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Container</TextBlock>
                     <ComboBox x:Name="containerComboBox"
                               IsEditable="True"
                               IsReadOnly="False"
                               IsTextSearchCaseSensitive="True"
                               StaysOpenOnEdit="True"
-                              Margin="0 8 8 8">
+                              Margin="4">
                         <ComboBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <VirtualizingStackPanel />
@@ -90,12 +99,12 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <TextBlock VerticalAlignment="Center" Margin="8">Format</TextBlock>
+                    <TextBlock VerticalAlignment="Center" Margin="8 4 4 4">Format</TextBlock>
                     <ComboBox x:Name="formatComboBox"
                               IsEditable="True"
                               IsReadOnly="False"
                               StaysOpenOnEdit="True"
-                              Margin="0 8 8 8">
+                              Margin="4">
                         <ComboBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <VirtualizingStackPanel />
@@ -109,46 +118,45 @@
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
-                    <ToggleButton
-                        x:Name="metadataToggle"
-                        Margin="8"/>
-                    <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Add Metadata</TextBlock>
-                    <ToggleButton
-                        x:Name="thumbnailToggle"
-                        Margin="8"/>
-                    <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Thumbnail</TextBlock>
-                    <ToggleButton
-                        x:Name="subtitlesToggle"
-                        Margin="8"/>
-                    <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Subtitles</TextBlock>
-                    <ToggleButton
-                        x:Name="playlistToggle"
-                        Margin="8"/>
-                    <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Download Playlist</TextBlock>
+                    <ToggleButton x:Name="metadataToggle"
+                                  Margin="4"/>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Add Metadata</TextBlock>
+                    <ToggleButton x:Name="thumbnailToggle"
+                                  Margin="8 4 4 4"/>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Download Thumbnail</TextBlock>
+                    <ToggleButton x:Name="subtitlesToggle"
+                                  Margin="8 4 4 4"/>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Download Subtitles</TextBlock>
+                    <ToggleButton x:Name="playlistToggle"
+                                  Margin="8 4 4 4"/>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Download Playlist</TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
-                    <ToggleButton
-                        x:Name="pathToggle"
-                        Margin="8"/>
-                    <TextBlock VerticalAlignment="Center" Margin="0,8,8,8">Custom Download Path</TextBlock>
-                    <TextBox
-                        x:Name="pathTextBox"
-                        Margin="8,8,1,8"
-                        Width="384"/>
-                    <Button
-                        x:Name="browseButton"
-                        Margin="1,0,1,0"
-                        Style="{StaticResource MaterialDesignFlatButton}"
-                        Content="Browse"/>
-                    <Button
-                        x:Name="openFolderButton"
-                        Margin="1,0,1,0"
-                        Style="{StaticResource MaterialDesignFlatButton}"
-                        Content="Open Folder"/>
+                    <ToggleButton x:Name="pathToggle"
+                                  Margin="4"/>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Custom Download Path</TextBlock>
+                    <TextBox x:Name="pathTextBox"
+                             Margin="4"
+                             Width="300"
+                             VerticalAlignment="Center"/>
+                    <Button x:Name="browseButton"
+                            Margin="4"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Content="Browse"/>
+                    <Button x:Name="openFolderButton"
+                            Margin="4"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Content="Open Folder"/>
                 </StackPanel>
             </Grid>
         </ScrollViewer>
-        <TextBlock Grid.Row="2" Margin="8,20,8,8" Style="{StaticResource MaterialDesignHeadline5TextBlock}">Results</TextBlock>
+
+        <TextBlock Grid.Row="2"
+                   Margin="8 20 8 8"
+                   Style="{StaticResource MaterialDesignHeadline5TextBlock}">
+            Results
+        </TextBlock>
+
         <TextBox
             Grid.Row="3"
             x:Name="resultTextBox"
