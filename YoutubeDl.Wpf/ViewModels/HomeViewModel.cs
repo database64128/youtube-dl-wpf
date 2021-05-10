@@ -12,8 +12,8 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Text;
 using System.Threading.Tasks;
-using YoutubeDl.Wpf.Behaviors;
 using YoutubeDl.Wpf.Models;
+using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
@@ -251,7 +251,7 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             try
             {
-                Utilities.OpenLink(DownloadPath);
+                WpfHelper.OpenLink(DownloadPath);
             }
             catch (Exception ex)
             {

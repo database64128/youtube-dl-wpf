@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Navigation;
-using YoutubeDl.Wpf.Behaviors;
+using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Views
 {
@@ -16,7 +16,7 @@ namespace YoutubeDl.Wpf.Views
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Utilities.OpenLink(e.Uri.AbsoluteUri);
+            WpfHelper.OpenLink(e.Uri.AbsoluteUri);
         }
     }
 }
