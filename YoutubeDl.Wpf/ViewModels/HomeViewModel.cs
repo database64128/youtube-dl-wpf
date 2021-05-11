@@ -226,16 +226,12 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private void StartDownload()
         {
-            FreezeButton = true;
-            DownloadButtonProgressIndeterminate = true;
-
             outputString.Clear();
             dlProcess.StartInfo.FileName = Settings.DlPath;
             dlProcess.StartInfo.ArgumentList.Clear();
 
             try
             {
-                // make parameter list
                 if (!string.IsNullOrEmpty(Settings.Proxy))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
@@ -306,10 +302,12 @@ namespace YoutubeDl.Wpf.ViewModels
 
                 dlProcess.StartInfo.ArgumentList.Add($"{Link}");
 
-                // start download
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
                 dlProcess.BeginOutputReadLine();
+
+                FreezeButton = true;
+                DownloadButtonProgressIndeterminate = true;
             }
             catch (Exception ex)
             {
@@ -324,16 +322,12 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private void ListFormats()
         {
-            FreezeButton = true;
-            FormatsButtonProgressIndeterminate = true;
-
             outputString.Clear();
             dlProcess.StartInfo.FileName = Settings.DlPath;
             dlProcess.StartInfo.ArgumentList.Clear();
 
             try
             {
-                // make parameter list
                 if (!string.IsNullOrEmpty(Settings.Proxy))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
@@ -342,10 +336,12 @@ namespace YoutubeDl.Wpf.ViewModels
                 dlProcess.StartInfo.ArgumentList.Add($"-F");
                 dlProcess.StartInfo.ArgumentList.Add($"{Link}");
 
-                // start listing
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
                 dlProcess.BeginOutputReadLine();
+
+                FreezeButton = true;
+                FormatsButtonProgressIndeterminate = true;
             }
             catch (Exception ex)
             {
@@ -379,17 +375,12 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private void UpdateDl()
         {
-            FreezeButton = true;
-            DownloadButtonProgressIndeterminate = true;
-            FormatsButtonProgressIndeterminate = true;
-
             outputString.Clear();
             dlProcess.StartInfo.FileName = Settings.DlPath;
             dlProcess.StartInfo.ArgumentList.Clear();
 
             try
             {
-                // make parameter list
                 if (!string.IsNullOrEmpty(Settings.Proxy))
                 {
                     dlProcess.StartInfo.ArgumentList.Add("--proxy");
@@ -397,10 +388,13 @@ namespace YoutubeDl.Wpf.ViewModels
                 }
                 dlProcess.StartInfo.ArgumentList.Add($"-U");
 
-                // start the update
                 dlProcess.Start();
                 dlProcess.BeginErrorReadLine();
                 dlProcess.BeginOutputReadLine();
+
+                FreezeButton = true;
+                DownloadButtonProgressIndeterminate = true;
+                FormatsButtonProgressIndeterminate = true;
             }
             catch (Exception ex)
             {
