@@ -42,11 +42,11 @@ namespace YoutubeDl.Wpf.Models
         /// </returns>
         public static async Task<(Settings settings, string? errMsg)> LoadSettingsAsync(CancellationToken cancellationToken = default)
         {
-            var (settings, errMsg) = await FileHelper.LoadJsonAsync<Settings>("Settings.json", FileHelper.commonJsonDeserializerOptions, cancellationToken);
+            var (settings, errMsg) = await FileHelper.LoadJsonAsync<Settings>("Settings.json", FileHelper.commonJsonDeserializerOptions, cancellationToken).ConfigureAwait(false);
             if (errMsg is null && settings.Version != DefaultVersion)
             {
                 settings.UpdateSettings();
-                errMsg = await SaveSettingsAsync(settings, cancellationToken);
+                errMsg = await SaveSettingsAsync(settings, cancellationToken).ConfigureAwait(false);
             }
             return (settings, errMsg);
         }

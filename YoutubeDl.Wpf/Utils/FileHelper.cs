@@ -76,7 +76,7 @@ namespace YoutubeDl.Wpf.Utils
             try
             {
                 jsonFile = new(filename, FileMode.Open);
-                jsonData = await JsonSerializer.DeserializeAsync<T>(jsonFile, jsonSerializerOptions, cancellationToken);
+                jsonData = await JsonSerializer.DeserializeAsync<T>(jsonFile, jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -85,7 +85,7 @@ namespace YoutubeDl.Wpf.Utils
             finally
             {
                 if (jsonFile is not null)
-                    await jsonFile.DisposeAsync();
+                    await jsonFile.DisposeAsync().ConfigureAwait(false);
             }
 
             jsonData ??= new();
@@ -133,12 +133,12 @@ namespace YoutubeDl.Wpf.Utils
                 if (alwaysOverwrite || !File.Exists(filename)) // alwaysOverwrite or file doesn't exist. Just write to it.
                 {
                     jsonFile = new(filename, FileMode.Create);
-                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonSerializerOptions, cancellationToken);
+                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
                 }
                 else // File exists. Write to `filename.new` and then replace with the new file and creates backup `filename.old`.
                 {
                     jsonFile = new($"{filename}.new", FileMode.Create);
-                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonSerializerOptions, cancellationToken);
+                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
                     jsonFile.Close();
                     File.Replace($"{filename}.new", filename, noBackup ? null : $"{filename}.old");
                 }
@@ -150,7 +150,7 @@ namespace YoutubeDl.Wpf.Utils
             finally
             {
                 if (jsonFile is not null)
-                    await jsonFile.DisposeAsync();
+                    await jsonFile.DisposeAsync().ConfigureAwait(false);
             }
 
             return errMsg;
