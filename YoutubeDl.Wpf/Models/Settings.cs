@@ -1,11 +1,13 @@
 ﻿using MaterialDesignThemes.Wpf;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Models
 {
-    public class Settings
+    public class Settings : ReactiveObject
     {
         /// Gets the default configuration version
         /// used by this version of the app.
@@ -19,18 +21,41 @@ namespace YoutubeDl.Wpf.Models
         public int Version { get; set; } = DefaultVersion;
 
         public BaseTheme AppColorMode { get; set; } = BaseTheme.Inherit;
+
+        [Reactive]
         public bool AutoUpdateDl { get; set; } = true;
+
+        [Reactive]
         public string DlPath { get; set; } = "";
+
+        [Reactive]
         public string FfmpegPath { get; set; } = "";
+
+        [Reactive]
         public string Proxy { get; set; } = "";
 
+        [Reactive]
         public string Container { get; set; } = "Auto";
+
+        [Reactive]
         public string Format { get; set; } = "Auto";
+
+        [Reactive]
         public bool AddMetadata { get; set; } = true;
+
+        [Reactive]
         public bool DownloadThumbnail { get; set; } = true;
+
+        [Reactive]
         public bool DownloadSubtitles { get; set; } = true;
+
+        [Reactive]
         public bool DownloadPlaylist { get; set; }
+
+        [Reactive]
         public bool UseCustomPath { get; set; }
+
+        [Reactive]
         public string DownloadPath { get; set; } = "";
 
         /// <summary>

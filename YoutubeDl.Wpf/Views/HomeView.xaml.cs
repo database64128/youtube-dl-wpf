@@ -71,7 +71,7 @@ namespace YoutubeDl.Wpf.Views
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Container,
+                    viewModel => viewModel.Settings.Container,
                     view => view.containerComboBox.Text)
                     .DisposeWith(disposables);
 
@@ -82,48 +82,48 @@ namespace YoutubeDl.Wpf.Views
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Format,
+                    viewModel => viewModel.Settings.Format,
                     view => view.formatComboBox.Text)
                     .DisposeWith(disposables);
 
                 // Options
                 this.Bind(ViewModel,
-                    viewModel => viewModel.AddMetadata,
+                    viewModel => viewModel.Settings.AddMetadata,
                     view => view.metadataToggle.IsChecked)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.DownloadThumbnail,
+                    viewModel => viewModel.Settings.DownloadThumbnail,
                     view => view.thumbnailToggle.IsChecked)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.DownloadSubtitles,
+                    viewModel => viewModel.Settings.DownloadSubtitles,
                     view => view.subtitlesToggle.IsChecked)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.DownloadPlaylist,
+                    viewModel => viewModel.Settings.DownloadPlaylist,
                     view => view.playlistToggle.IsChecked)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.UseCustomPath,
+                    viewModel => viewModel.Settings.UseCustomPath,
                     view => view.pathToggle.IsChecked)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.UseCustomPath,
+                    viewModel => viewModel.Settings.UseCustomPath,
                     view => view.pathTextBox.IsEnabled)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.DownloadPath,
+                    viewModel => viewModel.Settings.DownloadPath,
                     view => view.pathTextBox.Text)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.UseCustomPath,
+                    viewModel => viewModel.Settings.UseCustomPath,
                     view => view.browseButton.IsEnabled)
                     .DisposeWith(disposables);
 

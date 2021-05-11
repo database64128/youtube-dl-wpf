@@ -30,28 +30,28 @@ namespace YoutubeDl.Wpf.Views
 
                 this.Bind(ViewModel,
                     viewModel => viewModel.DarkMode,
-                    view => view.lightColorModeRadioButton.IsChecked)
+                    view => view.darkColorModeRadioButton.IsChecked)
                     .DisposeWith(disposables);
 
                 // Backend
                 this.Bind(ViewModel,
-                    viewModel => viewModel.AutoUpdateDl,
+                    viewModel => viewModel.Settings.AutoUpdateDl,
                     view => view.autoUpdateDlToggle.IsChecked)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.DlPath,
+                    viewModel => viewModel.Settings.DlPath,
                     view => view.dlPathTextBox.Text)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.FfmpegPath,
+                    viewModel => viewModel.Settings.FfmpegPath,
                     view => view.ffmpegPathTextBox.Text)
                     .DisposeWith(disposables);
 
                 // Network
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Proxy,
+                    viewModel => viewModel.Settings.Proxy,
                     view => view.proxyTextBox.Text)
                     .DisposeWith(disposables);
 
