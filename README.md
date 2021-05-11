@@ -5,40 +5,43 @@
 
 A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
-![Light Mode](LightMode.png "Light Mode")
-![Dark Mode](DarkMode.png "Dark Mode")
+![Home](Home.png "Home")
+![Settings](Settings.png "Settings")
 
 ## Features
 
-- Toggle between 🎨 system color mode, 🌃 dark mode, and 🔆 light mode.
+- Follow 🎨 system color mode, or choose between 🌃 dark mode and 🔆 light mode.
 - Update `youtube-dl` on startup.
 - List available formats.
-- Override video and audio formats.
-- Toggle metadata embedding.
-- Toggle thumbnail and subtitles embedding.
-- Toggle downloading a single video or the whole playlist.
-- Custom download path.
-- Custom `ffmpeg` and `youtube-dl` path.
-- Custom proxy support.
+- Override video and audio formats and output container.
+- Embed metadata into downloaded file.
+- Download and embed thumbnails and subtitles.
+- Download playlists.
+- Specify custom download path.
+- Specify custom `ffmpeg` and `youtube-dl` path.
+- Specify custom proxy.
 
 ## Usage
 
 1. Download the pre-built binary or build it from source.
 2. Download [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) from the upstream. _Optionally but recommended_, get `ffmpeg` either by [building from source](https://www.ffmpeg.org/) or downloading [pre-built binaries](https://ffmpeg.zeranoe.com/builds/) for Windows.
-3. Make sure you have [.NET 5 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0) installed to run our app. The upstream `youtube-dl` binary requires [MSVC++ 2010 runtime](https://www.microsoft.com/en-us/download/details.aspx?id=13523).
-4. Run `youtube-dl-wpf.exe`. Open the left drawer and go to __Settings__. Set the path to `youtube-dl` and `ffmpeg`.
-5. Go back to the home tab. Paste a URL and start downloading! 🚀
+3. The framework-dependent binary requires [.NET 5 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0) installed to run. Alternatively, download the self-contained binary that doesn't require a installed runtime. The upstream `youtube-dl` binary requires [MSVC++ 2010 runtime](https://www.microsoft.com/en-us/download/details.aspx?id=13523).
+4. Run `youtube-dl-wpf.exe`. Go to __Settings__. Set the path to `youtube-dl` and `ffmpeg`.
+5. Go back to the home tab. Paste a video URL and start downloading! 🚀
 
-## F.A.Q.
+## FAQ
 
-- _Q:_ The __Download__ button is grayed out and I can't click it!
-- _A:_ `youtube-dl-wpf` is a simple GUI wrapper. It doesn't embed any downloader in it. You have to download `youtube-dl` from the upstream. The `ffmpeg` binary is required by `youtube-dl` when downloading and merging separate video and audio tracks, which is the case for any video resolution higher than 360p.
+1.  Q: The __Download__ button is grayed out and I can't click it!
 
-- _Q:_ How can I use a proxy to download?
-- _A:_ Leave the proxy field empty to use system proxy settings. Otherwise the format is similar to how `curl` accepts proxy strings. Examples are, `socks5://localhost:1080/`, `http://localhost:8080/`. Currently the upstream doesn't accept `socks5h` protocol and treat `socks5` as `socks5h` by always resolving the hostname using the proxy. This is tracked in [this issue](https://github.com/ytdl-org/youtube-dl/issues/22618).
+    A: `youtube-dl-wpf` is a simple GUI wrapper. It doesn't bundle any downloader with it. You have to download `youtube-dl` from the upstream. The `ffmpeg` binary is required by `youtube-dl` when downloading and merging separate video and audio tracks, which is the case for any video resolution higher than 360p on YouTube.
 
-- _Q:_ Downloading the whole playlist doesn't work!
-- _A:_ It's an upstream bug, just like many other issues you might discover. There's nothing I can do. Just report the bug to the [upstream](https://github.com/ytdl-org/youtube-dl).
+2.  Q: How can I use a proxy to download?
+
+    A: Leave the proxy field empty to use system proxy settings. Otherwise the format is similar to how `curl` accepts proxy strings. Examples are, `socks5://localhost:1080/`, `http://localhost:8080/`. Currently the upstream doesn't accept `socks5h` protocol and treat `socks5` as `socks5h` by always resolving the hostname using the proxy. This is tracked in [this issue](https://github.com/ytdl-org/youtube-dl/issues/22618).
+
+3.  Q: Downloading the whole playlist doesn't work!
+
+    A: It's an upstream bug, just like many other issues you might discover. There's nothing I can do. Just report the bug to the [upstream](https://github.com/ytdl-org/youtube-dl).
 
 ## Known Issues
 
@@ -50,17 +53,23 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl).
 
 ## Build
 
-- IDE: Visual Studio 2019
-- Language: C# 9.0
-- SDK: .NET 5
+Prerequisites: .NET 5 SDK
 
-### Build Steps
+Note for packagers: The application by default uses executable directory as config directory. To use user's config directory, define the constant `PACKAGED` when building.
 
-1. Clone the repository recursively.
 ```bash
-$ git clone --recursive https://github.com/database64128/youtube-dl-wpf.git
+# Build with Release configuration
+$ dotnet build -c Release
+
+# Publish as framework-dependent
+$ dotnet publish YoutubeDl.Wpf -c Release
+
+# Publish as self-contained for Windows x64
+$ dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
+
+# Publish as self-contained for packaging on Windows x64
+$ dotnet publish YoutubeDl.Wpf -c Release -p:DefineConstants=PACKAGED -r win-x64 --self-contained
 ```
-2. Open the repository in VS2019, switch to the _Release_ configuration, and build the solution.
 
 ## License
 
@@ -68,7 +77,6 @@ $ git clone --recursive https://github.com/database64128/youtube-dl-wpf.git
 - The icons are from [Material Design Icons](https://materialdesignicons.com/) and are licensed under the [Pictogrammers Free License](https://dev.materialdesignicons.com/license).
 - [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) is licensed under [The Unlicense](https://github.com/ytdl-org/youtube-dl/blob/master/LICENSE).
 - [Material Design Themes](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit) is licensed under [MIT](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/blob/master/LICENSE).
-- [`PeanutButter.TinyEventAggregator`](https://github.com/fluffynuts/PeanutButter) is licensed under [BSD-3-Clause License](https://github.com/fluffynuts/PeanutButter/blob/master/LICENSE).
 - [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono) is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 - [ReactiveUI](https://github.com/reactiveui/ReactiveUI) is licensed under [MIT](https://github.com/reactiveui/ReactiveUI/blob/main/LICENSE).
 
