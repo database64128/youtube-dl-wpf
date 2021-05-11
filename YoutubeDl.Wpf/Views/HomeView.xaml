@@ -157,18 +157,16 @@
             Results
         </TextBlock>
 
-        <TextBox
-            Grid.Row="3"
-            x:Name="resultTextBox"
-            Style="{StaticResource MaterialDesignOutlinedTextBox}"
-            Margin="8"
-            TextWrapping="NoWrap"
-            IsReadOnly="True"
-            VerticalAlignment="Stretch"
-            VerticalScrollBarVisibility="Auto"
-            HorizontalScrollBarVisibility="Auto"
-            materialDesign:HintAssist.Hint="Output from youtube-dl"
-            TextChanged="ResultTextBox_TextChanged"
-            FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"/>
+        <TextBox x:Name="resultTextBox"
+                 Grid.Row="3"
+                 Margin="8"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 TextWrapping="NoWrap"
+                 IsReadOnly="True"
+                 VerticalAlignment="Stretch"
+                 VerticalScrollBarVisibility="Auto"
+                 HorizontalScrollBarVisibility="Auto"
+                 materialDesign:HintAssist.Hint="Output from youtube-dl"
+                 FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"/>
     </Grid>
 </reactiveui:ReactiveUserControl>

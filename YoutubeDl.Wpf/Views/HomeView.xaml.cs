@@ -5,8 +5,9 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using YoutubeDl.Wpf.ViewModels;
+using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Views
 {
@@ -15,11 +16,10 @@ namespace YoutubeDl.Wpf.Views
     /// </summary>
     public partial class HomeView
     {
-        public HomeView(ISnackbarMessageQueue snackbarMessageQueue)
+        public HomeView()
         {
             InitializeComponent();
-            _snackbarMessageQueue = snackbarMessageQueue;
-            ViewModel = new HomeViewModel(_snackbarMessageQueue);
+
             this.WhenActivated(disposables =>
             {
                 // Link and Start
@@ -27,10 +27,12 @@ namespace YoutubeDl.Wpf.Views
                     viewModel => viewModel.Link,
                     view => view.linkTextBox.Text)
                     .DisposeWith(disposables);
+
                 linkTextBox.Events().KeyDown
                            .Where(x => x.Key == Key.Enter)
                            .Select(x => Unit.Default)
-                           .InvokeCommand(ViewModel.StartDownloadCommand);
+                           .InvokeCommand(ViewModel!.StartDownloadCommand) // Null forgiving reason: upstream limitation.
+                           .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.DownloadButtonProgressPercentageString,
@@ -67,6 +69,7 @@ namespace YoutubeDl.Wpf.Views
                     viewModel => viewModel.ContainerList,
                     view => view.containerComboBox.ItemsSource)
                     .DisposeWith(disposables);
+
                 this.Bind(ViewModel,
                     viewModel => viewModel.Container,
                     view => view.containerComboBox.Text)
@@ -77,6 +80,7 @@ namespace YoutubeDl.Wpf.Views
                     viewModel => viewModel.FormatList,
                     view => view.formatComboBox.ItemsSource)
                     .DisposeWith(disposables);
+
                 this.Bind(ViewModel,
                     viewModel => viewModel.Format,
                     view => view.formatComboBox.Text)
@@ -87,30 +91,37 @@ namespace YoutubeDl.Wpf.Views
                     viewModel => viewModel.AddMetadata,
                     view => view.metadataToggle.IsChecked)
                     .DisposeWith(disposables);
+
                 this.Bind(ViewModel,
                     viewModel => viewModel.DownloadThumbnail,
                     view => view.thumbnailToggle.IsChecked)
                     .DisposeWith(disposables);
+
                 this.Bind(ViewModel,
                     viewModel => viewModel.DownloadSubtitles,
                     view => view.subtitlesToggle.IsChecked)
                     .DisposeWith(disposables);
+
                 this.Bind(ViewModel,
                     viewModel => viewModel.DownloadPlaylist,
                     view => view.playlistToggle.IsChecked)
                     .DisposeWith(disposables);
+
                 this.Bind(ViewModel,
                     viewModel => viewModel.UseCustomPath,
                     view => view.pathToggle.IsChecked)
                     .DisposeWith(disposables);
+
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.UseCustomPath,
                     view => view.pathTextBox.IsEnabled)
                     .DisposeWith(disposables);
+
                 this.Bind(ViewModel,
                     viewModel => viewModel.DownloadPath,
                     view => view.pathTextBox.Text)
                     .DisposeWith(disposables);
+
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.UseCustomPath,
                     view => view.browseButton.IsEnabled)
@@ -122,39 +133,38 @@ namespace YoutubeDl.Wpf.Views
                     view => view.resultTextBox.Text)
                     .DisposeWith(disposables);
 
-                // Commands
+                resultTextBox.Events().TextChanged
+                             .Where(_ => WpfHelper.IsScrolledToEnd(resultTextBox))
+                             .Subscribe(_ => resultTextBox.ScrollToEnd())
+                             .DisposeWith(disposables);
+
+                // Download, list, abort button
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.StartDownloadCommand,
                     view => view.downloadButton)
                     .DisposeWith(disposables);
+
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.ListFormatsCommand,
                     view => view.listFormatsButton)
                     .DisposeWith(disposables);
+
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.AbortDlCommand,
                     view => view.abortButton)
                     .DisposeWith(disposables);
 
+                // Browse and open folder button
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.BrowseDownloadFolderCommand,
                     view => view.browseButton)
                     .DisposeWith(disposables);
+
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.OpenDownloadFolderCommand,
                     view => view.openFolderButton)
                     .DisposeWith(disposables);
             });
-        }
-
-        private readonly ISnackbarMessageQueue _snackbarMessageQueue;
-
-        private static bool IsScrolledToEnd(TextBox textBox) => textBox.VerticalOffset > textBox.ExtentHeight - textBox.ViewportHeight - textBox.FontSize * textBox.FontFamily.LineSpacing;
-
-        private void ResultTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (IsScrolledToEnd(resultTextBox))
-                resultTextBox.ScrollToEnd();
         }
     }
 }

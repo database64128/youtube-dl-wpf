@@ -6,14 +6,14 @@ namespace YoutubeDl.Wpf.ViewModels
 {
     public class MainWindowViewModel : ReactiveObject
     {
-        public HomeView GetHomeView { get; }
+        public HomeView GetHomeView { get; } = new();
 
-        public SettingsView GetSettingsView { get; }
+        public SettingsView GetSettingsView { get; } = new();
 
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
-            GetHomeView = new(snackbarMessageQueue);
-            GetSettingsView = new(snackbarMessageQueue);
+            GetHomeView.ViewModel = new(snackbarMessageQueue);
+            GetSettingsView.ViewModel = new(snackbarMessageQueue);
         }
     }
 }

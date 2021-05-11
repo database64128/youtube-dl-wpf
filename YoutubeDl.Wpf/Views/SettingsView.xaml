@@ -224,7 +224,7 @@
                            Margin="4"
                            VerticalAlignment="Center"
                            Style="{StaticResource MaterialDesignBody2TextBlock}">
-                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate"
+                    <Hyperlink x:Name="projectRepoHyperlink"
                                NavigateUri="https://github.com/database64128/youtube-dl-wpf">
                         https://github.com/database64128/youtube-dl-wpf
                     </Hyperlink>
@@ -243,7 +243,7 @@
                            Margin="4"
                            VerticalAlignment="Center"
                            Style="{StaticResource MaterialDesignBody2TextBlock}">
-                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate"
+                    <Hyperlink x:Name="ytdlRepoHyperlink"
                                NavigateUri="https://github.com/ytdl-org/youtube-dl">
                         https://github.com/ytdl-org/youtube-dl
                     </Hyperlink>

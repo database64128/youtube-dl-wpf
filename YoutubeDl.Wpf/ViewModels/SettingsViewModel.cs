@@ -10,6 +10,7 @@ using System.Reactive;
 using System.Reflection;
 using System.Threading.Tasks;
 using YoutubeDl.Wpf.Models;
+using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
@@ -53,6 +54,7 @@ namespace YoutubeDl.Wpf.ViewModels
             ChangeColorModeToDark = ReactiveCommand.Create(() => OnChangeColorMode(BaseTheme.Dark));
             BrowseDlBinaryCommand = ReactiveCommand.Create(BrowseDlBinary);
             BrowseFfmpegBinaryCommand = ReactiveCommand.Create(BrowseFfmpegBinary);
+            OpenUri = ReactiveCommand.Create<string>(uri => WpfHelper.OpenUri(uri));
 
             settingsChangedEvent = EventAggregator.Instance.GetEvent<SettingsChangedEvent>();
             // subscribe to settings changes published by HomeViewModel
@@ -81,6 +83,7 @@ namespace YoutubeDl.Wpf.ViewModels
         public ReactiveCommand<Unit, Unit> ChangeColorModeToDark { get; }
         public ReactiveCommand<Unit, Unit> BrowseDlBinaryCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseFfmpegBinaryCommand { get; }
+        public ReactiveCommand<string, Unit> OpenUri { get; }
 
         private void OnChangeColorMode(BaseTheme colorMode)
         {

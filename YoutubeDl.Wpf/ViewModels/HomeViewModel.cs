@@ -251,7 +251,7 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             try
             {
-                WpfHelper.OpenLink(DownloadPath);
+                WpfHelper.OpenUri(DownloadPath);
             }
             catch (Exception ex)
             {
