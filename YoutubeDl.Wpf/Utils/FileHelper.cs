@@ -12,6 +12,7 @@ namespace YoutubeDl.Wpf.Utils
         public static readonly JsonSerializerOptions commonJsonSerializerOptions = new()
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            IgnoreReadOnlyProperties = true,
             WriteIndented = true,
         };
 
