@@ -21,7 +21,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
-            (var settings, var loadSettingsErrMsg) = Settings.LoadSettingsAsync().GetAwaiter().GetResult();
+            var (settings, loadSettingsErrMsg) = Settings.LoadSettingsAsync().GetAwaiter().GetResult();
             if (loadSettingsErrMsg is not null)
                 snackbarMessageQueue.Enqueue(loadSettingsErrMsg);
 

@@ -13,7 +13,7 @@ namespace YoutubeDl.Wpf
         public MainWindow()
         {
             InitializeComponent();
-            ViewModel = new MainWindowViewModel(MainSnackbar.MessageQueue!); // Null forgiving reason: following upstream
+            ViewModel = new(MainSnackbar.MessageQueue!); // Null forgiving reason: following upstream
             MainSnackbar.MessageQueue!.DiscardDuplicates = true;
             this.WhenActivated(disposables =>
             {
