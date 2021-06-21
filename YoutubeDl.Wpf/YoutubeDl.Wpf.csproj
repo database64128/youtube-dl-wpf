@@ -43,7 +43,7 @@
     <PackageReference Include="ReactiveUI.Events.WPF" Version="13.3.2" />
     <PackageReference Include="ReactiveUI.Fody" Version="13.3.2" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.1.1" />
-    <PackageReference Include="ReactiveUI.WPF" Version="13.3.2" />
+    <PackageReference Include="ReactiveUI.WPF" Version="14.1.1" />
   </ItemGroup>
 
   <ItemGroup>
