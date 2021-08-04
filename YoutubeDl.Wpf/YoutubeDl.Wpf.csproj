@@ -40,7 +40,7 @@
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
-    <PackageReference Include="ReactiveUI.Events.WPF" Version="14.1.1" />
+    <PackageReference Include="ReactiveUI.Events.WPF" Version="14.2.1" />
     <PackageReference Include="ReactiveUI.Fody" Version="14.1.1" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.1.1" />
     <PackageReference Include="ReactiveUI.WPF" Version="14.1.1" />
