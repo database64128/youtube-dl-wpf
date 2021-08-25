@@ -1,6 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 using System;
@@ -22,18 +21,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public Settings Settings { get; }
 
-        [Reactive]
-        public bool FollowOSColorMode { get; set; }
-
-        [Reactive]
-        public bool LightMode { get; set; }
-
-        [Reactive]
-        public bool DarkMode { get; set; }
-
-        public ReactiveCommand<Unit, Unit> ChangeColorModeToSystem { get; }
-        public ReactiveCommand<Unit, Unit> ChangeColorModeToLight { get; }
-        public ReactiveCommand<Unit, Unit> ChangeColorModeToDark { get; }
+        public ReactiveCommand<BaseTheme, Unit> ChangeColorModeCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseDlBinaryCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseFfmpegBinaryCommand { get; }
         public ReactiveCommand<string, Unit> OpenUri { get; }
@@ -45,25 +33,6 @@ namespace YoutubeDl.Wpf.ViewModels
 
             Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
             Settings = settings;
-
-            switch (Settings.AppColorMode)
-            {
-                case BaseTheme.Inherit:
-                    FollowOSColorMode = true;
-                    LightMode = false;
-                    DarkMode = false;
-                    break;
-                case BaseTheme.Light:
-                    FollowOSColorMode = false;
-                    LightMode = true;
-                    DarkMode = false;
-                    break;
-                case BaseTheme.Dark:
-                    FollowOSColorMode = false;
-                    LightMode = false;
-                    DarkMode = true;
-                    break;
-            }
 
             ChangeColorMode(Settings.AppColorMode);
 
@@ -111,9 +80,7 @@ namespace YoutubeDl.Wpf.ViewModels
                     };
                 });
 
-            ChangeColorModeToSystem = ReactiveCommand.Create(() => ChangeColorMode(BaseTheme.Inherit));
-            ChangeColorModeToLight = ReactiveCommand.Create(() => ChangeColorMode(BaseTheme.Light));
-            ChangeColorModeToDark = ReactiveCommand.Create(() => ChangeColorMode(BaseTheme.Dark));
+            ChangeColorModeCommand = ReactiveCommand.Create<BaseTheme>(ChangeColorMode);
             BrowseDlBinaryCommand = ReactiveCommand.Create(BrowseDlBinary);
             BrowseFfmpegBinaryCommand = ReactiveCommand.Create(BrowseFfmpegBinary);
             OpenUri = ReactiveCommand.Create<string>(uri => WpfHelper.OpenUri(uri));

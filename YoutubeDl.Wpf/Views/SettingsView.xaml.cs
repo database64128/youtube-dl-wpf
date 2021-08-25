@@ -1,4 +1,5 @@
-﻿using ReactiveMarbles.ObservableEvents;
+﻿using MaterialDesignThemes.Wpf;
+using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -18,19 +19,22 @@ namespace YoutubeDl.Wpf.Views
             this.WhenActivated(disposables =>
             {
                 // Color mode
-                this.Bind(ViewModel,
-                    viewModel => viewModel.FollowOSColorMode,
-                    view => view.systemColorModeRadioButton.IsChecked)
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.Settings.AppColorMode,
+                    view => view.systemColorModeRadioButton.IsChecked,
+                    colorMode => colorMode == BaseTheme.Inherit)
                     .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.LightMode,
-                    view => view.lightColorModeRadioButton.IsChecked)
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.Settings.AppColorMode,
+                    view => view.lightColorModeRadioButton.IsChecked,
+                    colorMode => colorMode == BaseTheme.Light)
                     .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.DarkMode,
-                    view => view.darkColorModeRadioButton.IsChecked)
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.Settings.AppColorMode,
+                    view => view.darkColorModeRadioButton.IsChecked,
+                    colorMode => colorMode == BaseTheme.Dark)
                     .DisposeWith(disposables);
 
                 // Backend
@@ -41,11 +45,10 @@ namespace YoutubeDl.Wpf.Views
                     isChecked => isChecked == true ? BackendType.Ytdl : BackendType.Ytdlp)
                     .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
+                this.OneWayBind(ViewModel,
                     viewModel => viewModel.Settings.Backend,
                     view => view.ytdlpBackendTypeRadioButton.IsChecked,
-                    backend => backend == BackendType.Ytdlp,
-                    isChecked => isChecked == true ? BackendType.Ytdlp : BackendType.Ytdl)
+                    backend => backend == BackendType.Ytdlp)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
@@ -92,18 +95,21 @@ namespace YoutubeDl.Wpf.Views
 
                 // Color mode
                 this.BindCommand(ViewModel,
-                    viewModel => viewModel.ChangeColorModeToSystem,
-                    view => view.systemColorModeRadioButton)
+                    viewModel => viewModel.ChangeColorModeCommand,
+                    view => view.systemColorModeRadioButton,
+                    Observable.Return(BaseTheme.Inherit))
                     .DisposeWith(disposables);
 
                 this.BindCommand(ViewModel,
-                    viewModel => viewModel.ChangeColorModeToLight,
-                    view => view.lightColorModeRadioButton)
+                    viewModel => viewModel.ChangeColorModeCommand,
+                    view => view.lightColorModeRadioButton,
+                    Observable.Return(BaseTheme.Light))
                     .DisposeWith(disposables);
 
                 this.BindCommand(ViewModel,
-                    viewModel => viewModel.ChangeColorModeToDark,
-                    view => view.darkColorModeRadioButton)
+                    viewModel => viewModel.ChangeColorModeCommand,
+                    view => view.darkColorModeRadioButton,
+                    Observable.Return(BaseTheme.Dark))
                     .DisposeWith(disposables);
 
                 // Browse buttons
