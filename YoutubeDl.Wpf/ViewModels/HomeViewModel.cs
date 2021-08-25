@@ -266,6 +266,11 @@ namespace YoutubeDl.Wpf.ViewModels
                         dlProcess.StartInfo.ArgumentList.Add("--merge-output-format");
                         dlProcess.StartInfo.ArgumentList.Add($"{Settings.Container}");
                     }
+                    else if (Settings.Format.Contains("AV1 + Opus WebM"))
+                    {
+                        dlProcess.StartInfo.ArgumentList.Add("--merge-output-format");
+                        dlProcess.StartInfo.ArgumentList.Add("webm");
+                    }
                 }
                 else if (Settings.Container != "Auto") // custom container
                 {
