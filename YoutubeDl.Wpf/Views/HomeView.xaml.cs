@@ -1,11 +1,10 @@
 ﻿using MaterialDesignThemes.Wpf;
+using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
 using System;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using YoutubeDl.Wpf.Utils;
 

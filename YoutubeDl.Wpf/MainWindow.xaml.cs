@@ -1,7 +1,6 @@
-﻿using ReactiveUI;
+﻿using ReactiveMarbles.ObservableEvents;
+using ReactiveUI;
 using System.Reactive.Disposables;
-using System.Windows;
-using YoutubeDl.Wpf.ViewModels;
 
 namespace YoutubeDl.Wpf
 {

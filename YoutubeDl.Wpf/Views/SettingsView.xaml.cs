@@ -1,8 +1,7 @@
-﻿using ReactiveUI;
+﻿using ReactiveMarbles.ObservableEvents;
+using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Windows.Documents;
-using System.Windows.Navigation;
 
 namespace YoutubeDl.Wpf.Views
 {
