@@ -252,9 +252,13 @@ namespace YoutubeDl.Wpf.ViewModels
                     {
                         var parsedFormat = Settings.Format.Split(new char[] { '(', ')' });
                         if (parsedFormat.Length >= 2)
+                        {
                             dlProcess.StartInfo.ArgumentList.Add($"{parsedFormat[1]}");
+                        }
                         else
+                        {
                             dlProcess.StartInfo.ArgumentList.Add($"{Settings.Format}");
+                        }
                     }
                     else
                     {
@@ -279,14 +283,22 @@ namespace YoutubeDl.Wpf.ViewModels
                 }
 
                 if (Settings.AddMetadata)
+                {
                     dlProcess.StartInfo.ArgumentList.Add("--add-metadata");
+                }
 
                 if (Settings.DownloadThumbnail)
+                {
                     dlProcess.StartInfo.ArgumentList.Add("--embed-thumbnail");
+                }
 
                 if (Settings.DownloadSubtitles)
                 {
-                    dlProcess.StartInfo.ArgumentList.Add("--write-sub");
+                    if (Settings.Backend == BackendType.Ytdl)
+                    {
+                        dlProcess.StartInfo.ArgumentList.Add("--write-sub");
+                    }
+
                     dlProcess.StartInfo.ArgumentList.Add("--embed-subs");
                 }
 

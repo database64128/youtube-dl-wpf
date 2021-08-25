@@ -2,6 +2,7 @@
 using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.Views
 {
@@ -33,6 +34,20 @@ namespace YoutubeDl.Wpf.Views
                     .DisposeWith(disposables);
 
                 // Backend
+                this.Bind(ViewModel,
+                    viewModel => viewModel.Settings.Backend,
+                    view => view.ytdlBackendTypeRadioButton.IsChecked,
+                    backend => backend == BackendType.Ytdl,
+                    isChecked => isChecked == true ? BackendType.Ytdl : BackendType.Ytdlp)
+                    .DisposeWith(disposables);
+
+                this.Bind(ViewModel,
+                    viewModel => viewModel.Settings.Backend,
+                    view => view.ytdlpBackendTypeRadioButton.IsChecked,
+                    backend => backend == BackendType.Ytdlp,
+                    isChecked => isChecked == true ? BackendType.Ytdlp : BackendType.Ytdl)
+                    .DisposeWith(disposables);
+
                 this.Bind(ViewModel,
                     viewModel => viewModel.Settings.AutoUpdateDl,
                     view => view.autoUpdateDlToggle.IsChecked)
@@ -69,6 +84,11 @@ namespace YoutubeDl.Wpf.Views
                                  .Select(args => args.Uri.AbsoluteUri)
                                  .InvokeCommand(ViewModel.OpenUri)
                                  .DisposeWith(disposables);
+
+                ytdlpRepoHyperlink.Events().RequestNavigate
+                                  .Select(args => args.Uri.AbsoluteUri)
+                                  .InvokeCommand(ViewModel.OpenUri)
+                                  .DisposeWith(disposables);
 
                 // Color mode
                 this.BindCommand(ViewModel,

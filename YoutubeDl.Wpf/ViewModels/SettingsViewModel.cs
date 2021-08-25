@@ -98,6 +98,19 @@ namespace YoutubeDl.Wpf.ViewModels
                 .Where(proxy => !string.IsNullOrEmpty(proxy) && !(Uri.TryCreate(proxy, UriKind.Absolute, out var uri) && (uri.Scheme is "socks5" or "http" or "https")))
                 .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid proxy URL"));
 
+            // Guess the backend type from binary name.
+            this.WhenAnyValue(x => x.Settings.DlPath)
+                .Select(dlPath => Path.GetFileNameWithoutExtension(dlPath))
+                .Subscribe(name =>
+                {
+                    Settings.Backend = name switch
+                    {
+                        "youtube-dl" => BackendType.Ytdl,
+                        "yt-dlp" => BackendType.Ytdlp,
+                        _ => Settings.Backend,
+                    };
+                });
+
             ChangeColorModeToSystem = ReactiveCommand.Create(() => ChangeColorMode(BaseTheme.Inherit));
             ChangeColorModeToLight = ReactiveCommand.Create(() => ChangeColorMode(BaseTheme.Light));
             ChangeColorModeToDark = ReactiveCommand.Create(() => ChangeColorMode(BaseTheme.Dark));

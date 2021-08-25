@@ -26,6 +26,9 @@ namespace YoutubeDl.Wpf.Models
         public bool AutoUpdateDl { get; set; } = true;
 
         [Reactive]
+        public BackendType Backend { get; set; } = BackendType.Ytdl;
+
+        [Reactive]
         public string DlPath { get; set; } = "";
 
         [Reactive]

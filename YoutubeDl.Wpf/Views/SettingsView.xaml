@@ -23,6 +23,7 @@
                 <RowDefinition Height="40" />
                 <RowDefinition Height="40" />
                 <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="40" />
                 <RowDefinition Height="auto"/>
@@ -48,23 +49,24 @@
                        Style="{StaticResource MaterialDesignHeadline6TextBlock}">
                 UI
             </TextBlock>
+
             <TextBlock Grid.Row="2"
                        Grid.Column="0"
                        Margin="8"
                        VerticalAlignment="Center"
                        Style="{StaticResource MaterialDesignBody2TextBlock}">
-                Color Mode
+                Color theme
             </TextBlock>
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
                 <RadioButton
                     x:Name="systemColorModeRadioButton"
-                    Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                    Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
                     GroupName="ColorMode">
                     System
                 </RadioButton>
                 <RadioButton
                     x:Name="lightColorModeRadioButton"
-                    Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                    Style="{StaticResource MaterialDesignChoiceChipAccentOutlineRadioButton}"
                     GroupName="ColorMode">
                     Light
                 </RadioButton>
@@ -82,22 +84,29 @@
                        Style="{StaticResource MaterialDesignHeadline6TextBlock}">
                 Backend
             </TextBlock>
-            
+
             <TextBlock Grid.Row="4"
                        Grid.Column="0"
-                       Style="{StaticResource MaterialDesignBody2TextBlock}"
+                       Margin="8"
                        VerticalAlignment="Center"
-                       Margin="8">
-                Update <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">youtube-dl</Span> on startup
+                       Style="{StaticResource MaterialDesignBody2TextBlock}">
+                Type
             </TextBlock>
-            <ToggleButton
-                Grid.Row="4"
-                Grid.Column="1"
-                x:Name="autoUpdateDlToggle"
-                Margin="4"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"/>
-            
+            <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                <RadioButton
+                    x:Name="ytdlBackendTypeRadioButton"
+                    Style="{StaticResource MaterialDesignChoiceChipAccentOutlineRadioButton}"
+                    GroupName="BackendType">
+                    youtube-dl
+                </RadioButton>
+                <RadioButton
+                    x:Name="ytdlpBackendTypeRadioButton"
+                    Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                    GroupName="BackendType">
+                    yt-dlp
+                </RadioButton>
+            </StackPanel>
+
             <TextBlock Grid.Row="5"
                        Grid.Column="0"
                        Margin="8"
@@ -144,12 +153,27 @@
 
             <TextBlock Grid.Row="7"
                        Grid.Column="0"
+                       Style="{StaticResource MaterialDesignBody2TextBlock}"
+                       VerticalAlignment="Center"
+                       Margin="8">
+                Update <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">youtube-dl</Span> on startup
+            </TextBlock>
+            <ToggleButton
+                Grid.Row="7"
+                Grid.Column="1"
+                x:Name="autoUpdateDlToggle"
+                Margin="4"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"/>
+
+            <TextBlock Grid.Row="8"
+                       Grid.Column="0"
                        Margin="8"
                        Style="{StaticResource MaterialDesignHeadline6TextBlock}">
                 Network
             </TextBlock>
             
-            <TextBlock Grid.Row="8"
+            <TextBlock Grid.Row="9"
                        Grid.Column="0"
                        Margin="8"
                        VerticalAlignment="Center"
@@ -157,21 +181,21 @@
                 Proxy
             </TextBlock>
             <TextBox x:Name="proxyTextBox"
-                     Grid.Row="8"
+                     Grid.Row="9"
                      Grid.Column="1"
                      Margin="4"
                      Width="400"
                      VerticalAlignment="Center"
                      materialDesign:HintAssist.Hint="e.g. socks5://localhost:1080/. Leave empty to use system proxy."/>
 
-            <TextBlock Grid.Row="9"
+            <TextBlock Grid.Row="10"
                        Grid.Column="0"
                        Margin="8 32 8 8"
                        Style="{StaticResource MaterialDesignHeadline5TextBlock}">
                 About
             </TextBlock>
 
-            <TextBlock Grid.Row="10"
+            <TextBlock Grid.Row="11"
                        Grid.Column="0"
                        Grid.ColumnSpan="3"
                        Margin="8 4 8 4"
@@ -179,11 +203,12 @@
                 Cube YouTube Downloader is a simple GUI wrapper for <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">youtube-dl</Span>.
             </TextBlock>
 
-            <Grid Grid.Row="11"
+            <Grid Grid.Row="12"
                   Grid.Column="0"
                   Grid.ColumnSpan="3"
                   Margin="4">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -244,6 +269,25 @@
                     <Hyperlink x:Name="ytdlRepoHyperlink"
                                NavigateUri="https://github.com/ytdl-org/youtube-dl">
                         https://github.com/ytdl-org/youtube-dl
+                    </Hyperlink>
+                </TextBlock>
+
+                <materialDesign:PackIcon Grid.Row="3" Grid.Column="0" Margin="4" Kind="Github" Height="20" Width="20" />
+                <TextBlock Grid.Row="3"
+                           Grid.Column="1"
+                           Margin="4"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}">
+                    <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">yt-dlp</Span> Repository
+                </TextBlock>
+                <TextBlock Grid.Row="3"
+                           Grid.Column="2"
+                           Margin="4"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}">
+                    <Hyperlink x:Name="ytdlpRepoHyperlink"
+                               NavigateUri="https://github.com/yt-dlp/yt-dlp">
+                        https://github.com/yt-dlp/yt-dlp
                     </Hyperlink>
                 </TextBlock>
             </Grid>
