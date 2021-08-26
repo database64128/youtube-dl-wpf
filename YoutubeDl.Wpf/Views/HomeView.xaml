@@ -83,6 +83,7 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
                     <TextBlock VerticalAlignment="Center" Margin="4">Container</TextBlock>
                     <ComboBox x:Name="containerComboBox"
+                              DisplayMemberPath="DisplayName"
                               IsEditable="True"
                               IsReadOnly="False"
                               IsTextSearchCaseSensitive="True"
@@ -93,14 +94,10 @@
                                 <VirtualizingStackPanel />
                             </ItemsPanelTemplate>
                         </ComboBox.ItemsPanel>
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
                     </ComboBox>
                     <TextBlock VerticalAlignment="Center" Margin="8 4 4 4">Format</TextBlock>
                     <ComboBox x:Name="formatComboBox"
+                              DisplayMemberPath="DisplayName"
                               IsEditable="True"
                               IsReadOnly="False"
                               StaysOpenOnEdit="True"
@@ -110,11 +107,6 @@
                                 <VirtualizingStackPanel />
                             </ItemsPanelTemplate>
                         </ComboBox.ItemsPanel>
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">

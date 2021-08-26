@@ -1,4 +1,5 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using DynamicData;
+using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
@@ -7,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Text;
@@ -24,9 +26,9 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public Settings Settings { get; }
 
-        public ObservableCollection<string> ContainerList { get; }
+        public ObservableCollection<Format> Containers { get; } = new();
 
-        public ObservableCollection<string> FormatList { get; }
+        public ObservableCollection<Format> Formats { get; } = new();
 
         [Reactive]
         public string Link { get; set; } = "";
@@ -77,7 +79,18 @@ namespace YoutubeDl.Wpf.ViewModels
                 "ETA",
                 " "
             };
+
             outputString = new();
+
+            this.WhenAnyValue(x => x.Settings.Backend)
+                .Subscribe(backend =>
+                {
+                    Containers.Clear();
+                    Containers.AddRange(Format.PredefinedContainers.Where(x => (x.SupportedBackends & Settings.Backend) == Settings.Backend));
+                    Formats.Clear();
+                    Formats.AddRange(Format.PredefinedFormats.Where(x => (x.SupportedBackends & Settings.Backend) == Settings.Backend));
+                });
+
             PrepareDlProcess();
 
             var canOpenDownloadFolder = this.WhenAnyValue(
@@ -86,11 +99,13 @@ namespace YoutubeDl.Wpf.ViewModels
 
             var canStartDl = this.WhenAnyValue(
                 x => x.Link,
-                x => x.Settings.Container,
-                x => x.Settings.Format,
+                x => x.Settings.ContainerText,
+                x => x.Settings.FormatText,
+                x => x.Settings.UseCustomPath,
+                x => x.Settings.DownloadPath,
                 x => x.Settings.DlPath,
                 x => x.FreezeButton,
-                (link, container, format, dlBinaryPath, freezeButton) => !string.IsNullOrEmpty(link) && !string.IsNullOrEmpty(container) && !string.IsNullOrEmpty(format) && !string.IsNullOrEmpty(dlBinaryPath) && !freezeButton);
+                (link, container, format, useCustomPath, downloadPath, dlBinaryPath, freezeButton) => !string.IsNullOrEmpty(link) && !string.IsNullOrEmpty(container) && !string.IsNullOrEmpty(format) && (!useCustomPath || Directory.Exists(downloadPath)) && !string.IsNullOrEmpty(dlBinaryPath) && !freezeButton);
 
             var canAbortDl = this.WhenAnyValue(x => x.FreezeButton);
 
@@ -99,62 +114,6 @@ namespace YoutubeDl.Wpf.ViewModels
             StartDownloadCommand = ReactiveCommand.Create(StartDownload, canStartDl);
             ListFormatsCommand = ReactiveCommand.Create(ListFormats, canStartDl);
             AbortDlCommand = ReactiveCommand.Create(AbortDl, canAbortDl);
-
-            ContainerList = new()
-            {
-                "Auto",
-                "webm",
-                "mp4",
-                "mkv",
-                "opus",
-                "flac",
-                "ogg",
-                "m4a",
-                "mp3"
-            };
-
-            FormatList = new()
-            {
-                "Auto",
-                "bestvideo+bestaudio/best",
-                "bestvideo+bestaudio",
-                "bestvideo+worstaudio",
-                "worstvideo+bestaudio",
-                "worstvideo+worstaudio",
-                "worstvideo+worstaudio/worst",
-                "best",
-                "worst",
-                "bestvideo",
-                "worstvideo",
-                "bestaudio",
-                "worstaudio",
-                "YouTube 4K 60fps HDR AV1 + Opus WebM (701+251)",
-                "YouTube 4K 60fps HDR VP9 + Opus WebM (337+251)",
-                "YouTube 4K 60fps AV1 + Opus WebM (401+251)",
-                "YouTube 4K 60fps VP9 + Opus WebM (315+251)",
-                "YouTube 4K AV1 + Opus WebM (401+251)",
-                "YouTube 4K VP9 + Opus WebM (313+251)",
-                "YouTube 1440p60 HDR AV1 + Opus WebM (700+251)",
-                "YouTube 1440p60 HDR VP9 + Opus WebM (336+251)",
-                "YouTube 1440p60 AV1 + Opus WebM (400+251)",
-                "YouTube 1440p60 VP9 + Opus WebM (308+251)",
-                "YouTube 1440p AV1 + Opus WebM (400+251)",
-                "YouTube 1440p VP9 + Opus WebM (271+251)",
-                "YouTube 1080p60 AV1 + Opus WebM (399+251)",
-                "YouTube 1080p60 VP9 + Opus WebM (303+251)",
-                "YouTube 1080p60 AVC + AAC MP4 (299+140)",
-                "YouTube 1080p AV1 + Opus WebM (399+251)",
-                "YouTube 1080p VP9 + Opus WebM (248+251)",
-                "YouTube 1080p AVC + AAC MP4 (137+140)",
-                "YouTube 720p60 AV1 + Opus WebM (398+251)",
-                "YouTube 720p60 VP9 + Opus WebM (302+251)",
-                "YouTube 720p60 AVC + AAC MP4 (298+140)",
-                "YouTube 720p AV1 + Opus WebM (398+251)",
-                "YouTube 720p VP9 + Opus WebM (247+251)",
-                "YouTube 720p AVC + AAC (136+140)",
-                "1080p",
-                "720p",
-            };
 
             if (Settings.AutoUpdateDl && !string.IsNullOrEmpty(Settings.DlPath))
             {
@@ -244,42 +203,44 @@ namespace YoutubeDl.Wpf.ViewModels
                     dlProcess.StartInfo.ArgumentList.Add($"{Settings.FfmpegPath}");
                 }
 
-                if (Settings.Format != "Auto") // custom format
+                // Use '-f' if no specified format. With specified format, use '--merge-output-format'.
+                var containerOption = "-f";
+
+                if (Settings.SelectedFormat is null) // custom format
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-f");
-
-                    if (Settings.Format.Contains("YouTube "))
-                    {
-                        var parsedFormat = Settings.Format.Split(new char[] { '(', ')' });
-                        if (parsedFormat.Length >= 2)
-                        {
-                            dlProcess.StartInfo.ArgumentList.Add($"{parsedFormat[1]}");
-                        }
-                        else
-                        {
-                            dlProcess.StartInfo.ArgumentList.Add($"{Settings.Format}");
-                        }
-                    }
-                    else
-                    {
-                        dlProcess.StartInfo.ArgumentList.Add($"{Settings.Format}");
-                    }
-
-                    if (Settings.Container != "Auto") // merge into target container
-                    {
-                        dlProcess.StartInfo.ArgumentList.Add("--merge-output-format");
-                        dlProcess.StartInfo.ArgumentList.Add($"{Settings.Container}");
-                    }
-                    else if (Settings.Format.Contains("AV1 + Opus WebM"))
-                    {
-                        dlProcess.StartInfo.ArgumentList.Add("--merge-output-format");
-                        dlProcess.StartInfo.ArgumentList.Add("webm");
-                    }
+                    dlProcess.StartInfo.ArgumentList.Add($"{Settings.FormatText}");
+                    containerOption = "--merge-output-format";
                 }
-                else if (Settings.Container != "Auto") // custom container
+                else if (Settings.SelectedFormat != Format.Auto) // Apply selected format
                 {
                     dlProcess.StartInfo.ArgumentList.Add("-f");
-                    dlProcess.StartInfo.ArgumentList.Add($"{Settings.Container}");
+                    dlProcess.StartInfo.ArgumentList.Add($"{Settings.SelectedFormat.FormatArg}");
+                    dlProcess.StartInfo.ArgumentList.AddRange(Settings.SelectedFormat.ExtraArgs);
+                    containerOption = "--merge-output-format";
+                }
+                else if (Settings.SelectedContainer?.FormatArg is not null)
+                {
+                    dlProcess.StartInfo.ArgumentList.Add("-f");
+                    dlProcess.StartInfo.ArgumentList.Add($"{Settings.SelectedContainer.FormatArg}");
+                    containerOption = "--merge-output-format";
+                }
+
+                if (Settings.SelectedContainer is null) // custom container
+                {
+                    dlProcess.StartInfo.ArgumentList.Add(containerOption);
+                    dlProcess.StartInfo.ArgumentList.Add($"{Settings.ContainerText}");
+                }
+                else if (Settings.SelectedContainer != Format.Auto) // Apply selected container
+                {
+                    dlProcess.StartInfo.ArgumentList.Add(containerOption);
+                    dlProcess.StartInfo.ArgumentList.Add($"{Settings.SelectedContainer.ContainerArg}");
+                    dlProcess.StartInfo.ArgumentList.AddRange(Settings.SelectedContainer.ExtraArgs);
+                }
+                else if (Settings.SelectedFormat?.ContainerArg is not null)
+                {
+                    dlProcess.StartInfo.ArgumentList.Add(containerOption);
+                    dlProcess.StartInfo.ArgumentList.Add($"{Settings.SelectedFormat.ContainerArg}");
                 }
 
                 if (Settings.AddMetadata)
@@ -294,7 +255,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
                 if (Settings.DownloadSubtitles)
                 {
-                    if (Settings.Backend == BackendType.Ytdl)
+                    if (Settings.Backend == BackendTypes.Ytdl)
                     {
                         dlProcess.StartInfo.ArgumentList.Add("--write-sub");
                     }

@@ -41,14 +41,14 @@ namespace YoutubeDl.Wpf.Views
                 this.Bind(ViewModel,
                     viewModel => viewModel.Settings.Backend,
                     view => view.ytdlBackendTypeRadioButton.IsChecked,
-                    backend => backend == BackendType.Ytdl,
-                    isChecked => isChecked == true ? BackendType.Ytdl : BackendType.Ytdlp)
+                    backend => backend == BackendTypes.Ytdl,
+                    isChecked => isChecked == true ? BackendTypes.Ytdl : BackendTypes.Ytdlp)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.Settings.Backend,
                     view => view.ytdlpBackendTypeRadioButton.IsChecked,
-                    backend => backend == BackendType.Ytdlp)
+                    backend => backend == BackendTypes.Ytdlp)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,

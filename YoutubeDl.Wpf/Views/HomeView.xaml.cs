@@ -65,23 +65,33 @@ namespace YoutubeDl.Wpf.Views
 
                 // containerComboBox
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.ContainerList,
+                    viewModel => viewModel.Containers,
                     view => view.containerComboBox.ItemsSource)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.Container,
+                    viewModel => viewModel.Settings.SelectedContainer,
+                    view => view.containerComboBox.SelectedItem)
+                    .DisposeWith(disposables);
+
+                this.Bind(ViewModel,
+                    viewModel => viewModel.Settings.ContainerText,
                     view => view.containerComboBox.Text)
                     .DisposeWith(disposables);
 
                 // formatComboBox
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.FormatList,
+                    viewModel => viewModel.Formats,
                     view => view.formatComboBox.ItemsSource)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.Format,
+                    viewModel => viewModel.Settings.SelectedFormat,
+                    view => view.formatComboBox.SelectedItem)
+                    .DisposeWith(disposables);
+
+                this.Bind(ViewModel,
+                    viewModel => viewModel.Settings.FormatText,
                     view => view.formatComboBox.Text)
                     .DisposeWith(disposables);
 

@@ -74,8 +74,8 @@ namespace YoutubeDl.Wpf.ViewModels
                 {
                     Settings.Backend = name switch
                     {
-                        "youtube-dl" => BackendType.Ytdl,
-                        "yt-dlp" => BackendType.Ytdlp,
+                        "youtube-dl" => BackendTypes.Ytdl,
+                        "yt-dlp" => BackendTypes.Ytdlp,
                         _ => Settings.Backend,
                     };
                 });

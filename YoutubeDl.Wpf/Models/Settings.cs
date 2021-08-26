@@ -26,7 +26,7 @@ namespace YoutubeDl.Wpf.Models
         public bool AutoUpdateDl { get; set; } = true;
 
         [Reactive]
-        public BackendType Backend { get; set; } = BackendType.Ytdl;
+        public BackendTypes Backend { get; set; } = BackendTypes.Ytdl;
 
         [Reactive]
         public string DlPath { get; set; } = "";
@@ -38,10 +38,16 @@ namespace YoutubeDl.Wpf.Models
         public string Proxy { get; set; } = "";
 
         [Reactive]
-        public string Container { get; set; } = "Auto";
+        public string ContainerText { get; set; } = "Auto";
 
         [Reactive]
-        public string Format { get; set; } = "Auto";
+        public Format? SelectedContainer { get; set; } = Format.Auto;
+
+        [Reactive]
+        public string FormatText { get; set; } = "Auto";
+
+        [Reactive]
+        public Format? SelectedFormat { get; set; } = Format.Auto;
 
         [Reactive]
         public bool AddMetadata { get; set; } = true;
