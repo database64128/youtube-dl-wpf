@@ -5,8 +5,8 @@
 
 A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) and [`yt-dlp`](https://github.com/yt-dlp/yt-dlp).
 
-![Home](Home.png "Home")
-![Settings](Settings.png "Settings")
+![Home](home.webp "Home")
+![Settings](settings.webp "Settings")
 
 ## Features
 
