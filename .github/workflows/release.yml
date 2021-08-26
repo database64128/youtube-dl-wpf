@@ -33,7 +33,7 @@ jobs:
       # Package
       - name: Package for Windows
         run: |
-          cd YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.19041.0/publish
+          cd YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/publish
           7z a -tzip -mx=9 -mfb=128 ../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows.zip .
           7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows.7z .
           # cd ../win-arm64/publish
@@ -48,7 +48,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.19041.0/youtube-dl-wpf-*
+          file: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/youtube-dl-wpf-*
           tag: ${{ github.ref }}
           file_glob: true
           prerelease: true

@@ -37,14 +37,14 @@ jobs:
       #   uses: actions/upload-artifact@v2
       #   with:
       #     name: youtube-dl-wpf-${{ github.sha }}-windows-arm64
-      #     path: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.19041.0/win-arm64/publish/
+      #     path: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/win-arm64/publish/
       - name: Upload artifacts for Windows x64
         uses: actions/upload-artifact@v2
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows-x64
-          path: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.19041.0/win-x64/publish/
+          path: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/win-x64/publish/
       - name: Upload artifacts for Windows framework-dependent
         uses: actions/upload-artifact@v2
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows
-          path: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.19041.0/publish/
+          path: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/publish/
