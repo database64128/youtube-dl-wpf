@@ -38,7 +38,7 @@
                          Width="56">
                     <TabItem.Header>
                         <materialDesign:PackIcon
-                            Kind="SettingsOutline"
+                            Kind="Settings"
                             Width="24"
                             Height="24" />
                     </TabItem.Header>

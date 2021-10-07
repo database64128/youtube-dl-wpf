@@ -58,18 +58,16 @@
                              VerticalAlignment="Center"
                              materialDesign:HintAssist.Hint="e.g. https://www.youtube.com/watch?v=b2390GAm4d0"/>
                     <Button x:Name="downloadButton"
-                            Margin="4"/>
+                            Margin="4"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"/>
                     <Button x:Name="listFormatsButton"
                             Margin="4"
-                            Style="{StaticResource MaterialDesignRaisedAccentButton}"
-                            Foreground="White"
+                            Style="{StaticResource MaterialDesignOutlinedSecondaryButton}"
                             Content="_List Formats"/>
                     <Button x:Name="abortButton"
                             Margin="4"
-                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                            Background="Red"
-                            BorderBrush="Red"
-                            Foreground="White"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="Red"
                             Content="_Abort"/>
                 </StackPanel>
 
@@ -88,7 +86,8 @@
                               IsReadOnly="False"
                               IsTextSearchCaseSensitive="True"
                               StaysOpenOnEdit="True"
-                              Margin="4">
+                              Margin="4"
+                              VerticalAlignment="Center">
                         <ComboBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <VirtualizingStackPanel />
@@ -101,7 +100,8 @@
                               IsEditable="True"
                               IsReadOnly="False"
                               StaysOpenOnEdit="True"
-                              Margin="4">
+                              Margin="4"
+                              VerticalAlignment="Center">
                         <ComboBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <VirtualizingStackPanel />
