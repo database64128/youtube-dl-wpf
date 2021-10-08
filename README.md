@@ -15,8 +15,10 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) 
 - List all available formats.
 - Override video, audio formats and output container.
 - Embed metadata into downloaded file.
-- Download and embed thumbnails and subtitles.
+- Download and embed thumbnails.
 - Download playlists.
+- Select types of subtitles (default, all languages, auto-generated) to download and embed.
+- Specify custom download filename template.
 - Specify custom download path.
 - Specify custom `ffmpeg` path.
 - Specify custom proxy.
