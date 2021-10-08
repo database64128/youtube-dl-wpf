@@ -159,6 +159,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 FreezeButton = false;
                 DownloadButtonProgressIndeterminate = false;
                 FormatsButtonProgressIndeterminate = false;
+                DownloadButtonProgressPercentageValue = 0.0;
                 DownloadButtonProgressPercentageString = "_Download";
             });
         }
