@@ -42,7 +42,7 @@ namespace YoutubeDl.Wpf.ViewModels
             this.ValidationRule(
                 viewModel => viewModel.Settings.DlPath,
                 dlPath => File.Exists(dlPath),
-                "Invalid youtube-dl binary path.");
+                "Invalid backend binary path.");
 
             this.ValidationRule(
                 viewModel => viewModel.Settings.FfmpegPath,
@@ -57,7 +57,7 @@ namespace YoutubeDl.Wpf.ViewModels
             // The actual validation mechanisms.
             this.WhenAnyValue(x => x.Settings.DlPath)
                 .Where(dlPath => !File.Exists(dlPath))
-                .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid youtube-dl binary path"));
+                .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid backend binary path"));
 
             this.WhenAnyValue(x => x.Settings.FfmpegPath)
                 .Where(ffmpegPath => !string.IsNullOrEmpty(ffmpegPath) && !File.Exists(ffmpegPath))
@@ -116,7 +116,7 @@ namespace YoutubeDl.Wpf.ViewModels
             Settings.AppColorMode = colorMode;
         }
 
-        private void BrowseDlBinary() => Settings.DlPath = BrowseBinary("youtube-dl", Settings.DlPath);
+        private void BrowseDlBinary() => Settings.DlPath = BrowseBinary(Settings.Backend.ToExecutableName(), Settings.DlPath);
 
         private void BrowseFfmpegBinary() => Settings.FfmpegPath = BrowseBinary("ffmpeg", Settings.FfmpegPath);
 

@@ -51,7 +51,7 @@
                            Margin="8"
                            VerticalAlignment="Center"
                            Style="{StaticResource MaterialDesignSubtitle1TextBlock}">
-                    Video Link
+                    Video link
                 </TextBlock>
                 <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
                     <TextBox x:Name="linkTextBox"
@@ -65,7 +65,7 @@
                     <Button x:Name="listFormatsButton"
                             Margin="4"
                             Style="{StaticResource MaterialDesignOutlinedSecondaryButton}"
-                            Content="_List Formats"/>
+                            Content="_List formats"/>
                     <Button x:Name="abortButton"
                             Margin="4"
                             Style="{StaticResource MaterialDesignFlatButton}"
@@ -126,18 +126,18 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
                     <ToggleButton x:Name="metadataToggle"
                                   Margin="4"/>
-                    <TextBlock VerticalAlignment="Center" Margin="4">Add Metadata</TextBlock>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Add metadata</TextBlock>
                     <ToggleButton x:Name="thumbnailToggle"
                                   Margin="8 4 4 4"/>
-                    <TextBlock VerticalAlignment="Center" Margin="4">Download Thumbnail</TextBlock>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Download thumbnail</TextBlock>
                     <ToggleButton x:Name="playlistToggle"
                                   Margin="8 4 4 4"/>
-                    <TextBlock VerticalAlignment="Center" Margin="4">Download Playlist</TextBlock>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Download playlist</TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
                     <ToggleButton x:Name="filenameTemplateToggle"
                                   Margin="4"/>
-                    <TextBlock VerticalAlignment="Center" Margin="4">Custom Filename Template</TextBlock>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Custom filename template</TextBlock>
                     <TextBox x:Name="filenameTemplateTextBox"
                              Margin="4"
                              Width="200"
@@ -150,7 +150,7 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1">
                     <ToggleButton x:Name="pathToggle"
                                   Margin="4"/>
-                    <TextBlock VerticalAlignment="Center" Margin="4">Custom Download Path</TextBlock>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Custom download path</TextBlock>
                     <TextBox x:Name="pathTextBox"
                              Margin="4"
                              Width="300"
@@ -170,7 +170,7 @@
         <TextBlock Grid.Row="2"
                    Margin="8 20 8 8"
                    Style="{StaticResource MaterialDesignHeadline5TextBlock}">
-            Results
+            Logs
         </TextBlock>
 
         <TextBox x:Name="resultTextBox"
@@ -182,7 +182,7 @@
                  VerticalAlignment="Stretch"
                  VerticalScrollBarVisibility="Auto"
                  HorizontalScrollBarVisibility="Auto"
-                 materialDesign:HintAssist.Hint="Output from youtube-dl"
+                 materialDesign:HintAssist.Hint="Output from backend"
                  FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"/>
     </Grid>
 </reactiveui:ReactiveUserControl>
