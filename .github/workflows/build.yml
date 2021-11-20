@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v2
@@ -28,23 +28,23 @@ jobs:
       # Publish
       - name: Publish framework-dependent
         run: dotnet publish YoutubeDl.Wpf -c Release --no-restore
-      # - name: Publish self-contained for Windows ARM64
-      #   run: dotnet publish YoutubeDl.Wpf -c Release -r win-arm64 --self-contained
+      - name: Publish self-contained for Windows ARM64
+        run: dotnet publish YoutubeDl.Wpf -c Release -r win-arm64 --self-contained
       - name: Publish self-contained for Windows x64
         run: dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
       # Upload
-      # - name: Upload artifacts for Windows ARM64
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: youtube-dl-wpf-${{ github.sha }}-windows-arm64
-      #     path: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/win-arm64/publish/
+      - name: Upload artifacts for Windows ARM64
+        uses: actions/upload-artifact@v2
+        with:
+          name: youtube-dl-wpf-${{ github.sha }}-windows-arm64
+          path: YoutubeDl.Wpf/bin/Release/net6.0-windows10.0.22000.0/win-arm64/publish/
       - name: Upload artifacts for Windows x64
         uses: actions/upload-artifact@v2
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows-x64
-          path: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/win-x64/publish/
+          path: YoutubeDl.Wpf/bin/Release/net6.0-windows10.0.22000.0/win-x64/publish/
       - name: Upload artifacts for Windows framework-dependent
         uses: actions/upload-artifact@v2
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows
-          path: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/publish/
+          path: YoutubeDl.Wpf/bin/Release/net6.0-windows10.0.22000.0/publish/

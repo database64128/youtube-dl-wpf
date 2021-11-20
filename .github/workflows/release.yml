@@ -8,7 +8,7 @@ on:
 jobs:
   publish_upload:
     name: Publish and upload
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v2
@@ -21,8 +21,8 @@ jobs:
       # Publish
       - name: Publish framework-dependent
         run: dotnet publish YoutubeDl.Wpf -c Release --no-restore
-      # - name: Publish self-contained for Windows ARM64
-      #   run: dotnet publish YoutubeDl.Wpf -c Release -r win-arm64 --self-contained
+      - name: Publish self-contained for Windows ARM64
+        run: dotnet publish YoutubeDl.Wpf -c Release -r win-arm64 --self-contained
       - name: Publish self-contained for Windows x64
         run: dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
       # Get version
@@ -33,13 +33,13 @@ jobs:
       # Package
       - name: Package for Windows
         run: |
-          cd YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/publish
+          cd YoutubeDl.Wpf/bin/Release/net6.0-windows10.0.22000.0/publish
           7z a -tzip -mx=9 -mfb=128 ../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows.zip .
           7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows.7z .
-          # cd ../win-arm64/publish
-          # 7z a -tzip -mx=9 -mfb=128 ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-arm64.zip .
-          # 7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-arm64.7z .
-          # cd ../../win-x64/publish
+          cd ../win-arm64/publish
+          7z a -tzip -mx=9 -mfb=128 ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-arm64.zip .
+          7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-arm64.7z .
+          cd ../../win-x64/publish
           cd ../win-x64/publish
           7z a -tzip -mx=9 -mfb=128 ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-x64.zip .
           7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../../youtube-dl-wpf-${{ steps.get_version.outputs.VERSION }}-windows-x64.7z .
@@ -48,7 +48,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: YoutubeDl.Wpf/bin/Release/net5.0-windows10.0.20348.0/youtube-dl-wpf-*
+          file: YoutubeDl.Wpf/bin/Release/net6.0-windows10.0.22000.0/youtube-dl-wpf-*
           tag: ${{ github.ref }}
           file_glob: true
           prerelease: true
