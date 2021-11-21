@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeDl.Wpf.Utils;
@@ -84,6 +85,12 @@ namespace YoutubeDl.Wpf.Models
 
         [Reactive]
         public string DownloadPath { get; set; } = "";
+
+        /// <summary>
+        /// Gets the list of download path history.
+        /// New paths are always appended to the list.
+        /// </summary>
+        public List<string> DownloadPathHistory { get; set; } = new();
 
         /// <summary>
         /// Loads settings from Settings.json.

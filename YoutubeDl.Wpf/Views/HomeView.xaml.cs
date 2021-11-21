@@ -151,12 +151,17 @@ namespace YoutubeDl.Wpf.Views
 
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.Settings.UseCustomPath,
-                    view => view.pathTextBox.IsEnabled)
+                    view => view.pathComboBox.IsEnabled)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.DownloadPathHistory,
+                    view => view.pathComboBox.ItemsSource)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
                     viewModel => viewModel.Settings.DownloadPath,
-                    view => view.pathTextBox.Text)
+                    view => view.pathComboBox.Text)
                     .DisposeWith(disposables);
 
                 // Output

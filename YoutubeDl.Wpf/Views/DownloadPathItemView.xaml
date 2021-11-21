@@ -1,0 +1,31 @@
+﻿<reactiveui:ReactiveUserControl
+    x:Class="YoutubeDl.Wpf.Views.DownloadPathItemView"
+    x:TypeArguments="viewmodels:DownloadPathItemViewModel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:reactiveui="http://reactiveui.net"
+    xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:DownloadPathItemViewModel}"
+    d:DesignHeight="30" d:DesignWidth="200">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0"
+                   x:Name="pathTextBlock"
+                   VerticalAlignment="Center"/>
+        <Button Grid.Column="1"
+                x:Name="deleteButton"
+                Padding="2 0 0 0"
+                Style="{StaticResource MaterialDesignToolButton}"
+                VerticalAlignment="Center"
+                Height="18">
+            <materialDesign:PackIcon Kind="CloseCircle" />
+        </Button>
+    </Grid>
+</reactiveui:ReactiveUserControl>

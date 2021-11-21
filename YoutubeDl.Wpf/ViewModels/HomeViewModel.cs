@@ -30,6 +30,13 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public ObservableCollection<Format> Formats { get; } = new();
 
+        /// <summary>
+        /// Gets the download path history.
+        /// This collection was first constructed from <see cref="Settings.DownloadPathHistory"/> in reverse order.
+        /// So the newest path is always the first element.
+        /// </summary>
+        public ObservableCollection<DownloadPathItemViewModel> DownloadPathHistory { get; } = new();
+
         [Reactive]
         public string Link { get; set; } = "";
 
@@ -92,6 +99,8 @@ namespace YoutubeDl.Wpf.ViewModels
                     Formats.AddRange(Format.PredefinedFormats.Where(x => (x.SupportedBackends & Settings.Backend) == Settings.Backend));
                 });
 
+            DownloadPathHistory.AddRange(Settings.DownloadPathHistory.Select(x => new DownloadPathItemViewModel(x, DeleteDownloadPathItem)).Reverse());
+
             PrepareDlProcess();
 
             var canResetCustomFilenameTemplate = this.WhenAnyValue(
@@ -128,6 +137,24 @@ namespace YoutubeDl.Wpf.ViewModels
             if (Settings.AutoUpdateDl && !string.IsNullOrEmpty(Settings.DlPath))
             {
                 UpdateDl();
+            }
+        }
+
+        private void DeleteDownloadPathItem(DownloadPathItemViewModel item)
+        {
+            Settings.DownloadPathHistory.Remove(item.Path);
+            DownloadPathHistory.Remove(item);
+        }
+
+        private void UpdateDownloadPathHistory()
+        {
+            // No need to check if path is null or empty.
+            // Because this code path can only be reached
+            // when custom path is toggled and a valid path is supplied.
+            if (!Settings.DownloadPathHistory.Contains(Settings.DownloadPath))
+            {
+                Settings.DownloadPathHistory.Add(Settings.DownloadPath);
+                DownloadPathHistory.Insert(0, new(Settings.DownloadPath, DeleteDownloadPathItem));
             }
         }
 
@@ -332,6 +359,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 if (Settings.UseCustomPath)
                 {
                     outputTemplate = $@"{Settings.DownloadPath}\{outputTemplate}";
+                    UpdateDownloadPathHistory();
                 }
 
                 if (Settings.UseCustomOutputTemplate || Settings.UseCustomPath)
