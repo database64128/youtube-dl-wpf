@@ -27,7 +27,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) 
 
 1. Download the pre-built binary or build it from source.
 2. Download [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) or [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) from the upstream. _Optionally but recommended_, get `ffmpeg` either by [building from source](https://www.ffmpeg.org/) or downloading [pre-built binaries](https://ffmpeg.zeranoe.com/builds/) for Windows.
-3. The framework-dependent binary requires an installed [.NET 5 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0) to run. Alternatively, download the self-contained binary that bundles the runtime. The upstream `youtube-dl` binary requires MSVC++ 2010 x86 runtime.
+3. The framework-dependent binary requires an installed [.NET 6 Runtime](https://dotnet.microsoft.com/download/dotnet/6.0) to run. Alternatively, download the self-contained binary that bundles the runtime. The upstream `youtube-dl` binary requires MSVC++ 2010 x86 runtime.
 4. Run `youtube-dl-wpf.exe`. Go to __Settings__. Set the path to `youtube-dl`/`yt-dlp` and `ffmpeg`.
 5. Go back to the home tab. Paste a video URL and start downloading! 🚀
 
@@ -59,7 +59,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) 
 
 ## Build
 
-Prerequisites: .NET 5 SDK
+Prerequisites: .NET 6 SDK
 
 Note for packagers: The application by default uses executable directory as config directory. To use user's config directory, define the constant `PACKAGED` when building.
 
