@@ -24,6 +24,8 @@ namespace YoutubeDl.Wpf.ViewModels
         private readonly StringBuilder outputString;
         private Process dlProcess;
 
+        public static PackIconKind TabItemHeaderIconKind => PackIconKind.Download;
+
         public Settings Settings { get; }
 
         public ObservableCollection<Format> Containers { get; } = new();

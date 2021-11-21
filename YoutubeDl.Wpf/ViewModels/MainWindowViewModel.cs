@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeDl.Wpf.Models;
-using YoutubeDl.Wpf.Views;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
@@ -13,9 +12,9 @@ namespace YoutubeDl.Wpf.ViewModels
         private readonly Settings _settings;
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
 
-        public HomeView GetHomeView { get; } = new();
-
-        public SettingsView GetSettingsView { get; } = new();
+        public HomeViewModel HomeVM { get; }
+        public SettingsViewModel SettingsVM { get; }
+        public object[] Tabs { get; }
 
         public ReactiveCommand<CancelEventArgs?, bool> SaveSettingsAsyncCommand { get; }
 
@@ -28,8 +27,13 @@ namespace YoutubeDl.Wpf.ViewModels
             _settings = settings;
             _snackbarMessageQueue = snackbarMessageQueue;
 
-            GetHomeView.ViewModel = new(settings, snackbarMessageQueue);
-            GetSettingsView.ViewModel = new(settings, snackbarMessageQueue);
+            HomeVM = new(settings, snackbarMessageQueue);
+            SettingsVM = new(settings, snackbarMessageQueue);
+            Tabs = new object[]
+            {
+                HomeVM,
+                SettingsVM,
+            };
 
             SaveSettingsAsyncCommand = ReactiveCommand.CreateFromTask<CancelEventArgs?, bool>(SaveSettingsAsync);
         }

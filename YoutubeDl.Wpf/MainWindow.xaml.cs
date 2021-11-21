@@ -27,24 +27,20 @@ namespace YoutubeDl.Wpf
 
                 // Tabs
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.GetHomeView,
-                    view => view.dashboardTabItem.Content)
-                    .DisposeWith(disposables);
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.GetSettingsView,
-                    view => view.settingsTabItem.Content)
+                    viewModel => viewModel.Tabs,
+                    view => view.mainTabControl.ItemsSource)
                     .DisposeWith(disposables);
 
                 // Taskbar progress
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.GetHomeView.ViewModel!.DownloadButtonProgressPercentageValue, // Null forgiving reason: upstream limitation.
+                    viewModel => viewModel.HomeVM.DownloadButtonProgressPercentageValue,
                     view => view.TaskbarItemInfo.ProgressValue,
                     percentage => percentage / 100.0);
 
                 ViewModel.WhenAnyValue(
-                    x => x.GetHomeView.ViewModel!.FormatsButtonProgressIndeterminate,
-                    x => x.GetHomeView.ViewModel!.DownloadButtonProgressIndeterminate,
-                    x => x.GetHomeView.ViewModel!.DownloadButtonProgressPercentageValue, // Null forgiving reason: upstream limitation.
+                    x => x.HomeVM.FormatsButtonProgressIndeterminate,
+                    x => x.HomeVM.DownloadButtonProgressIndeterminate,
+                    x => x.HomeVM.DownloadButtonProgressPercentageValue,
                     (formatsIndeterminate, downloadIndeterminate, percentage) => (formatsIndeterminate || downloadIndeterminate, percentage))
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(Observer.Create(((bool indeterminate, double percentage) x) =>

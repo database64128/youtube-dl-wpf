@@ -20,29 +20,32 @@
     Title="Cube YouTube Downloader" Height="720" Width="896" MinHeight="540" MinWidth="620">
     <materialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
         <Grid>
-            <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}">
-                <TabItem x:Name="dashboardTabItem"
-                         Style="{StaticResource MaterialDesignNavigationRailTabItem}"
-                         Height="56"
-                         Width="56">
-                    <TabItem.Header>
-                        <materialDesign:PackIcon
-                            Kind="Download"
-                            Width="24"
-                            Height="24" />
-                    </TabItem.Header>
-                </TabItem>
-                <TabItem x:Name="settingsTabItem"
-                         Style="{StaticResource MaterialDesignNavigationRailTabItem}"
-                         Height="56"
-                         Width="56">
-                    <TabItem.Header>
-                        <materialDesign:PackIcon
-                            Kind="Settings"
-                            Width="24"
-                            Height="24" />
-                    </TabItem.Header>
-                </TabItem>
+            <TabControl x:Name="mainTabControl" SelectedIndex="0">
+                <TabControl.Style>
+                    <Style TargetType="TabControl" BasedOn="{StaticResource MaterialDesignNavigatilRailTabControl}">
+                        <Setter Property="ItemContainerStyle">
+                            <Setter.Value>
+                                <Style TargetType="TabItem" BasedOn="{StaticResource MaterialDesignNavigationRailTabItem}">
+                                    <Setter Property="Height" Value="56" />
+                                    <Setter Property="Width" Value="56" />
+                                </Style>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Style>
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <materialDesign:PackIcon Kind="{Binding TabItemHeaderIconKind}" Width="24" Height="24" />
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <reactiveui:ViewModelViewHost ViewModel="{Binding}"
+                                                      VerticalContentAlignment="Stretch"
+                                                      HorizontalContentAlignment="Stretch"
+                                                      IsTabStop="False" />
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
             </TabControl>
             <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="MainSnackbar" />
         </Grid>
