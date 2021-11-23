@@ -20,19 +20,13 @@
     Title="Cube YouTube Downloader" Height="720" Width="896" MinHeight="540" MinWidth="620">
     <materialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
         <Grid>
-            <TabControl x:Name="mainTabControl" SelectedIndex="0">
-                <TabControl.Style>
-                    <Style TargetType="TabControl" BasedOn="{StaticResource MaterialDesignNavigatilRailTabControl}">
-                        <Setter Property="ItemContainerStyle">
-                            <Setter.Value>
-                                <Style TargetType="TabItem" BasedOn="{StaticResource MaterialDesignNavigationRailTabItem}">
-                                    <Setter Property="Height" Value="56" />
-                                    <Setter Property="Width" Value="56" />
-                                </Style>
-                            </Setter.Value>
-                        </Setter>
+            <TabControl x:Name="mainTabControl" SelectedIndex="0" Style="{StaticResource MaterialDesignNavigatilRailTabControl}">
+                <TabControl.ItemContainerStyle>
+                    <Style TargetType="TabItem" BasedOn="{StaticResource MaterialDesignNavigationRailTabItem}">
+                        <Setter Property="Height" Value="56" />
+                        <Setter Property="Width" Value="56" />
                     </Style>
-                </TabControl.Style>
+                </TabControl.ItemContainerStyle>
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <materialDesign:PackIcon Kind="{Binding TabItemHeaderIconKind}" Width="24" Height="24" />
