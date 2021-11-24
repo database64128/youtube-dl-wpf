@@ -42,7 +42,7 @@ namespace YoutubeDl.Wpf.ViewModels
             // See https://github.com/reactiveui/ReactiveUI.Validation/issues/237.
             // These rules are kept here as a reference in case support gets added in a future version.
             this.ValidationRule(
-                viewModel => viewModel.Settings.DlPath,
+                viewModel => viewModel.Settings.BackendPath,
                 dlPath => File.Exists(dlPath),
                 "Invalid backend binary path.");
 
@@ -57,7 +57,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 "Invalid proxy URL.");
 
             // The actual validation mechanisms.
-            this.WhenAnyValue(x => x.Settings.DlPath)
+            this.WhenAnyValue(x => x.Settings.BackendPath)
                 .Where(dlPath => !File.Exists(dlPath))
                 .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid backend binary path"));
 
@@ -70,7 +70,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid proxy URL"));
 
             // Guess the backend type from binary name.
-            this.WhenAnyValue(x => x.Settings.DlPath)
+            this.WhenAnyValue(x => x.Settings.BackendPath)
                 .Select(dlPath => Path.GetFileNameWithoutExtension(dlPath))
                 .Subscribe(name =>
                 {
@@ -118,7 +118,7 @@ namespace YoutubeDl.Wpf.ViewModels
             Settings.AppColorMode = colorMode;
         }
 
-        private void BrowseDlBinary() => Settings.DlPath = BrowseBinary(Settings.Backend.ToExecutableName(), Settings.DlPath);
+        private void BrowseDlBinary() => Settings.BackendPath = BrowseBinary(Settings.Backend.ToExecutableName(), Settings.BackendPath);
 
         private void BrowseFfmpegBinary() => Settings.FfmpegPath = BrowseBinary("ffmpeg", Settings.FfmpegPath);
 

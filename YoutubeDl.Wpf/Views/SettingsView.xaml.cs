@@ -52,12 +52,12 @@ namespace YoutubeDl.Wpf.Views
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.AutoUpdateDl,
+                    viewModel => viewModel.Settings.BackendAutoUpdate,
                     view => view.autoUpdateDlToggle.IsChecked)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.DlPath,
+                    viewModel => viewModel.Settings.BackendPath,
                     view => view.dlPathTextBox.Text)
                     .DisposeWith(disposables);
 

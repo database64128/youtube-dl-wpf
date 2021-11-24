@@ -123,7 +123,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.Settings.FormatText,
                 x => x.Settings.UseCustomPath,
                 x => x.Settings.DownloadPath,
-                x => x.Settings.DlPath,
+                x => x.Settings.BackendPath,
                 x => x.FreezeButton,
                 (link, container, format, useCustomPath, downloadPath, dlBinaryPath, freezeButton) => !string.IsNullOrEmpty(link) && !string.IsNullOrEmpty(container) && !string.IsNullOrEmpty(format) && (!useCustomPath || Directory.Exists(downloadPath)) && !string.IsNullOrEmpty(dlBinaryPath) && !freezeButton);
 
@@ -136,7 +136,7 @@ namespace YoutubeDl.Wpf.ViewModels
             ListFormatsCommand = ReactiveCommand.Create(ListFormats, canStartDl);
             AbortDlCommand = ReactiveCommand.Create(AbortDl, canAbortDl);
 
-            if (Settings.AutoUpdateDl && !string.IsNullOrEmpty(Settings.DlPath))
+            if (Settings.BackendAutoUpdate && !string.IsNullOrEmpty(Settings.BackendPath))
             {
                 UpdateDl();
             }
@@ -231,7 +231,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private void StartDownload()
         {
             outputString.Clear();
-            dlProcess.StartInfo.FileName = Settings.DlPath;
+            dlProcess.StartInfo.FileName = Settings.BackendPath;
             dlProcess.StartInfo.ArgumentList.Clear();
 
             try
@@ -393,7 +393,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private void ListFormats()
         {
             outputString.Clear();
-            dlProcess.StartInfo.FileName = Settings.DlPath;
+            dlProcess.StartInfo.FileName = Settings.BackendPath;
             dlProcess.StartInfo.ArgumentList.Clear();
 
             try
@@ -446,7 +446,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private void UpdateDl()
         {
             outputString.Clear();
-            dlProcess.StartInfo.FileName = Settings.DlPath;
+            dlProcess.StartInfo.FileName = Settings.BackendPath;
             dlProcess.StartInfo.ArgumentList.Clear();
 
             try

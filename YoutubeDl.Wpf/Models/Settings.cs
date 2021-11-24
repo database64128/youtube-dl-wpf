@@ -30,13 +30,13 @@ namespace YoutubeDl.Wpf.Models
         public BaseTheme AppColorMode { get; set; } = BaseTheme.Inherit;
 
         [Reactive]
-        public bool AutoUpdateDl { get; set; } = true;
-
-        [Reactive]
         public BackendTypes Backend { get; set; } = BackendTypes.Ytdl;
 
         [Reactive]
-        public string DlPath { get; set; } = "";
+        public string BackendPath { get; set; } = "";
+
+        [Reactive]
+        public bool BackendAutoUpdate { get; set; } = true;
 
         [Reactive]
         public string FfmpegPath { get; set; } = "";
