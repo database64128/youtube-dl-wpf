@@ -10,7 +10,7 @@
     xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
-    d:DesignHeight="720" d:DesignWidth="840">
+    d:DesignHeight="720" d:DesignWidth="848">
     <ScrollViewer materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
                   HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
@@ -22,13 +22,15 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="40" />
                 <RowDefinition Height="40" />
+                <RowDefinition Height="40" MaxHeight="40" />
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="40" />
                 <RowDefinition Height="40" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="40" />
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -42,7 +44,7 @@
                        Style="{StaticResource MaterialDesignHeadline5TextBlock}">
                 Settings
             </TextBlock>
-            
+
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
                        Margin="8"
@@ -77,7 +79,7 @@
                     Dark
                 </RadioButton>
             </StackPanel>
-            
+
             <TextBlock Grid.Row="3"
                        Grid.Column="0"
                        Margin="8"
@@ -130,20 +132,38 @@
 
             <TextBlock Grid.Row="6"
                        Grid.Column="0"
+                       Margin="8"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource MaterialDesignBody2TextBlock}">
+                Startup arguments
+            </TextBlock>
+            <ItemsControl Grid.Row="6"
+                          Grid.RowSpan="2"
+                          Grid.Column="1"
+                          x:Name="argumentsItemsControl">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <TextBlock Grid.Row="8"
+                       Grid.Column="0"
                        Style="{StaticResource MaterialDesignBody2TextBlock}"
                        VerticalAlignment="Center"
                        Margin="8">
                 Update backend on startup
             </TextBlock>
             <ToggleButton
-                Grid.Row="6"
+                Grid.Row="8"
                 Grid.Column="1"
                 x:Name="autoUpdateDlToggle"
                 Margin="4"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"/>
-            
-            <TextBlock Grid.Row="7"
+
+            <TextBlock Grid.Row="9"
                        Grid.Column="0"
                        Margin="8"
                        VerticalAlignment="Center"
@@ -151,27 +171,27 @@
                 FFmpeg path
             </TextBlock>
             <TextBox x:Name="ffmpegPathTextBox"
-                     Grid.Row="7"
+                     Grid.Row="9"
                      Grid.Column="1"
                      Margin="4"
                      VerticalAlignment="Center"
                      materialDesign:HintAssist.Hint="Optional but recommended. Path to ffmpeg.exe"/>
             <Button x:Name="ffmpegPathBrowseButton"
-                    Grid.Row="7"
+                    Grid.Row="9"
                     Grid.Column="2"
                     Margin="4"
                     Style="{StaticResource MaterialDesignFlatButton}">
                 Browse
             </Button>
 
-            <TextBlock Grid.Row="8"
+            <TextBlock Grid.Row="10"
                        Grid.Column="0"
                        Margin="8"
                        Style="{StaticResource MaterialDesignHeadline6TextBlock}">
                 Network
             </TextBlock>
-            
-            <TextBlock Grid.Row="9"
+
+            <TextBlock Grid.Row="11"
                        Grid.Column="0"
                        Margin="8"
                        VerticalAlignment="Center"
@@ -179,20 +199,20 @@
                 Proxy
             </TextBlock>
             <TextBox x:Name="proxyTextBox"
-                     Grid.Row="9"
+                     Grid.Row="11"
                      Grid.Column="1"
                      Margin="4"
                      VerticalAlignment="Center"
                      materialDesign:HintAssist.Hint="Optional. Override system proxy settings. Example: socks5://localhost:1080/"/>
 
-            <TextBlock Grid.Row="10"
+            <TextBlock Grid.Row="12"
                        Grid.Column="0"
                        Margin="8 32 8 8"
                        Style="{StaticResource MaterialDesignHeadline5TextBlock}">
                 About
             </TextBlock>
 
-            <TextBlock Grid.Row="11"
+            <TextBlock Grid.Row="13"
                        Grid.Column="0"
                        Grid.ColumnSpan="3"
                        Margin="8 4 8 4"
@@ -202,7 +222,7 @@
                 and <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">yt-dlp</Span>.
             </TextBlock>
 
-            <Grid Grid.Row="12"
+            <Grid Grid.Row="14"
                   Grid.Column="0"
                   Grid.ColumnSpan="3"
                   Margin="4">

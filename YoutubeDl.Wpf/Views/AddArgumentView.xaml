@@ -1,0 +1,31 @@
+﻿<reactiveui:ReactiveUserControl
+    x:Class="YoutubeDl.Wpf.Views.AddArgumentView"
+    x:TypeArguments="viewmodels:AddArgumentViewModel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:reactiveui="http://reactiveui.net"
+    xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:AddArgumentViewModel}"
+    d:DesignHeight="36" d:DesignWidth="162">
+    <Grid Margin="4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="128" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.Column="0"
+                 VerticalAlignment="Center"
+                 x:Name="argumentTextBox"/>
+        <Button Grid.Column="1"
+                x:Name="addButton"
+                Padding="2 0 0 0"
+                Style="{StaticResource MaterialDesignIconForegroundButton}"
+                VerticalAlignment="Center"
+                Height="32" Width="32">
+            <materialDesign:PackIcon Kind="Add" Height="24" Width="24" />
+        </Button>
+    </Grid>
+</reactiveui:ReactiveUserControl>

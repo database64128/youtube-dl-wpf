@@ -2,6 +2,7 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeDl.Wpf.Utils;
@@ -34,6 +35,18 @@ namespace YoutubeDl.Wpf.Models
 
         [Reactive]
         public string BackendPath { get; set; } = "";
+
+        /// <summary>
+        /// Gets or sets the list of arguments passed
+        /// to the backend process for all types of operations.
+        /// </summary>
+        public ObservableCollection<BackendArgument> BackendGlobalArguments { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the list of arguments passed
+        /// to the backend process for download operations.
+        /// </summary>
+        public List<BackendArgument> BackendDownloadArguments { get; set; } = new();
 
         [Reactive]
         public bool BackendAutoUpdate { get; set; } = true;

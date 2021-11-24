@@ -1,0 +1,17 @@
+﻿<reactiveui:ReactiveUserControl
+    x:Class="YoutubeDl.Wpf.Views.ArgumentChipView"
+    x:TypeArguments="viewmodels:ArgumentChipViewModel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:reactiveui="http://reactiveui.net"
+    xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:ArgumentChipViewModel}"
+    d:DesignHeight="38" d:DesignWidth="160">
+    <materialDesign:Chip x:Name="argumentChip"
+                         Margin="4"
+                         Background="#16FFFFFF" />
+</reactiveui:ReactiveUserControl>

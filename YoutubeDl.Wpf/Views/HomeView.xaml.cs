@@ -164,6 +164,12 @@ namespace YoutubeDl.Wpf.Views
                     view => view.pathComboBox.Text)
                     .DisposeWith(disposables);
 
+                // Arguments
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.DownloadArguments,
+                    view => view.argumentsItemsControl.ItemsSource)
+                    .DisposeWith(disposables);
+
                 // Output
                 this.Bind(ViewModel,
                     viewModel => viewModel.Output,

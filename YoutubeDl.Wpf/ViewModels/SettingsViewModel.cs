@@ -1,9 +1,12 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using DynamicData;
+using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reflection;
@@ -23,6 +26,13 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public Settings Settings { get; }
 
+        /// <summary>
+        /// Gets the collection of view models of the arguments area.
+        /// A view model in this collection must be of either
+        /// <see cref="ArgumentChipViewModel"/> or <see cref="AddArgumentViewModel"/> type.
+        /// </summary>
+        public ObservableCollection<object> GlobalArguments { get; } = new();
+
         public ReactiveCommand<BaseTheme, Unit> ChangeColorModeCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseDlBinaryCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseFfmpegBinaryCommand { get; }
@@ -35,6 +45,9 @@ namespace YoutubeDl.Wpf.ViewModels
 
             Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
             Settings = settings;
+
+            GlobalArguments.AddRange(Settings.BackendGlobalArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
+            GlobalArguments.Add(new AddArgumentViewModel(AddArgument));
 
             ChangeColorMode(Settings.AppColorMode);
 
@@ -134,6 +147,24 @@ namespace YoutubeDl.Wpf.ViewModels
 
             var result = openFileDialog.ShowDialog();
             return result == true ? openFileDialog.FileName : path;
+        }
+
+        private void DeleteArgumentChip(ArgumentChipViewModel item)
+        {
+            if (item.IsRemovable)
+            {
+                Settings.BackendGlobalArguments.Remove(item.Argument);
+                GlobalArguments.Remove(item);
+            }
+        }
+
+        private void AddArgument(string argument)
+        {
+            var backendArgument = new BackendArgument(argument);
+            Settings.BackendGlobalArguments.Add(backendArgument);
+
+            // Insert right before AddArgumentViewModel.
+            GlobalArguments.Insert(GlobalArguments.Count - 1, new ArgumentChipViewModel(backendArgument, true, DeleteArgumentChip));
         }
     }
 }
