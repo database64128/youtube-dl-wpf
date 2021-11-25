@@ -429,7 +429,15 @@ namespace YoutubeDl.Wpf.ViewModels
 
             if (Settings.AddMetadata)
             {
-                _generatedDownloadArguments.Add("--add-metadata");
+                if (Settings.Backend == BackendTypes.Ytdl)
+                {
+                    _generatedDownloadArguments.Add("--add-metadata");
+                }
+
+                if (Settings.Backend == BackendTypes.Ytdlp)
+                {
+                    _generatedDownloadArguments.Add("--embed-metadata");
+                }
             }
 
             if (Settings.DownloadThumbnail)
