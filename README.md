@@ -22,6 +22,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) 
 - Specify custom download path.
 - Specify custom `ffmpeg` path.
 - Specify custom proxy.
+- Specify custom command-line arguments.
 
 ## Usage
 
@@ -63,18 +64,28 @@ Prerequisites: .NET 6 SDK
 
 Note for packagers: The application by default uses executable directory as config directory. To use user's config directory, define the constant `PACKAGED` when building.
 
+###  Build with Release configuration
+
 ```bash
-# Build with Release configuration
-$ dotnet build -c Release
+dotnet build -c Release
+```
 
-# Publish as framework-dependent
-$ dotnet publish YoutubeDl.Wpf -c Release
+### Publish as framework-dependent
 
-# Publish as self-contained for Windows x64
-$ dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
+```bash
+dotnet publish YoutubeDl.Wpf -c Release
+```
 
-# Publish as self-contained for packaging on Windows x64
-$ dotnet publish YoutubeDl.Wpf -c Release -p:DefineConstants=PACKAGED -r win-x64 --self-contained
+### Publish as self-contained for Windows x64
+
+```bash
+dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
+```
+
+### Publish as self-contained for packaging on Windows x64
+
+```bash
+dotnet publish YoutubeDl.Wpf -c Release -p:DefineConstants=PACKAGED -r win-x64 --self-contained
 ```
 
 ## License

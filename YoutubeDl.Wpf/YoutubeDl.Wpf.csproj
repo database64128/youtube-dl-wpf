@@ -7,7 +7,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Product>Cube YouTube Downloader</Product>
     <Authors>database64128</Authors>
-    <Version>1.9.0</Version>
+    <Version>1.10.0</Version>
     <ApplicationIcon>CubeYouTubeDownloader.ico</ApplicationIcon>
     <Description>A simple GUI wrapper for https://github.com/ytdl-org/youtube-dl.</Description>
     <Copyright>© 2021 database64128</Copyright>
@@ -20,6 +20,7 @@
     <AssemblyName>youtube-dl-wpf</AssemblyName>
     <PackageId>YoutubeDl.Wpf</PackageId>
     <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -55,6 +56,10 @@
     <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
