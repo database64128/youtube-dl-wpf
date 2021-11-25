@@ -143,8 +143,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.Settings.UseCustomOutputTemplate,
                 x => x.Settings.CustomOutputTemplate,
                 x => x.Settings.UseCustomPath,
-                x => x.Settings.DownloadPath,
-                x => x.Link)
+                x => x.Settings.DownloadPath)
                 .Select(_ => Unit.Default);
 
             Observable.Merge(gdaA, gdaB, gdaC)
@@ -476,11 +475,6 @@ namespace YoutubeDl.Wpf.ViewModels
                 _generatedDownloadArguments.Add(outputTemplate);
             }
 
-            if (!string.IsNullOrEmpty(Link))
-            {
-                _generatedDownloadArguments.Add($"{Link}");
-            }
-
             var pos = _globalArgCount;
 
             foreach (var arg in _generatedDownloadArguments)
@@ -498,6 +492,7 @@ namespace YoutubeDl.Wpf.ViewModels
             dlProcess.StartInfo.ArgumentList.AddRange(Settings.BackendGlobalArguments.Select(x => x.Argument));
             dlProcess.StartInfo.ArgumentList.AddRange(_generatedDownloadArguments);
             dlProcess.StartInfo.ArgumentList.AddRange(Settings.BackendDownloadArguments.Select(x => x.Argument));
+            dlProcess.StartInfo.ArgumentList.Add(Link);
 
             try
             {
@@ -530,7 +525,7 @@ namespace YoutubeDl.Wpf.ViewModels
             }
 
             args.Add($"-F");
-            args.Add($"{Link}");
+            args.Add(Link);
 
             return args;
         }
