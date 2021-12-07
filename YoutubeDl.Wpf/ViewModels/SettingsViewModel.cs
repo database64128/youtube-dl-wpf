@@ -20,7 +20,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
         private readonly PaletteHelper _paletteHelper;
 
-        public static PackIconKind TabItemHeaderIconKind => PackIconKind.Settings;
+        public static PackIconKind TabItemHeaderIconKind { get; } = PackIconKind.Settings;
 
         public string Version { get; }
 

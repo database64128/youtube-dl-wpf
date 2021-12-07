@@ -31,7 +31,7 @@ namespace YoutubeDl.Wpf.Utils
             // ~/.config on Linux
             // ~/AppData/Roaming on Windows
             var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            configDirectory = $"{appDataPath}/cubic-bot-telegram";
+            configDirectory = $"{appDataPath}/youtube-dl-wpf";
 #else
             // Use executable directory
             // Executable directory for single-file deployments in .NET 5: https://docs.microsoft.com/en-us/dotnet/core/deploying/single-file

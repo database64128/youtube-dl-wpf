@@ -23,13 +23,20 @@ namespace YoutubeDl.Wpf.ViewModels
     public class HomeViewModel : ReactiveValidationObject
     {
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
-        private readonly List<string> _generatedDownloadArguments;
-        private readonly string[] outputSeparators;
-        private readonly StringBuilder outputString;
+        private readonly List<string> _generatedDownloadArguments = new();
+        private readonly string[] outputSeparators =
+        {
+            "[download]",
+            "of",
+            "at",
+            "ETA",
+            " ",
+        };
+        private readonly StringBuilder outputString = new();
         private Process dlProcess;
         private int _globalArgCount;
 
-        public static PackIconKind TabItemHeaderIconKind => PackIconKind.Download;
+        public PackIconKind TabItemHeaderIconKind { get; }
 
         public Settings Settings { get; }
 
@@ -93,18 +100,33 @@ namespace YoutubeDl.Wpf.ViewModels
             Settings = settings;
             _snackbarMessageQueue = snackbarMessageQueue;
 
-            _generatedDownloadArguments = new();
-
-            outputSeparators = new string[]
+            // Tab icon Easter egg.
+            const PackIconKind defaultIcon = PackIconKind.Download;
+            var today = DateTime.Today;
+            TabItemHeaderIconKind = today.Month switch
             {
-                "[download]",
-                "of",
-                "at",
-                "ETA",
-                " "
+                2 => today.Day switch
+                {
+                    14 => PackIconKind.Heart,
+                    _ => defaultIcon,
+                },
+                10 => today.Day switch
+                {
+                    31 => PackIconKind.Halloween,
+                    _ => defaultIcon,
+                },
+                11 => today.Day switch
+                {
+                    >= 20 => PackIconKind.Thanksgiving,
+                    _ => defaultIcon,
+                },
+                12 => today.Day switch
+                {
+                    >= 23 => PackIconKind.Snowman,
+                    _ => defaultIcon,
+                },
+                _ => defaultIcon,
             };
-
-            outputString = new();
 
             this.WhenAnyValue(x => x.Settings.Backend)
                 .Subscribe(_ =>
