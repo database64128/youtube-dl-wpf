@@ -45,7 +45,7 @@
     <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.1.4" PrivateAssets="all" />
     <PackageReference Include="ReactiveUI.Fody" Version="17.1.4" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.2.1" />
-    <PackageReference Include="ReactiveUI.WPF" Version="17.1.4" />
+    <PackageReference Include="ReactiveUI.WPF" Version="17.1.6" />
   </ItemGroup>
 
   <ItemGroup>
