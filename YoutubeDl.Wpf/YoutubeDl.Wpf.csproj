@@ -43,7 +43,7 @@
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.2.1" />
     <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.1.4" PrivateAssets="all" />
-    <PackageReference Include="ReactiveUI.Fody" Version="17.1.9" />
+    <PackageReference Include="ReactiveUI.Fody" Version="18.0.7" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.2.1" />
     <PackageReference Include="ReactiveUI.WPF" Version="17.1.9" />
   </ItemGroup>
