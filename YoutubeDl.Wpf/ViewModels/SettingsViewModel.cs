@@ -71,6 +71,11 @@ namespace YoutubeDl.Wpf.ViewModels
                 proxy => string.IsNullOrEmpty(proxy) || (Uri.TryCreate(proxy, UriKind.Absolute, out var uri) && (uri.Scheme is "socks5" or "http" or "https")),
                 "Invalid proxy URL.");
 
+            this.ValidationRule(
+                viewModel => viewModel.Settings.LoggingMaxEntries,
+                loggingMaxEntries => loggingMaxEntries > 0,
+                "Max log entries must be greater than 0.");
+
             // The actual validation mechanisms.
             this.WhenAnyValue(x => x.Settings.BackendPath)
                 .Where(dlPath => !File.Exists(dlPath))
@@ -83,6 +88,14 @@ namespace YoutubeDl.Wpf.ViewModels
             this.WhenAnyValue(x => x.Settings.Proxy)
                 .Where(proxy => !string.IsNullOrEmpty(proxy) && !(Uri.TryCreate(proxy, UriKind.Absolute, out var uri) && (uri.Scheme is "socks5" or "http" or "https")))
                 .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid proxy URL"));
+
+            this.WhenAnyValue(x => x.Settings.LoggingMaxEntries)
+                .Where(loggingMaxEntries => loggingMaxEntries <= 0)
+                .Subscribe(_ =>
+                {
+                    _snackbarMessageQueue.Enqueue("Warning: Max log entries must be greater than 0.");
+                    Settings.LoggingMaxEntries = 1024;
+                });
 
             // Guess the backend type from binary name.
             this.WhenAnyValue(x => x.Settings.BackendPath)

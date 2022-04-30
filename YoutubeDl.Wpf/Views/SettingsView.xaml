@@ -28,9 +28,11 @@
                 <RowDefinition Height="40" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="40" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -207,12 +209,35 @@
 
             <TextBlock Grid.Row="12"
                        Grid.Column="0"
+                       Margin="8"
+                       Style="{StaticResource MaterialDesignHeadline6TextBlock}">
+                Logging
+            </TextBlock>
+
+            <TextBlock Grid.Row="13"
+                       Grid.Column="0"
+                       Margin="8"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource MaterialDesignBody2TextBlock}">
+                Max log entries
+            </TextBlock>
+            <TextBox x:Name="maxLogEntriesTextBox"
+                     Grid.Row="13"
+                     Grid.Column="1"
+                     Margin="4"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Left"
+                     HorizontalContentAlignment="Right"
+                     Width="48"/>
+
+            <TextBlock Grid.Row="14"
+                       Grid.Column="0"
                        Margin="8 32 8 8"
                        Style="{StaticResource MaterialDesignHeadline5TextBlock}">
                 About
             </TextBlock>
 
-            <TextBlock Grid.Row="13"
+            <TextBlock Grid.Row="15"
                        Grid.Column="0"
                        Grid.ColumnSpan="3"
                        Margin="8 4 8 4"
@@ -222,7 +247,7 @@
                 and <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">yt-dlp</Span>.
             </TextBlock>
 
-            <Grid Grid.Row="14"
+            <Grid Grid.Row="16"
                   Grid.Column="0"
                   Grid.ColumnSpan="3"
                   Margin="4">

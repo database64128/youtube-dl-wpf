@@ -77,6 +77,12 @@ namespace YoutubeDl.Wpf.Views
                     view => view.proxyTextBox.Text)
                     .DisposeWith(disposables);
 
+                // Logging
+                this.Bind(ViewModel,
+                    viewModel => viewModel.Settings.LoggingMaxEntries,
+                    view => view.maxLogEntriesTextBox.Text)
+                    .DisposeWith(disposables);
+
                 // About
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.Version,
