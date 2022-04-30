@@ -5,6 +5,7 @@ using Splat;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Text;
@@ -81,11 +82,10 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         var parsedStringArray = output.Split(outputSeparators, StringSplitOptions.RemoveEmptyEntries);
         if (parsedStringArray.Length == 4) // valid [download] line
         {
-            var percentageString = parsedStringArray[0];
-            if (percentageString.EndsWith('%')) // actual percentage
+            ReadOnlySpan<char> percentageString = parsedStringArray[0];
+            if (percentageString.Length >= 2 && percentageString.EndsWith("%")) // actual percentage
             {
-                var percentageNumberString = percentageString.TrimEnd('%');
-                if (double.TryParse(percentageNumberString, out var percentageNumber))
+                if (double.TryParse(percentageString[..^1], NumberStyles.None, CultureInfo.InvariantCulture, out var percentageNumber))
                 {
                     DownloadProgressPercentage = percentageNumber / 100;
                     StatusIndeterminate = false;
