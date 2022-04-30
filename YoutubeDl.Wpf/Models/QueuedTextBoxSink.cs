@@ -37,15 +37,25 @@ public class QueuedTextBoxSink : ReactiveObject, ILogEventSink
 
             _queuedLogEvents.Enqueue(logEvent);
 
-            var messages = _queuedLogEvents.Select(x => x.RenderMessage(_formatProvider));
-            var length = messages.Sum(x => x.Length + Environment.NewLine.Length);
+            var messages = _queuedLogEvents.Select(x => (x.Timestamp.ToString("O"), x.Level, x.RenderMessage(_formatProvider)));
+            var length = messages.Sum(x => x.Item1.Length + 1 + 3 + 1 + x.Item3.Length + Environment.NewLine.Length);
             var text = string.Create(length, messages, (buf, msgs) =>
             {
                 foreach (var msg in msgs)
                 {
-                    msg.CopyTo(buf);
-                    Environment.NewLine.CopyTo(buf[msg.Length..]);
-                    buf = buf[(msg.Length + Environment.NewLine.Length)..];
+                    msg.Item1.CopyTo(buf);
+                    buf[msg.Item1.Length] = ' ';
+                    buf = buf[(msg.Item1.Length + 1)..];
+
+                    buf[0] = '[';
+                    buf[1] = msg.Level.ToString()[0];
+                    buf[2] = ']';
+                    buf[3] = ' ';
+                    buf = buf[4..];
+
+                    msg.Item3.CopyTo(buf);
+                    Environment.NewLine.CopyTo(buf[msg.Item3.Length..]);
+                    buf = buf[(msg.Item3.Length + Environment.NewLine.Length)..];
                 }
             });
 

@@ -28,10 +28,11 @@ namespace YoutubeDl.Wpf.ViewModels
             if (loadSettingsErrMsg is not null)
                 snackbarMessageQueue.Enqueue(loadSettingsErrMsg);
 
+            // Configure logging.
             var queuedTextBoxsink = new QueuedTextBoxSink(settings);
-            var loggerConfig = new LoggerConfiguration();
-            loggerConfig.WriteTo.Sink(queuedTextBoxsink);
-            var logger = loggerConfig.CreateLogger();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(queuedTextBoxsink)
+                .CreateLogger();
             Locator.CurrentMutable.UseSerilogFullLogger(logger);
 
             BackendService = new BackendService(settings);
