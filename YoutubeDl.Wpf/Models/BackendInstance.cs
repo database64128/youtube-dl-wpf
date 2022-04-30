@@ -26,6 +26,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         "of",
         "at",
         "ETA",
+        "in",
         " ",
     };
 
@@ -83,12 +84,12 @@ public class BackendInstance : ReactiveObject, IEnableLogger
     private void ParseDlOutput(string output)
     {
         var parsedStringArray = output.Split(outputSeparators, StringSplitOptions.RemoveEmptyEntries);
-        if (parsedStringArray.Length == 4) // valid [download] line
+        if (parsedStringArray.Length >= 2) // valid [download] line
         {
             ReadOnlySpan<char> percentageString = parsedStringArray[0];
             if (percentageString.Length >= 2 && percentageString.EndsWith("%")) // actual percentage
             {
-                if (double.TryParse(percentageString[..^1], NumberStyles.None, CultureInfo.InvariantCulture, out var percentageNumber))
+                if (double.TryParse(percentageString[..^1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var percentageNumber))
                 {
                     DownloadProgressPercentage = percentageNumber / 100;
                     StatusIndeterminate = false;
@@ -98,8 +99,12 @@ public class BackendInstance : ReactiveObject, IEnableLogger
 
             // save other info
             FileSizeString = parsedStringArray[1];
-            DownloadSpeedString = parsedStringArray[2];
-            DownloadETAString = parsedStringArray[3];
+
+            if (parsedStringArray.Length == 4)
+            {
+                DownloadSpeedString = parsedStringArray[2];
+                DownloadETAString = parsedStringArray[3];
+            }
         }
     }
 
@@ -344,6 +349,8 @@ public class BackendInstance : ReactiveObject, IEnableLogger
 
     public void UpdateDl()
     {
+        _settings.BackendLastUpdateCheck = DateTimeOffset.Now;
+
         _dlProcess.StartInfo.FileName = _settings.BackendPath;
         _dlProcess.StartInfo.ArgumentList.Clear();
         if (!string.IsNullOrEmpty(_settings.Proxy))

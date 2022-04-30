@@ -14,7 +14,7 @@ public class BackendService : ReactiveObject, IEnableLogger
     public List<BackendInstance> Instances { get; } = new();
 
     [Reactive]
-    public bool IsUpdating { get; set; }
+    public bool CanUpdate { get; set; } = true;
 
     [Reactive]
     public double GlobalDownloadProgressPercentage { get; set; } // 0.99 is 99%.
@@ -33,6 +33,8 @@ public class BackendService : ReactiveObject, IEnableLogger
 
     public void UpdateProgress()
     {
+        CanUpdate = Instances.All(x => !x.IsRunning);
+
         GlobalDownloadProgressPercentage = Instances.Sum(x => x.DownloadProgressPercentage) / Instances.Count;
 
         if (Instances.All(x => x.StatusIndeterminate))
@@ -47,5 +49,16 @@ public class BackendService : ReactiveObject, IEnableLogger
         {
             ProgressState = TaskbarItemProgressState.None;
         }
+    }
+
+    public void UpdateBackend()
+    {
+        var instance = Instances.Count switch
+        {
+            > 0 => Instances[0],
+            _ => new(_settings, this),
+        };
+
+        instance.UpdateDl();
     }
 }

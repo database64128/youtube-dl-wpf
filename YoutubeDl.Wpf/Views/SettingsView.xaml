@@ -157,13 +157,21 @@
                        Margin="8">
                 Update backend on startup
             </TextBlock>
-            <ToggleButton
-                Grid.Row="8"
-                Grid.Column="1"
-                x:Name="autoUpdateDlToggle"
-                Margin="4"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"/>
+            <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal">
+                <ToggleButton x:Name="autoUpdateDlToggle"
+                              Margin="4"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"/>
+                <Button x:Name="updateBackendButton"
+                        Margin="4"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                    Update now
+                </Button>
+                <TextBlock x:Name="lastUpdateCheckTextBlock"
+                           Margin="4"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}" />
+            </StackPanel>
 
             <TextBlock Grid.Row="9"
                        Grid.Column="0"

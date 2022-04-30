@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -50,6 +51,9 @@ namespace YoutubeDl.Wpf.Models
 
         [Reactive]
         public bool BackendAutoUpdate { get; set; } = true;
+
+        [Reactive]
+        public DateTimeOffset BackendLastUpdateCheck { get; set; }
 
         [Reactive]
         public string FfmpegPath { get; set; } = "";

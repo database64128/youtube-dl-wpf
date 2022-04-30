@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
+using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using YoutubeDl.Wpf.Models;
@@ -64,6 +65,19 @@ namespace YoutubeDl.Wpf.Views
                 this.Bind(ViewModel,
                     viewModel => viewModel.Settings.BackendAutoUpdate,
                     view => view.autoUpdateDlToggle.IsChecked)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.Settings.BackendLastUpdateCheck,
+                    view => view.lastUpdateCheckTextBlock.Text,
+                    lastCheck =>
+                    {
+                        if (lastCheck == DateTimeOffset.MinValue)
+                        {
+                            return "Last check: Never";
+                        }
+                        return $"Last check: {lastCheck}";
+                    })
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
@@ -132,6 +146,12 @@ namespace YoutubeDl.Wpf.Views
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.BrowseFfmpegBinaryCommand,
                     view => view.ffmpegPathBrowseButton)
+                    .DisposeWith(disposables);
+
+                // Check now button
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.UpdateBackendCommand,
+                    view => view.updateBackendButton)
                     .DisposeWith(disposables);
             });
         }

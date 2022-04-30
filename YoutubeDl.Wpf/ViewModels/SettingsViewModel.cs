@@ -36,6 +36,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public ReactiveCommand<BaseTheme, Unit> ChangeColorModeCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseDlBinaryCommand { get; }
+        public ReactiveCommand<Unit, Unit> UpdateBackendCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseFfmpegBinaryCommand { get; }
         public ReactiveCommand<string, Unit> OpenUri { get; }
 
@@ -110,8 +111,11 @@ namespace YoutubeDl.Wpf.ViewModels
                     };
                 });
 
+            var canUpdateBackend = this.WhenAnyValue(x => x._backendService.CanUpdate);
+
             ChangeColorModeCommand = ReactiveCommand.Create<BaseTheme>(ChangeColorMode);
             BrowseDlBinaryCommand = ReactiveCommand.Create(BrowseDlBinary);
+            UpdateBackendCommand = ReactiveCommand.Create(_backendService.UpdateBackend, canUpdateBackend);
             BrowseFfmpegBinaryCommand = ReactiveCommand.Create(BrowseFfmpegBinary);
             OpenUri = ReactiveCommand.Create<string>(uri => WpfHelper.OpenUri(uri));
         }
