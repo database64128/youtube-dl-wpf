@@ -58,6 +58,9 @@ namespace YoutubeDl.Wpf.Models
         public string Proxy { get; set; } = "";
 
         [Reactive]
+        public int LoggingMaxEntries { get; set; } = 1024;
+
+        [Reactive]
         public string ContainerText { get; set; } = "Auto";
 
         [Reactive]

@@ -1,9 +1,6 @@
 ﻿using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
-using System.Reactive;
 using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Windows.Shell;
 
 namespace YoutubeDl.Wpf
 {
@@ -33,31 +30,13 @@ namespace YoutubeDl.Wpf
 
                 // Taskbar progress
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.HomeVM.DownloadButtonProgressPercentageValue,
-                    view => view.TaskbarItemInfo.ProgressValue,
-                    percentage => percentage / 100.0);
+                    viewModel => viewModel.BackendService.GlobalDownloadProgressPercentage,
+                    view => view.TaskbarItemInfo.ProgressValue)
+                    .DisposeWith(disposables);
 
-                ViewModel.WhenAnyValue(
-                    x => x.HomeVM.FormatsButtonProgressIndeterminate,
-                    x => x.HomeVM.DownloadButtonProgressIndeterminate,
-                    x => x.HomeVM.DownloadButtonProgressPercentageValue,
-                    (formatsIndeterminate, downloadIndeterminate, percentage) => (formatsIndeterminate || downloadIndeterminate, percentage))
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(Observer.Create(((bool indeterminate, double percentage) x) =>
-                    {
-                        if (x.indeterminate)
-                        {
-                            TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
-                        }
-                        else if (x.percentage > 0.0)
-                        {
-                            TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
-                        }
-                        else
-                        {
-                            TaskbarItemInfo.ProgressState = TaskbarItemProgressState.None;
-                        }
-                    }))
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.BackendService.ProgressState,
+                    view => view.TaskbarItemInfo.ProgressState)
                     .DisposeWith(disposables);
             });
         }

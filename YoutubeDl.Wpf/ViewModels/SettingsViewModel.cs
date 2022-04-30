@@ -17,6 +17,7 @@ namespace YoutubeDl.Wpf.ViewModels
 {
     public class SettingsViewModel : ReactiveValidationObject
     {
+        private readonly BackendService _backendService;
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
         private readonly PaletteHelper _paletteHelper;
 
@@ -38,8 +39,9 @@ namespace YoutubeDl.Wpf.ViewModels
         public ReactiveCommand<Unit, Unit> BrowseFfmpegBinaryCommand { get; }
         public ReactiveCommand<string, Unit> OpenUri { get; }
 
-        public SettingsViewModel(Settings settings, ISnackbarMessageQueue snackbarMessageQueue)
+        public SettingsViewModel(Settings settings, BackendService backendService, ISnackbarMessageQueue snackbarMessageQueue)
         {
+            _backendService = backendService;
             _snackbarMessageQueue = snackbarMessageQueue;
             _paletteHelper = new();
 

@@ -1,5 +1,8 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
+using Serilog;
+using Splat;
+using Splat.Serilog;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +15,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private readonly Settings _settings;
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
 
+        public BackendService BackendService { get; }
         public HomeViewModel HomeVM { get; }
         public SettingsViewModel SettingsVM { get; }
         public object[] Tabs { get; }
@@ -24,11 +28,19 @@ namespace YoutubeDl.Wpf.ViewModels
             if (loadSettingsErrMsg is not null)
                 snackbarMessageQueue.Enqueue(loadSettingsErrMsg);
 
+            var queuedTextBoxsink = new QueuedTextBoxSink(settings);
+            var loggerConfig = new LoggerConfiguration();
+            loggerConfig.WriteTo.Sink(queuedTextBoxsink);
+            var logger = loggerConfig.CreateLogger();
+            Locator.CurrentMutable.UseSerilogFullLogger(logger);
+
+            BackendService = new BackendService(settings);
+
             _settings = settings;
             _snackbarMessageQueue = snackbarMessageQueue;
 
-            HomeVM = new(settings, snackbarMessageQueue);
-            SettingsVM = new(settings, snackbarMessageQueue);
+            HomeVM = new(settings, BackendService, queuedTextBoxsink, snackbarMessageQueue);
+            SettingsVM = new(settings, BackendService, snackbarMessageQueue);
             Tabs = new object[]
             {
                 HomeVM,

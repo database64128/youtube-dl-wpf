@@ -10,7 +10,7 @@
     <Version>1.10.0</Version>
     <ApplicationIcon>CubeYouTubeDownloader.ico</ApplicationIcon>
     <Description>A simple GUI wrapper for https://github.com/ytdl-org/youtube-dl.</Description>
-    <Copyright>© 2021 database64128</Copyright>
+    <Copyright>© 2022 database64128</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/database64128/youtube-dl-wpf</PackageProjectUrl>
     <PackageIcon>CubeYouTubeDownloader.png</PackageIcon>
@@ -41,11 +41,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="4.2.1" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
     <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.1.4" PrivateAssets="all" />
-    <PackageReference Include="ReactiveUI.Fody" Version="17.1.9" />
+    <PackageReference Include="ReactiveUI.Fody" Version="18.0.10" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.2.1" />
-    <PackageReference Include="ReactiveUI.WPF" Version="17.1.9" />
+    <PackageReference Include="ReactiveUI.WPF" Version="18.0.10" />
+    <PackageReference Include="Serilog" Version="2.11.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Splat.Serilog" Version="14.2.8" />
   </ItemGroup>
 
   <ItemGroup>

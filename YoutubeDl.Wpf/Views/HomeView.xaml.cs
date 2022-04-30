@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
+using System.Windows.Shell;
 using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Views
@@ -34,12 +35,13 @@ namespace YoutubeDl.Wpf.Views
                            .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.DownloadButtonProgressPercentageString,
-                    view => view.downloadButton.Content)
+                    viewModel => viewModel.BackendService.GlobalDownloadProgressPercentage,
+                    view => view.downloadButton.Content,
+                    percentage => percentage > 0.0 ? percentage.ToString("P1") : "_Download")
                     .DisposeWith(disposables);
 
                 // ButtonProgressAssist bindings
-                ViewModel.WhenAnyValue(x => x.FreezeButton)
+                ViewModel.WhenAnyValue(x => x.BackendInstance.IsRunning)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(x =>
                     {
@@ -48,17 +50,19 @@ namespace YoutubeDl.Wpf.Views
                     })
                     .DisposeWith(disposables);
 
-                ViewModel.WhenAnyValue(x => x.DownloadButtonProgressIndeterminate)
+                ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
+                    .Select(x => x == TaskbarItemProgressState.Indeterminate)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(downloadButton, x))
                     .DisposeWith(disposables);
 
-                ViewModel.WhenAnyValue(x => x.DownloadButtonProgressPercentageValue)
+                ViewModel.WhenAnyValue(x => x.BackendService.GlobalDownloadProgressPercentage)
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(x => ButtonProgressAssist.SetValue(downloadButton, x))
+                    .Subscribe(x => ButtonProgressAssist.SetValue(downloadButton, x * 100))
                     .DisposeWith(disposables);
 
-                ViewModel.WhenAnyValue(x => x.FormatsButtonProgressIndeterminate)
+                ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
+                    .Select(x => x == TaskbarItemProgressState.Indeterminate)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(listFormatsButton, x))
                     .DisposeWith(disposables);
@@ -172,7 +176,7 @@ namespace YoutubeDl.Wpf.Views
 
                 // Output
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Output,
+                    viewModel => viewModel.QueuedTextBoxSink.Content,
                     view => view.resultTextBox.Text)
                     .DisposeWith(disposables);
 
