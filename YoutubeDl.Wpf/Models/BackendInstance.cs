@@ -9,6 +9,9 @@ using System.Globalization;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Models;
 
@@ -314,24 +317,29 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         }
     }
 
-    public void AbortDl()
+    public async Task AbortDl(CancellationToken cancellationToken = default)
     {
-        try
+        if (CtrlCHelper.AttachConsole((uint)_dlProcess.Id))
         {
-            // yes, I know it's bad to just kill the process.
-            // but currently .NET Core doesn't have an API for sending ^C or SIGTERM to a process
-            // see https://github.com/dotnet/runtime/issues/14628
-            // To implement a platform-specific solution,
-            // we need to use Win32 APIs.
-            // see https://stackoverflow.com/questions/283128/how-do-i-send-ctrlc-to-a-process-in-c
-            // I would prefer not to use Win32 APIs in the application.
-            _dlProcess.Kill();
-            this.Log().Info("🛑 Aborted.");
+            CtrlCHelper.SetConsoleCtrlHandler(null, true);
+            try
+            {
+                if (CtrlCHelper.GenerateConsoleCtrlEvent(CtrlCHelper.CTRL_C_EVENT, 0))
+                {
+                    await _dlProcess.WaitForExitAsync(cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Log().Error(ex);
+            }
+            finally
+            {
+                CtrlCHelper.SetConsoleCtrlHandler(null, false);
+                CtrlCHelper.FreeConsole();
+            }
         }
-        catch (Exception ex)
-        {
-            this.Log().Error(ex);
-        }
+        this.Log().Info("🛑 Aborted.");
     }
 
     public void UpdateDl()

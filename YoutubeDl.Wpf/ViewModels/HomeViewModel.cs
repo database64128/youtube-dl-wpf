@@ -178,7 +178,7 @@ namespace YoutubeDl.Wpf.ViewModels
             OpenDownloadFolderCommand = ReactiveCommand.Create(OpenDownloadFolder, canOpenDownloadFolder);
             StartDownloadCommand = ReactiveCommand.Create(StartDownload, canStartDl);
             ListFormatsCommand = ReactiveCommand.Create(ListFormats, canStartDl);
-            AbortDlCommand = ReactiveCommand.Create(BackendInstance.AbortDl, canAbortDl);
+            AbortDlCommand = ReactiveCommand.CreateFromTask(BackendInstance.AbortDl, canAbortDl);
 
             if (Settings.BackendAutoUpdate && !string.IsNullOrEmpty(Settings.BackendPath))
             {
