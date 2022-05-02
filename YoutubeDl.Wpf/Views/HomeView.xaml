@@ -83,11 +83,9 @@
                     Options
                 </TextBlock>
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
-                    <TextBlock VerticalAlignment="Center" Margin="4">Container</TextBlock>
-                    <ComboBox x:Name="containerComboBox"
+                    <TextBlock VerticalAlignment="Center" Margin="4 4 8 4">Preset</TextBlock>
+                    <ComboBox x:Name="presetComboBox"
                               DisplayMemberPath="DisplayName"
-                              IsEditable="True"
-                              IsReadOnly="False"
                               StaysOpenOnEdit="True"
                               Margin="4"
                               VerticalAlignment="Center">
@@ -97,20 +95,38 @@
                             </ItemsPanelTemplate>
                         </ComboBox.ItemsPanel>
                     </ComboBox>
-                    <TextBlock VerticalAlignment="Center" Margin="8 4 4 4">Format</TextBlock>
-                    <ComboBox x:Name="formatComboBox"
-                              DisplayMemberPath="DisplayName"
-                              IsEditable="True"
-                              IsReadOnly="False"
-                              StaysOpenOnEdit="True"
-                              Margin="4"
-                              VerticalAlignment="Center">
-                        <ComboBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel />
-                            </ItemsPanelTemplate>
-                        </ComboBox.ItemsPanel>
-                    </ComboBox>
+                    <Button x:Name="addPresetButton"
+                            Margin="4 4 2 4"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}"
+                            ToolTip="Add custom preset"
+                            VerticalAlignment="Center"
+                            Height="32" Width="32">
+                        <materialDesign:PackIcon Kind="Add" Height="20" Width="20" />
+                    </Button>
+                    <Button x:Name="editPresetButton"
+                            Margin="2 4 2 4"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}"
+                            ToolTip="Edit custom preset"
+                            VerticalAlignment="Center"
+                            Height="32" Width="32">
+                        <materialDesign:PackIcon Kind="Edit" Height="20" Width="20" />
+                    </Button>
+                    <Button x:Name="duplicatePresetButton"
+                            Margin="2 4 2 4"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}"
+                            ToolTip="Duplicate preset"
+                            VerticalAlignment="Center"
+                            Height="32" Width="32">
+                        <materialDesign:PackIcon Kind="ContentDuplicate" Height="20" Width="20" />
+                    </Button>
+                    <Button x:Name="deletePresetButton"
+                            Margin="2 4 2 4"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}"
+                            ToolTip="Delete custom preset"
+                            VerticalAlignment="Center"
+                            Height="32" Width="32">
+                        <materialDesign:PackIcon Kind="Delete" Height="20" Width="20" />
+                    </Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
                     <TextBlock VerticalAlignment="Center" Margin="4 4 8 4">Subtitles</TextBlock>

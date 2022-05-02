@@ -67,36 +67,20 @@ namespace YoutubeDl.Wpf.Views
                     .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(listFormatsButton, x))
                     .DisposeWith(disposables);
 
-                // containerComboBox
+                // presetComboBox
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.Containers,
-                    view => view.containerComboBox.ItemsSource)
+                    viewModel => viewModel.Presets,
+                    view => view.presetComboBox.ItemsSource)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.SelectedContainer,
-                    view => view.containerComboBox.SelectedItem)
+                    viewModel => viewModel.Settings.SelectedPreset,
+                    view => view.presetComboBox.SelectedItem)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.ContainerText,
-                    view => view.containerComboBox.Text)
-                    .DisposeWith(disposables);
-
-                // formatComboBox
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.Formats,
-                    view => view.formatComboBox.ItemsSource)
-                    .DisposeWith(disposables);
-
-                this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.SelectedFormat,
-                    view => view.formatComboBox.SelectedItem)
-                    .DisposeWith(disposables);
-
-                this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.FormatText,
-                    view => view.formatComboBox.Text)
+                    viewModel => viewModel.Settings.SelectedPresetText,
+                    view => view.presetComboBox.Text)
                     .DisposeWith(disposables);
 
                 // Subtitles
@@ -216,6 +200,27 @@ namespace YoutubeDl.Wpf.Views
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.ResetCustomFilenameTemplateCommand,
                     view => view.resetFilenameTemplateButton)
+                    .DisposeWith(disposables);
+
+                // Custom preset buttons
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.OpenAddCustomPresetDialogCommand,
+                    view => view.addPresetButton)
+                    .DisposeWith(disposables);
+
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.OpenEditCustomPresetDialogCommand,
+                    view => view.editPresetButton)
+                    .DisposeWith(disposables);
+
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.DuplicatePresetCommand,
+                    view => view.duplicatePresetButton)
+                    .DisposeWith(disposables);
+
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.DeleteCustomPresetCommand,
+                    view => view.deletePresetButton)
                     .DisposeWith(disposables);
             });
         }

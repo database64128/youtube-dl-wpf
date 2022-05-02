@@ -65,16 +65,17 @@ namespace YoutubeDl.Wpf.Models
         public int LoggingMaxEntries { get; set; } = 1024;
 
         [Reactive]
-        public string ContainerText { get; set; } = "Auto";
+        public Preset? SelectedPreset { get; set; } = Preset.Auto;
 
+        /// <summary>
+        /// This is a hack to prevent <see cref="SelectedPreset"/> from being changed to null.
+        /// Another solution is to manually implement equality for <see cref="Preset"/>,
+        /// which is much harder to get it right, and would look terrible compared to this little hack.
+        /// </summary>
         [Reactive]
-        public Format? SelectedContainer { get; set; } = Format.Auto;
+        public string SelectedPresetText { get; set; } = "Auto";
 
-        [Reactive]
-        public string FormatText { get; set; } = "Auto";
-
-        [Reactive]
-        public Format? SelectedFormat { get; set; } = Format.Auto;
+        public List<Preset> CustomPresets { get; set; } = new();
 
         [Reactive]
         public bool AddMetadata { get; set; } = true;

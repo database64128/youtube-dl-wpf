@@ -22,6 +22,17 @@ namespace YoutubeDl.Wpf
                     .InvokeCommand(ViewModel.SaveSettingsAsyncCommand)
                     .DisposeWith(disposables);
 
+                // DialogHost
+                this.Bind(ViewModel,
+                    viewModel => viewModel.IsDialogOpen,
+                    view => view.rootDialogHost.IsOpen)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.PresetDialogVM,
+                    view => view.rootDialogHost.DialogContent)
+                    .DisposeWith(disposables);
+
                 // Tabs
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.Tabs,

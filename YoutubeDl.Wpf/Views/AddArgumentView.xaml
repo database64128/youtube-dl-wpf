@@ -21,11 +21,11 @@
                  x:Name="argumentTextBox"/>
         <Button Grid.Column="1"
                 x:Name="addButton"
-                Padding="2 0 0 0"
                 Style="{StaticResource MaterialDesignIconForegroundButton}"
+                ToolTip="Add custom argument"
                 VerticalAlignment="Center"
                 Height="32" Width="32">
-            <materialDesign:PackIcon Kind="Add" Height="24" Width="24" />
+            <materialDesign:PackIcon Kind="Add" Height="20" Width="20" />
         </Button>
     </Grid>
 </reactiveui:ReactiveUserControl>

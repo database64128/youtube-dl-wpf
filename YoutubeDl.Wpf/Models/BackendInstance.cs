@@ -138,44 +138,9 @@ public class BackendInstance : ReactiveObject, IEnableLogger
             GeneratedDownloadArguments.Add(_settings.FfmpegPath);
         }
 
-        // Use '-f' if no specified format. With specified format, use '--merge-output-format'.
-        var containerOption = "-f";
-
-        if (_settings.SelectedFormat is null) // custom format
+        if (_settings.SelectedPreset is not null)
         {
-            GeneratedDownloadArguments.Add("-f");
-            GeneratedDownloadArguments.Add(_settings.FormatText);
-            containerOption = "--merge-output-format";
-        }
-        else if (_settings.SelectedFormat != Format.Auto && _settings.SelectedFormat.FormatArg is not null) // Apply selected format
-        {
-            GeneratedDownloadArguments.Add("-f");
-            GeneratedDownloadArguments.Add(_settings.SelectedFormat.FormatArg);
-            GeneratedDownloadArguments.AddRange(_settings.SelectedFormat.ExtraArgs);
-            containerOption = "--merge-output-format";
-        }
-        else if (_settings.SelectedContainer?.FormatArg is not null)
-        {
-            GeneratedDownloadArguments.Add("-f");
-            GeneratedDownloadArguments.Add(_settings.SelectedContainer.FormatArg);
-            containerOption = "--merge-output-format";
-        }
-
-        if (_settings.SelectedContainer is null) // custom container
-        {
-            GeneratedDownloadArguments.Add(containerOption);
-            GeneratedDownloadArguments.Add(_settings.ContainerText);
-        }
-        else if (_settings.SelectedContainer != Format.Auto && _settings.SelectedContainer.ContainerArg is not null) // Apply selected container
-        {
-            GeneratedDownloadArguments.Add(containerOption);
-            GeneratedDownloadArguments.Add(_settings.SelectedContainer.ContainerArg);
-            GeneratedDownloadArguments.AddRange(_settings.SelectedContainer.ExtraArgs);
-        }
-        else if (_settings.SelectedFormat?.ContainerArg is not null)
-        {
-            GeneratedDownloadArguments.Add(containerOption);
-            GeneratedDownloadArguments.Add(_settings.SelectedFormat.ContainerArg);
+            GeneratedDownloadArguments.AddRange(_settings.SelectedPreset.ToArgs());
         }
 
         if (_settings.DownloadSubtitles)

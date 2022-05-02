@@ -30,9 +30,9 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public QueuedTextBoxSink QueuedTextBoxSink { get; }
 
-        public ObservableCollection<Format> Containers { get; } = new();
+        public PresetDialogViewModel PresetDialogVM { get; }
 
-        public ObservableCollection<Format> Formats { get; } = new();
+        public ObservableCollection<Preset> Presets { get; } = new();
 
         /// <summary>
         /// Gets the download path history.
@@ -58,12 +58,18 @@ namespace YoutubeDl.Wpf.ViewModels
         public ReactiveCommand<Unit, Unit> ListFormatsCommand { get; }
         public ReactiveCommand<Unit, Unit> AbortDlCommand { get; }
 
-        public HomeViewModel(Settings settings, BackendService backendService, QueuedTextBoxSink queuedTextBoxSink, ISnackbarMessageQueue snackbarMessageQueue)
+        public ReactiveCommand<Unit, Unit> OpenAddCustomPresetDialogCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenEditCustomPresetDialogCommand { get; }
+        public ReactiveCommand<Unit, Unit> DuplicatePresetCommand { get; }
+        public ReactiveCommand<Unit, Unit> DeleteCustomPresetCommand { get; }
+
+        public HomeViewModel(Settings settings, BackendService backendService, QueuedTextBoxSink queuedTextBoxSink, PresetDialogViewModel presetDialogViewModel, ISnackbarMessageQueue snackbarMessageQueue)
         {
             Settings = settings;
             BackendService = backendService;
             BackendInstance = backendService.CreateInstance();
             QueuedTextBoxSink = queuedTextBoxSink;
+            PresetDialogVM = presetDialogViewModel;
             _snackbarMessageQueue = snackbarMessageQueue;
 
             // Tab icon Easter egg.
@@ -97,10 +103,9 @@ namespace YoutubeDl.Wpf.ViewModels
             this.WhenAnyValue(x => x.Settings.Backend)
                 .Subscribe(_ =>
                 {
-                    Containers.Clear();
-                    Containers.AddRange(Format.PredefinedContainers.Where(x => (x.SupportedBackends & Settings.Backend) == Settings.Backend));
-                    Formats.Clear();
-                    Formats.AddRange(Format.PredefinedFormats.Where(x => (x.SupportedBackends & Settings.Backend) == Settings.Backend));
+                    Presets.Clear();
+                    Presets.AddRange(Settings.CustomPresets.Where(x => (x.SupportedBackends & Settings.Backend) == Settings.Backend));
+                    Presets.AddRange(Preset.PredefinedPresets.Where(x => (x.SupportedBackends & Settings.Backend) == Settings.Backend));
                 });
 
             DownloadPathHistory.AddRange(Settings.DownloadPathHistory.Select(x => new DownloadPathItemViewModel(x, DeleteDownloadPathItem)).Reverse());
@@ -112,10 +117,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.Settings.Backend,
                 x => x.Settings.FfmpegPath,
                 x => x.Settings.Proxy,
-                x => x.Settings.ContainerText,
-                x => x.Settings.SelectedContainer,
-                x => x.Settings.FormatText,
-                x => x.Settings.SelectedFormat)
+                x => x.Settings.SelectedPreset)
                 .Select(_ => Unit.Default);
 
             var gdaB = this.WhenAnyValue(
@@ -157,21 +159,25 @@ namespace YoutubeDl.Wpf.ViewModels
 
             var canStartDl = this.WhenAnyValue(
                 x => x.Link,
-                x => x.Settings.ContainerText,
-                x => x.Settings.FormatText,
                 x => x.Settings.UseCustomPath,
                 x => x.Settings.DownloadPath,
                 x => x.Settings.BackendPath,
                 x => x.BackendInstance.IsRunning,
-                (link, container, format, useCustomPath, downloadPath, dlBinaryPath, isRunning) =>
+                (link, useCustomPath, downloadPath, dlBinaryPath, isRunning) =>
                     !string.IsNullOrEmpty(link) &&
-                    !string.IsNullOrEmpty(container) &&
-                    !string.IsNullOrEmpty(format) &&
                     (!useCustomPath || Directory.Exists(downloadPath)) &&
                     !string.IsNullOrEmpty(dlBinaryPath) &&
                     !isRunning);
 
             var canAbortDl = this.WhenAnyValue(x => x.BackendInstance.IsRunning);
+
+            var canEditOrDeletePreset = this.WhenAnyValue(
+                x => x.Settings.SelectedPreset,
+                selectedPreset => selectedPreset is not null && !selectedPreset.IsPredefined);
+
+            var canDuplicatePreset = this.WhenAnyValue(
+                x => x.Settings.SelectedPreset,
+                selectedPreset => selectedPreset is not null && selectedPreset != Preset.Auto);
 
             ResetCustomFilenameTemplateCommand = ReactiveCommand.Create(ResetCustomFilenameTemplate, canResetCustomFilenameTemplate);
             BrowseDownloadFolderCommand = ReactiveCommand.Create(BrowseDownloadFolder, canBrowseDownloadFolder);
@@ -180,10 +186,50 @@ namespace YoutubeDl.Wpf.ViewModels
             ListFormatsCommand = ReactiveCommand.Create(ListFormats, canStartDl);
             AbortDlCommand = ReactiveCommand.CreateFromTask(BackendInstance.AbortDl, canAbortDl);
 
+            OpenAddCustomPresetDialogCommand = ReactiveCommand.Create(OpenAddCustomPresetDialog);
+            OpenEditCustomPresetDialogCommand = ReactiveCommand.Create(OpenEditCustomPresetDialog, canEditOrDeletePreset);
+            DuplicatePresetCommand = ReactiveCommand.Create(DuplicatePreset, canDuplicatePreset);
+            DeleteCustomPresetCommand = ReactiveCommand.Create(DeleteCustomPreset, canEditOrDeletePreset);
+
             if (Settings.BackendAutoUpdate && !string.IsNullOrEmpty(Settings.BackendPath))
             {
                 BackendInstance.UpdateDl();
             }
+        }
+
+        private void AddCustomPreset(Preset preset)
+        {
+            Settings.CustomPresets.Add(preset);
+
+            if ((preset.SupportedBackends & Settings.Backend) == Settings.Backend)
+            {
+                Presets.Insert(0, preset);
+                Settings.SelectedPreset = Presets.First();
+            }
+        }
+
+        private void EditCustomPreset(Preset preset)
+        {
+            DeleteCustomPreset();
+            AddCustomPreset(preset);
+        }
+
+        private void OpenAddCustomPresetDialog() => PresetDialogVM.AddOrEditPreset(Preset.Auto, AddCustomPreset);
+
+        private void OpenEditCustomPresetDialog() => PresetDialogVM.AddOrEditPreset(Settings.SelectedPreset!, EditCustomPreset);
+
+        private void DuplicatePreset()
+        {
+            var dup = Settings.SelectedPreset! with { Name = $"{Settings.SelectedPreset.DisplayName} (1)", IsPredefined = false };
+            AddCustomPreset(dup);
+        }
+
+        private void DeleteCustomPreset()
+        {
+            var preset = Settings.SelectedPreset!;
+            Settings.CustomPresets.Remove(preset);
+            Presets.Remove(preset);
+            Settings.SelectedPreset = Presets.First();
         }
 
         private void DeleteDownloadPathItem(DownloadPathItemViewModel item)

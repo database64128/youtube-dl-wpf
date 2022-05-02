@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Serilog;
 using Splat;
 using Splat.Serilog;
@@ -16,9 +17,13 @@ namespace YoutubeDl.Wpf.ViewModels
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
 
         public BackendService BackendService { get; }
+        public PresetDialogViewModel PresetDialogVM { get; }
         public HomeViewModel HomeVM { get; }
         public SettingsViewModel SettingsVM { get; }
         public object[] Tabs { get; }
+
+        [Reactive]
+        public bool IsDialogOpen { get; set; }
 
         public ReactiveCommand<CancelEventArgs?, bool> SaveSettingsAsyncCommand { get; }
 
@@ -35,12 +40,13 @@ namespace YoutubeDl.Wpf.ViewModels
                 .CreateLogger();
             Locator.CurrentMutable.UseSerilogFullLogger(logger);
 
-            BackendService = new BackendService(settings);
+            BackendService = new(settings);
+            PresetDialogVM = new(ControlDialog);
 
             _settings = settings;
             _snackbarMessageQueue = snackbarMessageQueue;
 
-            HomeVM = new(settings, BackendService, queuedTextBoxsink, snackbarMessageQueue);
+            HomeVM = new(settings, BackendService, queuedTextBoxsink, PresetDialogVM, snackbarMessageQueue);
             SettingsVM = new(settings, BackendService, snackbarMessageQueue);
             Tabs = new object[]
             {
@@ -50,6 +56,8 @@ namespace YoutubeDl.Wpf.ViewModels
 
             SaveSettingsAsyncCommand = ReactiveCommand.CreateFromTask<CancelEventArgs?, bool>(SaveSettingsAsync);
         }
+
+        public void ControlDialog(bool open) => IsDialogOpen = open;
 
         public async Task<bool> SaveSettingsAsync(CancelEventArgs? cancelEventArgs = null, CancellationToken cancellationToken = default)
         {

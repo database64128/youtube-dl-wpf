@@ -1,0 +1,83 @@
+﻿<reactiveui:ReactiveUserControl
+    x:Class="YoutubeDl.Wpf.Views.PresetDialogView"
+    x:TypeArguments="viewmodels:PresetDialogViewModel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:reactiveui="http://reactiveui.net"
+    xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:PresetDialogViewModel}"
+    d:DesignHeight="360" d:DesignWidth="640">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" MaxHeight="40" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBox Grid.Row="0"
+                 x:Name="nameTextBox"
+                 Margin="4"
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 materialDesign:HintAssist.Hint="Name"
+                 VerticalAlignment="Center" />
+
+        <TextBox Grid.Row="1"
+                 x:Name="formatTextBox"
+                 Margin="4"
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 materialDesign:HintAssist.Hint="Format"
+                 VerticalAlignment="Center" />
+
+        <TextBox Grid.Row="2"
+                 x:Name="containerTextBox"
+                 Margin="4"
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 materialDesign:HintAssist.Hint="Container"
+                 VerticalAlignment="Center" />
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0 4 0 4">
+            <CheckBox x:Name="backendYoutubeDlCheckBox"
+                      Style="{StaticResource MaterialDesignFilterChipAccentOutlineCheckBox}"
+                      Content="youtube-dl" />
+
+            <CheckBox x:Name="backendYtDlpCheckBox"
+                      Style="{StaticResource MaterialDesignFilterChipPrimaryOutlineCheckBox}"
+                      Content="yt-dlp" />
+        </StackPanel>
+
+        <ItemsControl Grid.Row="4"
+                      Grid.RowSpan="2"
+                      x:Name="argumentsItemsControl">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <StackPanel Grid.Row="6" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+            <Button x:Name="saveButton"
+                    Margin="0 16 4 0"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                Save
+            </Button>
+
+            <Button x:Name="discardButton"
+                    Margin="4 16 0 0"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                Discard
+            </Button>
+        </StackPanel>
+    </Grid>
+</reactiveui:ReactiveUserControl>

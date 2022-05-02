@@ -24,6 +24,5 @@ internal static class CtrlCHelper
     [DllImport("kernel32.dll")]
     internal static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate? HandlerRoutine, bool Add);
 
-    // Delegate type to be used as the Handler Routine for SCCH
-    internal delegate bool ConsoleCtrlDelegate(uint CtrlType);
+    internal delegate bool ConsoleCtrlDelegate(uint dwCtrlType);
 }

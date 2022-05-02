@@ -18,7 +18,15 @@
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{materialDesign:MaterialDesignFont}"
     Title="Cube YouTube Downloader" Height="720" Width="904" MinHeight="644" MinWidth="620">
-    <materialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
+    <materialDesign:DialogHost x:Name="rootDialogHost" Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
+        <materialDesign:DialogHost.DialogContentTemplate>
+            <DataTemplate>
+                <reactiveui:ViewModelViewHost ViewModel="{Binding}"
+                                              VerticalContentAlignment="Stretch"
+                                              HorizontalContentAlignment="Stretch"
+                                              IsTabStop="False" />
+            </DataTemplate>
+        </materialDesign:DialogHost.DialogContentTemplate>
         <Grid>
             <TabControl x:Name="mainTabControl" SelectedIndex="0" Style="{StaticResource MaterialDesignNavigatilRailTabControl}">
                 <TabControl.ItemContainerStyle>
