@@ -39,9 +39,6 @@ jobs:
       - name: Publish self-contained for Windows x64
         run: dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
 
-      - name: Publish self-contained for Windows ARM32
-        run: dotnet publish YoutubeDl.Wpf -c Release -r win-arm --self-contained
-
       - name: Publish self-contained for Windows x86
         run: dotnet publish YoutubeDl.Wpf -c Release -r win-x86 --self-contained
 
@@ -63,12 +60,6 @@ jobs:
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows-x64
           path: YoutubeDl.Wpf/bin/Release/net6.0-windows10.0.22000.0/win-x64/publish/
-
-      - name: Upload artifacts for Windows ARM32
-        uses: actions/upload-artifact@v3
-        with:
-          name: youtube-dl-wpf-${{ github.sha }}-windows-arm32
-          path: YoutubeDl.Wpf/bin/Release/net6.0-windows10.0.22000.0/win-arm/publish/
 
       - name: Upload artifacts for Windows x86
         uses: actions/upload-artifact@v3

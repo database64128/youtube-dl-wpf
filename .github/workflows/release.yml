@@ -26,9 +26,6 @@ jobs:
       - name: Publish self-contained for Windows x64
         run: dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
 
-      - name: Publish self-contained for Windows ARM32
-        run: dotnet publish YoutubeDl.Wpf -c Release -r win-arm --self-contained
-
       - name: Publish self-contained for Windows x86
         run: dotnet publish YoutubeDl.Wpf -c Release -r win-x86 --self-contained
 
@@ -44,9 +41,6 @@ jobs:
           cd ../../win-x64/publish
           7z a -tzip -mx=9 -mfb=128 ../../youtube-dl-wpf-${{ github.ref_name }}-windows-x64.zip .
           7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../../youtube-dl-wpf-${{ github.ref_name }}-windows-x64.7z .
-          cd ../../win-arm/publish
-          7z a -tzip -mx=9 -mfb=128 ../../youtube-dl-wpf-${{ github.ref_name }}-windows-arm32.zip .
-          7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../../youtube-dl-wpf-${{ github.ref_name }}-windows-arm32.7z .
           cd ../../win-x86/publish
           7z a -tzip -mx=9 -mfb=128 ../../youtube-dl-wpf-${{ github.ref_name }}-windows-x86.zip .
           7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on ../../youtube-dl-wpf-${{ github.ref_name }}-windows-x86.7z .
