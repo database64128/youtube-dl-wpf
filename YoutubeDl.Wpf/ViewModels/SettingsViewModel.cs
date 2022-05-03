@@ -25,7 +25,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public string Version { get; }
 
-        public Settings Settings { get; }
+        public ObservableSettings SharedSettings { get; }
 
         /// <summary>
         /// Gets the collection of view models of the arguments area.
@@ -40,74 +40,74 @@ namespace YoutubeDl.Wpf.ViewModels
         public ReactiveCommand<Unit, Unit> BrowseFfmpegBinaryCommand { get; }
         public ReactiveCommand<string, Unit> OpenUri { get; }
 
-        public SettingsViewModel(Settings settings, BackendService backendService, ISnackbarMessageQueue snackbarMessageQueue)
+        public SettingsViewModel(ObservableSettings settings, BackendService backendService, ISnackbarMessageQueue snackbarMessageQueue)
         {
             _backendService = backendService;
             _snackbarMessageQueue = snackbarMessageQueue;
             _paletteHelper = new();
 
             Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
-            Settings = settings;
+            SharedSettings = settings;
 
-            GlobalArguments.AddRange(Settings.BackendGlobalArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
+            GlobalArguments.AddRange(SharedSettings.BackendGlobalArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
             GlobalArguments.Add(new AddArgumentViewModel(AddArgument));
 
-            ChangeColorMode(Settings.AppColorMode);
+            ChangeColorMode(SharedSettings.AppColorMode);
 
             // The error messages won't be shown because INotifyDataErrorInfo only works with XAML bindings.
             // See https://github.com/reactiveui/ReactiveUI.Validation/issues/237.
             // These rules are kept here as a reference in case support gets added in a future version.
             this.ValidationRule(
-                viewModel => viewModel.Settings.BackendPath,
+                viewModel => viewModel.SharedSettings.BackendPath,
                 dlPath => File.Exists(dlPath),
                 "Invalid backend binary path.");
 
             this.ValidationRule(
-                viewModel => viewModel.Settings.FfmpegPath,
+                viewModel => viewModel.SharedSettings.FfmpegPath,
                 ffmpegPath => string.IsNullOrEmpty(ffmpegPath) || File.Exists(ffmpegPath),
                 "Invalid ffmpeg binary path.");
 
             this.ValidationRule(
-                viewModel => viewModel.Settings.Proxy,
+                viewModel => viewModel.SharedSettings.Proxy,
                 proxy => string.IsNullOrEmpty(proxy) || (Uri.TryCreate(proxy, UriKind.Absolute, out var uri) && (uri.Scheme is "socks5" or "http" or "https")),
                 "Invalid proxy URL.");
 
             this.ValidationRule(
-                viewModel => viewModel.Settings.LoggingMaxEntries,
+                viewModel => viewModel.SharedSettings.LoggingMaxEntries,
                 loggingMaxEntries => loggingMaxEntries > 0,
                 "Max log entries must be greater than 0.");
 
             // The actual validation mechanisms.
-            this.WhenAnyValue(x => x.Settings.BackendPath)
+            this.WhenAnyValue(x => x.SharedSettings.BackendPath)
                 .Where(dlPath => !File.Exists(dlPath))
                 .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid backend binary path"));
 
-            this.WhenAnyValue(x => x.Settings.FfmpegPath)
+            this.WhenAnyValue(x => x.SharedSettings.FfmpegPath)
                 .Where(ffmpegPath => !string.IsNullOrEmpty(ffmpegPath) && !File.Exists(ffmpegPath))
                 .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid ffmpeg binary path"));
 
-            this.WhenAnyValue(x => x.Settings.Proxy)
+            this.WhenAnyValue(x => x.SharedSettings.Proxy)
                 .Where(proxy => !string.IsNullOrEmpty(proxy) && !(Uri.TryCreate(proxy, UriKind.Absolute, out var uri) && (uri.Scheme is "socks5" or "http" or "https")))
                 .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid proxy URL"));
 
-            this.WhenAnyValue(x => x.Settings.LoggingMaxEntries)
+            this.WhenAnyValue(x => x.SharedSettings.LoggingMaxEntries)
                 .Where(loggingMaxEntries => loggingMaxEntries <= 0)
                 .Subscribe(_ =>
                 {
                     _snackbarMessageQueue.Enqueue("Warning: Max log entries must be greater than 0.");
-                    Settings.LoggingMaxEntries = 1024;
+                    SharedSettings.LoggingMaxEntries = 1024;
                 });
 
             // Guess the backend type from binary name.
-            this.WhenAnyValue(x => x.Settings.BackendPath)
+            this.WhenAnyValue(x => x.SharedSettings.BackendPath)
                 .Select(dlPath => Path.GetFileNameWithoutExtension(dlPath))
                 .Subscribe(name =>
                 {
-                    Settings.Backend = name switch
+                    SharedSettings.Backend = name switch
                     {
                         "youtube-dl" => BackendTypes.Ytdl,
                         "yt-dlp" => BackendTypes.Ytdlp,
-                        _ => Settings.Backend,
+                        _ => SharedSettings.Backend,
                     };
                 });
 
@@ -147,12 +147,12 @@ namespace YoutubeDl.Wpf.ViewModels
             _paletteHelper.SetTheme(theme);
 
             // Save setting
-            Settings.AppColorMode = colorMode;
+            SharedSettings.AppColorMode = colorMode;
         }
 
-        private void BrowseDlBinary() => Settings.BackendPath = BrowseBinary(Settings.Backend.ToExecutableName(), Settings.BackendPath);
+        private void BrowseDlBinary() => SharedSettings.BackendPath = BrowseBinary(SharedSettings.Backend.ToExecutableName(), SharedSettings.BackendPath);
 
-        private void BrowseFfmpegBinary() => Settings.FfmpegPath = BrowseBinary("ffmpeg", Settings.FfmpegPath);
+        private void BrowseFfmpegBinary() => SharedSettings.FfmpegPath = BrowseBinary("ffmpeg", SharedSettings.FfmpegPath);
 
         private static string BrowseBinary(string filename, string path)
         {
@@ -172,7 +172,7 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             if (item.IsRemovable)
             {
-                Settings.BackendGlobalArguments.Remove(item.Argument);
+                SharedSettings.BackendGlobalArguments.Remove(item.Argument);
                 GlobalArguments.Remove(item);
             }
         }
@@ -180,7 +180,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private void AddArgument(string argument)
         {
             var backendArgument = new BackendArgument(argument);
-            Settings.BackendGlobalArguments.Add(backendArgument);
+            SharedSettings.BackendGlobalArguments.Add(backendArgument);
 
             // Insert right before AddArgumentViewModel.
             GlobalArguments.Insert(GlobalArguments.Count - 1, new ArgumentChipViewModel(backendArgument, true, DeleteArgumentChip));

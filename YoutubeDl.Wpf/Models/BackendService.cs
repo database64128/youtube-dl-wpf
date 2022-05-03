@@ -9,7 +9,7 @@ namespace YoutubeDl.Wpf.Models;
 
 public class BackendService : ReactiveObject, IEnableLogger
 {
-    private readonly Settings _settings;
+    private readonly ObservableSettings _settings;
 
     public List<BackendInstance> Instances { get; } = new();
 
@@ -22,7 +22,7 @@ public class BackendService : ReactiveObject, IEnableLogger
     [Reactive]
     public TaskbarItemProgressState ProgressState { get; set; }
 
-    public BackendService(Settings settings) => _settings = settings;
+    public BackendService(ObservableSettings settings) => _settings = settings;
 
     public BackendInstance CreateInstance()
     {

@@ -12,14 +12,14 @@ namespace YoutubeDl.Wpf.Models;
 public class QueuedTextBoxSink : ReactiveObject, ILogEventSink
 {
     private readonly object _locker = new();
-    private readonly Settings _settings;
+    private readonly ObservableSettings _settings;
     private readonly Queue<LogEvent> _queuedLogEvents;
     private readonly IFormatProvider? _formatProvider;
 
     [Reactive]
     public string Content { get; set; } = "";
 
-    public QueuedTextBoxSink(Settings settings, IFormatProvider? formatProvider = null)
+    public QueuedTextBoxSink(ObservableSettings settings, IFormatProvider? formatProvider = null)
     {
         _settings = settings;
         _queuedLogEvents = new(settings.LoggingMaxEntries);

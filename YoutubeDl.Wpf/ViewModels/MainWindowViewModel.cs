@@ -14,6 +14,7 @@ namespace YoutubeDl.Wpf.ViewModels
     public class MainWindowViewModel : ReactiveObject
     {
         private readonly Settings _settings;
+        private readonly ObservableSettings _observableSettings;
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
 
         public BackendService BackendService { get; }
@@ -31,23 +32,25 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             var (settings, loadSettingsErrMsg) = Settings.LoadSettingsAsync().GetAwaiter().GetResult();
             if (loadSettingsErrMsg is not null)
+            {
                 snackbarMessageQueue.Enqueue(loadSettingsErrMsg);
+            }
+
+            _settings = settings;
+            _observableSettings = new(settings);
+            _snackbarMessageQueue = snackbarMessageQueue;
 
             // Configure logging.
-            var queuedTextBoxsink = new QueuedTextBoxSink(settings);
+            var queuedTextBoxsink = new QueuedTextBoxSink(_observableSettings);
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(queuedTextBoxsink)
                 .CreateLogger();
             Locator.CurrentMutable.UseSerilogFullLogger(logger);
 
-            BackendService = new(settings);
+            BackendService = new(_observableSettings);
             PresetDialogVM = new(ControlDialog);
-
-            _settings = settings;
-            _snackbarMessageQueue = snackbarMessageQueue;
-
-            HomeVM = new(settings, BackendService, queuedTextBoxsink, PresetDialogVM, snackbarMessageQueue);
-            SettingsVM = new(settings, BackendService, snackbarMessageQueue);
+            HomeVM = new(_observableSettings, BackendService, queuedTextBoxsink, PresetDialogVM, snackbarMessageQueue);
+            SettingsVM = new(_observableSettings, BackendService, snackbarMessageQueue);
             Tabs = new object[]
             {
                 HomeVM,
@@ -61,6 +64,8 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public async Task<bool> SaveSettingsAsync(CancelEventArgs? cancelEventArgs = null, CancellationToken cancellationToken = default)
         {
+            _observableSettings.UpdateSettings(_settings);
+
             var errMsg = await Settings.SaveSettingsAsync(_settings, cancellationToken);
             if (errMsg is not null)
             {

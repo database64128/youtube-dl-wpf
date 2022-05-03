@@ -21,39 +21,39 @@ namespace YoutubeDl.Wpf.Views
             {
                 // Color mode
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.Settings.AppColorMode,
+                    viewModel => viewModel.SharedSettings.AppColorMode,
                     view => view.systemColorModeRadioButton.IsChecked,
                     colorMode => colorMode == BaseTheme.Inherit)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.Settings.AppColorMode,
+                    viewModel => viewModel.SharedSettings.AppColorMode,
                     view => view.lightColorModeRadioButton.IsChecked,
                     colorMode => colorMode == BaseTheme.Light)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.Settings.AppColorMode,
+                    viewModel => viewModel.SharedSettings.AppColorMode,
                     view => view.darkColorModeRadioButton.IsChecked,
                     colorMode => colorMode == BaseTheme.Dark)
                     .DisposeWith(disposables);
 
                 // Backend
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.Backend,
+                    viewModel => viewModel.SharedSettings.Backend,
                     view => view.ytdlBackendTypeRadioButton.IsChecked,
                     backend => backend == BackendTypes.Ytdl,
                     isChecked => isChecked == true ? BackendTypes.Ytdl : BackendTypes.Ytdlp)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.Settings.Backend,
+                    viewModel => viewModel.SharedSettings.Backend,
                     view => view.ytdlpBackendTypeRadioButton.IsChecked,
                     backend => backend == BackendTypes.Ytdlp)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.BackendPath,
+                    viewModel => viewModel.SharedSettings.BackendPath,
                     view => view.dlPathTextBox.Text)
                     .DisposeWith(disposables);
 
@@ -63,12 +63,12 @@ namespace YoutubeDl.Wpf.Views
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.BackendAutoUpdate,
+                    viewModel => viewModel.SharedSettings.BackendAutoUpdate,
                     view => view.autoUpdateDlToggle.IsChecked)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.Settings.BackendLastUpdateCheck,
+                    viewModel => viewModel.SharedSettings.BackendLastUpdateCheck,
                     view => view.lastUpdateCheckTextBlock.Text,
                     lastCheck =>
                     {
@@ -81,19 +81,19 @@ namespace YoutubeDl.Wpf.Views
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.FfmpegPath,
+                    viewModel => viewModel.SharedSettings.FfmpegPath,
                     view => view.ffmpegPathTextBox.Text)
                     .DisposeWith(disposables);
 
                 // Network
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.Proxy,
+                    viewModel => viewModel.SharedSettings.Proxy,
                     view => view.proxyTextBox.Text)
                     .DisposeWith(disposables);
 
                 // Logging
                 this.Bind(ViewModel,
-                    viewModel => viewModel.Settings.LoggingMaxEntries,
+                    viewModel => viewModel.SharedSettings.LoggingMaxEntries,
                     view => view.maxLogEntriesTextBox.Text)
                     .DisposeWith(disposables);
 

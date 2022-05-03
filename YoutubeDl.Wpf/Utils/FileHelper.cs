@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,20 +9,6 @@ namespace YoutubeDl.Wpf.Utils
 {
     public static class FileHelper
     {
-        public static readonly JsonSerializerOptions commonJsonSerializerOptions = new()
-        {
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            IgnoreReadOnlyProperties = true,
-            WriteIndented = true,
-        };
-
-        public static readonly JsonSerializerOptions commonJsonDeserializerOptions = new()
-        {
-            AllowTrailingCommas = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            WriteIndented = true,
-        };
-
         public static readonly string configDirectory;
 
         static FileHelper()
@@ -53,13 +39,13 @@ namespace YoutubeDl.Wpf.Utils
         /// </summary>
         /// <typeparam name="T">Data object type.</typeparam>
         /// <param name="filename">JSON file name.</param>
-        /// <param name="jsonSerializerOptions">Deserialization options.</param>
+        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
         /// <param name="cancellationToken">A token that may be used to cancel the read operation.</param>
         /// <returns>
         /// A ValueTuple containing a data object loaded from the JSON file and an error message.
         /// The error message is null if no errors occurred.
         /// </returns>
-        public static async Task<(T, string? errMsg)> LoadJsonAsync<T>(string filename, JsonSerializerOptions? jsonSerializerOptions = null, CancellationToken cancellationToken = default) where T : class, new()
+        public static async Task<(T, string? errMsg)> LoadJsonAsync<T>(string filename, JsonTypeInfo<T> jsonTypeInfo, CancellationToken cancellationToken = default) where T : class, new()
         {
             // extend relative path
             filename = GetAbsolutePath(filename);
@@ -77,7 +63,7 @@ namespace YoutubeDl.Wpf.Utils
             try
             {
                 jsonFile = new(filename, FileMode.Open);
-                jsonData = await JsonSerializer.DeserializeAsync<T>(jsonFile, jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+                jsonData = await JsonSerializer.DeserializeAsync<T>(jsonFile, jsonTypeInfo, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -99,7 +85,7 @@ namespace YoutubeDl.Wpf.Utils
         /// <typeparam name="T">Data object type.</typeparam>
         /// <param name="filename">JSON file name.</param>
         /// <param name="jsonData">The data object to save.</param>
-        /// <param name="jsonSerializerOptions">Serialization options.</param>
+        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
         /// <param name="alwaysOverwrite">Always overwrite the original file.</param>
         /// <param name="noBackup">Do not create `filename.old` as backup.</param>
         /// <param name="cancellationToken">A token that may be used to cancel the write operation.</param>
@@ -107,7 +93,7 @@ namespace YoutubeDl.Wpf.Utils
         public static async Task<string?> SaveJsonAsync<T>(
             string filename,
             T jsonData,
-            JsonSerializerOptions? jsonSerializerOptions = null,
+            JsonTypeInfo<T> jsonTypeInfo,
             bool alwaysOverwrite = false,
             bool noBackup = false,
             CancellationToken cancellationToken = default)
@@ -134,12 +120,12 @@ namespace YoutubeDl.Wpf.Utils
                 if (alwaysOverwrite || !File.Exists(filename)) // alwaysOverwrite or file doesn't exist. Just write to it.
                 {
                     jsonFile = new(filename, FileMode.Create);
-                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonTypeInfo, cancellationToken).ConfigureAwait(false);
                 }
                 else // File exists. Write to `filename.new` and then replace with the new file and creates backup `filename.old`.
                 {
                     jsonFile = new($"{filename}.new", FileMode.Create);
-                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonTypeInfo, cancellationToken).ConfigureAwait(false);
                     jsonFile.Close();
                     File.Replace($"{filename}.new", filename, noBackup ? null : $"{filename}.old");
                 }

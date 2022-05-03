@@ -17,7 +17,7 @@ namespace YoutubeDl.Wpf.Models;
 
 public class BackendInstance : ReactiveObject, IEnableLogger
 {
-    private readonly Settings _settings;
+    private readonly ObservableSettings _settings;
     private readonly Process _dlProcess;
     private readonly BackendService _backendService;
     private readonly string[] outputSeparators =
@@ -50,7 +50,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
     [Reactive]
     public string DownloadETAString { get; set; } = "";
 
-    public BackendInstance(Settings settings, BackendService backendService)
+    public BackendInstance(ObservableSettings settings, BackendService backendService)
     {
         _settings = settings;
         _backendService = backendService;
