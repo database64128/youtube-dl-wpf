@@ -1,7 +1,7 @@
 # 🎞⬇ Cube YouTube Downloader - `youtube-dl-wpf`
 
-[![Build](https://github.com/database64128/youtube-dl-wpf/workflows/Build/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions?query=workflow%3ABuild)
-[![Release](https://github.com/database64128/youtube-dl-wpf/workflows/Release/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions?query=workflow%3ARelease)
+[![Build](https://github.com/database64128/youtube-dl-wpf/actions/workflows/build.yml/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions/workflows/build.yml)
+[![Release](https://github.com/database64128/youtube-dl-wpf/actions/workflows/release.yml/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions/workflows/release.yml)
 
 A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) and [`yt-dlp`](https://github.com/yt-dlp/yt-dlp).
 
