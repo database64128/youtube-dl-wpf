@@ -43,12 +43,12 @@
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
     <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.1.4" PrivateAssets="all" />
-    <PackageReference Include="ReactiveUI.Fody" Version="18.1.8" />
-    <PackageReference Include="ReactiveUI.Validation" Version="2.2.1" />
-    <PackageReference Include="ReactiveUI.WPF" Version="18.1.8" />
+    <PackageReference Include="ReactiveUI.Fody" Version="18.2.5" />
+    <PackageReference Include="ReactiveUI.Validation" Version="3.0.1" />
+    <PackageReference Include="ReactiveUI.WPF" Version="18.2.5" />
     <PackageReference Include="Serilog" Version="2.11.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="Splat.Serilog" Version="14.2.27" />
+    <PackageReference Include="Splat.Serilog" Version="14.3.4" />
     <PackageReference Include="System.Text.Json" Version="6.0.5" />
   </ItemGroup>
 
