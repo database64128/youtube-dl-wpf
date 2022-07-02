@@ -1,6 +1,20 @@
 {
-  "commitMessagePrefix": "🔼",
-  "extends": [
-    "config:base"
-  ]
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "commitMessagePrefix": "🔼",
+    "extends": [
+        "config:base",
+        ":automergeBranch",
+        ":automergeDigest",
+        ":automergeMinor",
+        ":disableRateLimiting"
+    ],
+    "packageRules": [
+        {
+            "matchPackagePrefixes": [
+                "ReactiveUI",
+                "ReactiveMarbles"
+            ],
+            "groupName": "ReactiveUI"
+        }
+    ]
 }
