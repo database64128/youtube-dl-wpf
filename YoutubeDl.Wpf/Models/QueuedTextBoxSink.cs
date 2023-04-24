@@ -28,6 +28,12 @@ public class QueuedTextBoxSink : ReactiveObject, ILogEventSink
 
     public void Emit(LogEvent logEvent)
     {
+        // Workaround for https://github.com/reactiveui/ReactiveUI/issues/3415 before upstream has a fix.
+        if (logEvent.MessageTemplate.Text.EndsWith(" is a POCO type and won't send change notifications, WhenAny will only return a single value!"))
+        {
+            return;
+        }
+
         lock (_locker)
         {
             if (_queuedLogEvents.Count >= _settings.LoggingMaxEntries)
