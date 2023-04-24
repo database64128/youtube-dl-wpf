@@ -70,15 +70,12 @@ public class BackendInstance : ReactiveObject, IEnableLogger
 
     private void DlOutputHandler(object? sendingProcess, DataReceivedEventArgs outLine)
     {
+        if (outLine.Data is null)
+            return;
+
         this.Log().Info(outLine.Data);
 
-        RxApp.MainThreadScheduler.Schedule(() =>
-        {
-            if (!string.IsNullOrEmpty(outLine.Data))
-            {
-                ParseDlOutput(outLine.Data);
-            }
-        });
+        RxApp.MainThreadScheduler.Schedule(() => ParseDlOutput(outLine.Data));
     }
 
     private void ParseDlOutput(string output)
