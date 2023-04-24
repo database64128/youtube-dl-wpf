@@ -78,38 +78,29 @@ public class Settings
     /// Loads settings from Settings.json.
     /// </summary>
     /// <param name="cancellationToken">A token that may be used to cancel the read operation.</param>
-    /// <returns>
-    /// A ValueTuple containing a <see cref="Settings"/> object and an optional error message.
-    /// </returns>
-    public static async Task<(Settings settings, string? errMsg)> LoadSettingsAsync(CancellationToken cancellationToken = default)
+    /// <returns>The <see cref="Settings"/> object.</returns>
+    public static async Task<Settings> LoadAsync(CancellationToken cancellationToken = default)
     {
-        var (settings, errMsg) = await FileHelper.LoadJsonAsync("Settings.json", SettingsJsonSerializerContext.Default.Settings, cancellationToken).ConfigureAwait(false);
-        errMsg ??= settings.UpdateSettings();
-        return (settings, errMsg);
+        var settings = await FileHelper.LoadFromJsonFileAsync("Settings.json", SettingsJsonSerializerContext.Default.Settings, cancellationToken).ConfigureAwait(false);
+        settings.UpdateSettings();
+        return settings;
     }
 
     /// <summary>
     /// Saves settings to Settings.json.
     /// </summary>
-    /// <param name="settings">The <see cref="Settings"/> object to save.</param>
     /// <param name="cancellationToken">A token that may be used to cancel the write operation.</param>
-    /// <returns>
-    /// An optional error message.
-    /// Null if no errors occurred.
-    /// </returns>
-    public static Task<string?> SaveSettingsAsync(Settings settings, CancellationToken cancellationToken = default)
-        => FileHelper.SaveJsonAsync("Settings.json", settings, SettingsJsonSerializerContext.Default.Settings, false, false, cancellationToken);
+    /// <returns>A task that represents the asynchronous write operation.</returns>
+    public Task SaveAsync(CancellationToken cancellationToken = default)
+        => FileHelper.SaveToJsonFileAsync("Settings.json", this, SettingsJsonSerializerContext.Default.Settings, cancellationToken);
 
     /// <summary>
     /// Updates the loaded settings to the latest version.
-    /// If the loaded settings have a higher version number,
-    /// an error message is returned.
     /// </summary>
-    /// <returns>
-    /// An optional error message.
-    /// Null if no errors occurred.
-    /// </returns>
-    public string? UpdateSettings()
+    /// <exception cref="Exception">
+    /// The loaded settings have a higher version number than supported.
+    /// </exception>
+    public void UpdateSettings()
     {
         switch (Version)
         {
@@ -117,9 +108,9 @@ public class Settings
                 Version++;
                 goto case 1; // go to the next update path
             case DefaultVersion: // current version
-                return null;
+                return;
             default:
-                return $"Settings version {Version} is newer than supported.";
+                throw new Exception($"Settings version {Version} is newer than supported.");
         }
     }
 }

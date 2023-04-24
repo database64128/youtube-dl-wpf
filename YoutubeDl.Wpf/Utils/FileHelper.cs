@@ -5,142 +5,83 @@ using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace YoutubeDl.Wpf.Utils
+namespace YoutubeDl.Wpf.Utils;
+
+public static class FileHelper
 {
-    public static class FileHelper
+    private static readonly string s_configDirectory;
+
+    static FileHelper()
     {
-        public static readonly string configDirectory;
-
-        static FileHelper()
-        {
 #if PACKAGED
-            // ~/.config on Linux
-            // ~/AppData/Roaming on Windows
-            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            configDirectory = $"{appDataPath}/youtube-dl-wpf";
+        // ~/.config on Linux
+        // ~/AppData/Roaming on Windows
+        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        s_configDirectory = Path.Join(appDataPath, "youtube-dl-wpf");
 #else
-            // Use executable directory
-            // Executable directory for single-file deployments in .NET 5: https://docs.microsoft.com/en-us/dotnet/core/deploying/single-file
-            configDirectory = AppContext.BaseDirectory;
+        // Use executable directory
+        // Executable directory for single-file deployments in .NET 5+: https://docs.microsoft.com/en-us/dotnet/core/deploying/single-file
+        s_configDirectory = AppContext.BaseDirectory;
 #endif
-        }
+    }
 
-        /// <summary>
-        /// Gets the fully qualified absolute path
-        /// that the original path points to.
-        /// </summary>
-        /// <param name="path">A relative or absolute path.</param>
-        /// <returns>A fully qualified path.</returns>
-        public static string GetAbsolutePath(string path)
-            => Path.IsPathFullyQualified(path) ? path : $"{configDirectory}/{path}";
+    /// <summary>
+    /// Gets the absolute path pointed to by the specified path.
+    /// </summary>
+    /// <param name="path">A relative or absolute path.</param>
+    /// <returns>A fully qualified path.</returns>
+    public static string GetAbsolutePath(string path) => Path.Combine(s_configDirectory, path);
 
-        /// <summary>
-        /// Loads data from a JSON file.
-        /// </summary>
-        /// <typeparam name="T">Data object type.</typeparam>
-        /// <param name="filename">JSON file name.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
-        /// <param name="cancellationToken">A token that may be used to cancel the read operation.</param>
-        /// <returns>
-        /// A ValueTuple containing a data object loaded from the JSON file and an error message.
-        /// The error message is null if no errors occurred.
-        /// </returns>
-        public static async Task<(T, string? errMsg)> LoadJsonAsync<T>(string filename, JsonTypeInfo<T> jsonTypeInfo, CancellationToken cancellationToken = default) where T : class, new()
+    /// <summary>
+    /// Loads the specified JSON file and deserializes its content as a <typeparamref name="TValue"/>.
+    /// </summary>
+    /// <typeparam name="TValue">The type to deserialize the JSON value into.</typeparam>
+    /// <param name="path">JSON file path.</param>
+    /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+    /// <param name="cancellationToken">A token that may be used to cancel the read operation.</param>
+    /// <returns>A <typeparamref name="TValue"/>.</returns>
+    public static async Task<TValue> LoadFromJsonFileAsync<TValue>(string path, JsonTypeInfo<TValue> jsonTypeInfo, CancellationToken cancellationToken = default) where TValue : class, new()
+    {
+        path = GetAbsolutePath(path);
+        if (!File.Exists(path))
+            return new();
+
+        var fileStream = new FileStream(path, FileMode.Open);
+        await using (fileStream.ConfigureAwait(false))
         {
-            // extend relative path
-            filename = GetAbsolutePath(filename);
-
-            if (!File.Exists(filename))
-                return (new(), null);
-
-            if (cancellationToken.IsCancellationRequested)
-                return (new(), "The operation was canceled.");
-
-            T? jsonData = null;
-            string? errMsg = null;
-            FileStream? jsonFile = null;
-
-            try
-            {
-                jsonFile = new(filename, FileMode.Open);
-                jsonData = await JsonSerializer.DeserializeAsync<T>(jsonFile, jsonTypeInfo, cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                errMsg = $"Error: failed to load {filename}: {ex.Message}";
-            }
-            finally
-            {
-                if (jsonFile is not null)
-                    await jsonFile.DisposeAsync().ConfigureAwait(false);
-            }
-
-            jsonData ??= new();
-            return (jsonData, errMsg);
+            return await JsonSerializer.DeserializeAsync(fileStream, jsonTypeInfo, cancellationToken).ConfigureAwait(false) ?? new();
         }
+    }
 
-        /// <summary>
-        /// Saves data to a JSON file.
-        /// </summary>
-        /// <typeparam name="T">Data object type.</typeparam>
-        /// <param name="filename">JSON file name.</param>
-        /// <param name="jsonData">The data object to save.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
-        /// <param name="alwaysOverwrite">Always overwrite the original file.</param>
-        /// <param name="noBackup">Do not create `filename.old` as backup.</param>
-        /// <param name="cancellationToken">A token that may be used to cancel the write operation.</param>
-        /// <returns>An error message. Null if no errors occurred.</returns>
-        public static async Task<string?> SaveJsonAsync<T>(
-            string filename,
-            T jsonData,
-            JsonTypeInfo<T> jsonTypeInfo,
-            bool alwaysOverwrite = false,
-            bool noBackup = false,
-            CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Serializes the provided value as JSON and saves to the specified file.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
+    /// <param name="path">JSON file path.</param>
+    /// <param name="value">The value to save.</param>
+    /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+    /// <param name="cancellationToken">A token that may be used to cancel the write operation.</param>
+    /// <returns>A task that represents the asynchronous write operation.</returns>
+    public static async Task SaveToJsonFileAsync<TValue>(
+        string path,
+        TValue value,
+        JsonTypeInfo<TValue> jsonTypeInfo,
+        CancellationToken cancellationToken = default)
+    {
+        path = GetAbsolutePath(path);
+
+        var directoryPath = Path.GetDirectoryName(path);
+        if (string.IsNullOrEmpty(directoryPath))
+            throw new ArgumentException("Invalid path.", nameof(path));
+
+        _ = Directory.CreateDirectory(directoryPath);
+
+        var newPath = $"{path}.new";
+        var fileStream = new FileStream(newPath, FileMode.Create);
+        await using (fileStream.ConfigureAwait(false))
         {
-            // extend relative path
-            filename = GetAbsolutePath(filename);
-
-            string? errMsg = null;
-            FileStream? jsonFile = null;
-
-            try
-            {
-                if (cancellationToken.IsCancellationRequested)
-                    return "The operation was canceled.";
-
-                // create directory
-                var directoryPath = Path.GetDirectoryName(filename);
-                if (directoryPath is null)
-                    return $"Error: invalid path: {filename}";
-
-                Directory.CreateDirectory(directoryPath);
-
-                // save JSON
-                if (alwaysOverwrite || !File.Exists(filename)) // alwaysOverwrite or file doesn't exist. Just write to it.
-                {
-                    jsonFile = new(filename, FileMode.Create);
-                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonTypeInfo, cancellationToken).ConfigureAwait(false);
-                }
-                else // File exists. Write to `filename.new` and then replace with the new file and creates backup `filename.old`.
-                {
-                    jsonFile = new($"{filename}.new", FileMode.Create);
-                    await JsonSerializer.SerializeAsync(jsonFile, jsonData, jsonTypeInfo, cancellationToken).ConfigureAwait(false);
-                    jsonFile.Close();
-                    File.Replace($"{filename}.new", filename, noBackup ? null : $"{filename}.old");
-                }
-            }
-            catch (Exception ex)
-            {
-                errMsg = $"Error: failed to save {filename}: {ex.Message}";
-            }
-            finally
-            {
-                if (jsonFile is not null)
-                    await jsonFile.DisposeAsync().ConfigureAwait(false);
-            }
-
-            return errMsg;
+            await JsonSerializer.SerializeAsync(fileStream, value, jsonTypeInfo, cancellationToken);
         }
+        File.Replace(newPath, path, $"{path}.old");
     }
 }

@@ -4,6 +4,7 @@ using ReactiveUI.Fody.Helpers;
 using Serilog;
 using Splat;
 using Splat.Serilog;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,14 +31,17 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
-            var (settings, loadSettingsErrMsg) = Settings.LoadSettingsAsync().GetAwaiter().GetResult();
-            if (loadSettingsErrMsg is not null)
+            try
             {
-                snackbarMessageQueue.Enqueue(loadSettingsErrMsg);
+                _settings = Settings.LoadAsync().GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                snackbarMessageQueue.Enqueue(ex.Message);
+                _settings = new();
             }
 
-            _settings = settings;
-            _observableSettings = new(settings);
+            _observableSettings = new(_settings);
             _snackbarMessageQueue = snackbarMessageQueue;
 
             // Configure logging.
@@ -66,10 +70,13 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             _observableSettings.UpdateSettings(_settings);
 
-            var errMsg = await Settings.SaveSettingsAsync(_settings, cancellationToken);
-            if (errMsg is not null)
+            try
             {
-                _snackbarMessageQueue.Enqueue(errMsg);
+                await _settings.SaveAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _snackbarMessageQueue.Enqueue(ex.Message);
 
                 // Cancel window closing
                 if (cancelEventArgs is not null)
@@ -77,10 +84,8 @@ namespace YoutubeDl.Wpf.ViewModels
 
                 return false;
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
     }
 }
