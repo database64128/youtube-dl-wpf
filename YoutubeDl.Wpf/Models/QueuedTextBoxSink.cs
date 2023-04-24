@@ -43,7 +43,7 @@ public class QueuedTextBoxSink : ReactiveObject, ILogEventSink
 
             _queuedLogEvents.Enqueue(logEvent);
 
-            var messages = _queuedLogEvents.Select(x => (x.Timestamp.ToString("O"), x.Level, x.RenderMessage(_formatProvider)));
+            var messages = _queuedLogEvents.Select(x => (x.Timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"), x.Level, x.RenderMessage(_formatProvider)));
             var length = messages.Sum(x => x.Item1.Length + 1 + 3 + 1 + x.Item3.Length + Environment.NewLine.Length);
             var text = string.Create(length, messages, (buf, msgs) =>
             {
