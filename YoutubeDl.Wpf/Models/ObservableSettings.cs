@@ -84,6 +84,12 @@ public class ObservableSettings : ReactiveObject
     [Reactive]
     public string CustomOutputTemplate { get; set; }
 
+    /// <summary>
+    /// Gets the list of used output templates.
+    /// New templates are appended to the list.
+    /// </summary>
+    public List<string> OutputTemplateHistory { get; }
+
     [Reactive]
     public bool UseCustomPath { get; set; }
 
@@ -91,10 +97,10 @@ public class ObservableSettings : ReactiveObject
     public string DownloadPath { get; set; }
 
     /// <summary>
-    /// Gets the list of download path history.
-    /// New paths are always appended to the list.
+    /// Gets the list of used download paths.
+    /// New paths are appended to the list.
     /// </summary>
-    public List<string> DownloadPathHistory { get; set; }
+    public List<string> DownloadPathHistory { get; }
 
     public ObservableSettings(Settings settings)
     {
@@ -120,6 +126,7 @@ public class ObservableSettings : ReactiveObject
         DownloadPlaylist = settings.DownloadPlaylist;
         UseCustomOutputTemplate = settings.UseCustomOutputTemplate;
         CustomOutputTemplate = settings.CustomOutputTemplate;
+        OutputTemplateHistory = new(settings.OutputTemplateHistory);
         UseCustomPath = settings.UseCustomPath;
         DownloadPath = settings.DownloadPath;
         DownloadPathHistory = new(settings.DownloadPathHistory);
@@ -149,6 +156,7 @@ public class ObservableSettings : ReactiveObject
         AppSettings.UseCustomOutputTemplate = UseCustomOutputTemplate;
         AppSettings.CustomOutputTemplate = CustomOutputTemplate;
         AppSettings.UseCustomPath = UseCustomPath;
+        AppSettings.OutputTemplateHistory = OutputTemplateHistory.ToArray();
         AppSettings.DownloadPath = DownloadPath;
         AppSettings.DownloadPathHistory = DownloadPathHistory.ToArray();
     }

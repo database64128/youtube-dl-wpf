@@ -75,6 +75,8 @@ public class Settings
 
     public string CustomOutputTemplate { get; set; } = DefaultCustomFilenameTemplate;
 
+    public string[] OutputTemplateHistory { get; set; } = Array.Empty<string>();
+
     public bool UseCustomPath { get; set; }
 
     public string DownloadPath { get; set; } = "";

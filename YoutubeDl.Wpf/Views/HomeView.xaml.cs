@@ -123,12 +123,17 @@ namespace YoutubeDl.Wpf.Views
 
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.SharedSettings.UseCustomOutputTemplate,
-                    view => view.filenameTemplateTextBox.IsEnabled)
+                    view => view.outputTemplateComboBox.IsEnabled)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.OutputTemplateHistory,
+                    view => view.outputTemplateComboBox.ItemsSource)
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,
                     viewModel => viewModel.SharedSettings.CustomOutputTemplate,
-                    view => view.filenameTemplateTextBox.Text)
+                    view => view.outputTemplateComboBox.Text)
                     .DisposeWith(disposables);
 
                 // Options row 3

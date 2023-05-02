@@ -155,10 +155,19 @@
                     <ToggleButton x:Name="filenameTemplateToggle"
                                   Margin="4"/>
                     <TextBlock VerticalAlignment="Center" Margin="4">Custom filename template</TextBlock>
-                    <TextBox x:Name="filenameTemplateTextBox"
-                             Margin="4"
-                             Width="200"
-                             VerticalAlignment="Center"/>
+                    <ComboBox x:Name="outputTemplateComboBox"
+                              IsEditable="True"
+                              IsReadOnly="False"
+                              StaysOpenOnEdit="True"
+                              Margin="4"
+                              Width="200"
+                              VerticalAlignment="Center">
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                    </ComboBox>
                     <Button x:Name="resetFilenameTemplateButton"
                             Margin="4"
                             Style="{StaticResource MaterialDesignFlatButton}"
