@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Text;
@@ -220,7 +221,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
 
         if (_settings.UseCustomPath)
         {
-            outputTemplate = $@"{_settings.DownloadPath}\{outputTemplate}";
+            outputTemplate = $@"{_settings.DownloadPath}{Path.DirectorySeparatorChar}{outputTemplate}";
         }
 
         if (_settings.UseCustomOutputTemplate || _settings.UseCustomPath)

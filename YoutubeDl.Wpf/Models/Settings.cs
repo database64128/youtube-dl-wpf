@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeDl.Wpf.Utils;
@@ -13,6 +14,12 @@ public class Settings
     /// used by this version of the app.
     /// </summary>
     public const int DefaultVersion = 1;
+
+    /// <summary>
+    /// Defines the default limit on the number of log messages
+    /// displayed in the logs view.
+    /// </summary>
+    public const int DefaultLoggingMaxEntries = 1024;
 
     /// <summary>
     /// Defines the default custom output filename template.
@@ -44,11 +51,11 @@ public class Settings
 
     public string Proxy { get; set; } = "";
 
-    public int LoggingMaxEntries { get; set; } = 1024;
+    public int LoggingMaxEntries { get; set; } = DefaultLoggingMaxEntries;
 
     public Preset? SelectedPreset { get; set; } = Preset.Auto;
 
-    public string SelectedPresetText { get; set; } = "Auto";
+    public string SelectedPresetText { get; set; } = Preset.AutoName;
 
     public Preset[] CustomPresets { get; set; } = Array.Empty<Preset>();
 
@@ -82,7 +89,8 @@ public class Settings
     public static async Task<Settings> LoadAsync(CancellationToken cancellationToken = default)
     {
         var settings = await FileHelper.LoadFromJsonFileAsync("Settings.json", SettingsJsonSerializerContext.Default.Settings, cancellationToken).ConfigureAwait(false);
-        settings.UpdateSettings();
+        settings.Update();
+        settings.Validate();
         return settings;
     }
 
@@ -95,22 +103,59 @@ public class Settings
         => FileHelper.SaveToJsonFileAsync("Settings.json", this, SettingsJsonSerializerContext.Default.Settings, cancellationToken);
 
     /// <summary>
-    /// Updates the loaded settings to the latest version.
+    /// Updates settings to the latest version.
     /// </summary>
-    /// <exception cref="Exception">
-    /// The loaded settings have a higher version number than supported.
+    /// <exception cref="NotSupportedException">
+    /// The version number is not supported.
     /// </exception>
-    public void UpdateSettings()
+    private void Update()
     {
         switch (Version)
         {
-            case 0: // nothing to do
+            case 0:
                 Version++;
-                goto case 1; // go to the next update path
-            case DefaultVersion: // current version
+                goto case 1;
+            case DefaultVersion:
                 return;
             default:
-                throw new Exception($"Settings version {Version} is newer than supported.");
+                throw new NotSupportedException($"Settings version {Version} is not supported.");
+        }
+    }
+
+    /// <summary>
+    /// Validates that all properties have valid values.
+    /// </summary>
+    /// <exception cref="InvalidEnumArgumentException">
+    /// One of the enum properties have an invalid value.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// One of the integer values is out of the allowed range.
+    /// </exception>
+    private void Validate()
+    {
+        switch (AppColorMode)
+        {
+            case BaseTheme.Inherit:
+            case BaseTheme.Light:
+            case BaseTheme.Dark:
+                break;
+            default:
+                throw new InvalidEnumArgumentException(nameof(AppColorMode), (int)AppColorMode, typeof(BaseTheme));
+        }
+
+        switch (Backend)
+        {
+            case BackendTypes.None:
+            case BackendTypes.Ytdl:
+            case BackendTypes.Ytdlp:
+                break;
+            default:
+                throw new InvalidEnumArgumentException(nameof(Backend), (int)Backend, typeof(BackendTypes));
+        }
+
+        if (LoggingMaxEntries <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(LoggingMaxEntries), LoggingMaxEntries, "Max log entries must be positive.");
         }
     }
 }

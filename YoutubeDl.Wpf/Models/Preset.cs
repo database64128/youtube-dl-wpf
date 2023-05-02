@@ -1,12 +1,4 @@
-﻿#pragma warning disable IDE0079
-// STJ source generation actually supports record types with constructor parameters.
-// See discussions at https://github.com/dotnet/runtime/issues/58770.
-// Analyzer fix: https://github.com/dotnet/runtime/pull/68064.
-// Warning suppression is needed for .NET 6.
-#pragma warning disable SYSLIB1037
-#pragma warning restore IDE0079
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace YoutubeDl.Wpf.Models;
 
@@ -18,7 +10,7 @@ public record Preset(
     bool IsPredefined = false,
     params string[] ExtraArgs)
 {
-    public string DisplayName => Name ?? FormatArg ?? ContainerArg ?? "Auto";
+    public string DisplayName => Name ?? FormatArg ?? ContainerArg ?? "unnamed";
 
     public IEnumerable<string> ToArgs()
     {
@@ -48,7 +40,9 @@ public record Preset(
         }
     }
 
-    public static readonly Preset Auto = new(IsPredefined: true);
+    public const string AutoName = "Auto";
+
+    public static readonly Preset Auto = new(AutoName, IsPredefined: true);
 
     public static readonly Preset[] PredefinedPresets =
     {

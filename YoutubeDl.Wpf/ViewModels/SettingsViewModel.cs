@@ -91,11 +91,17 @@ namespace YoutubeDl.Wpf.ViewModels
                 .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid proxy URL"));
 
             this.WhenAnyValue(x => x.SharedSettings.LoggingMaxEntries)
-                .Where(loggingMaxEntries => loggingMaxEntries <= 0)
-                .Subscribe(_ =>
+                .Subscribe(loggingMaxEntries =>
                 {
-                    _snackbarMessageQueue.Enqueue("Warning: Max log entries must be greater than 0.");
-                    SharedSettings.LoggingMaxEntries = 1024;
+                    if (loggingMaxEntries > 0)
+                    {
+                        SharedSettings.AppSettings.LoggingMaxEntries = loggingMaxEntries;
+                    }
+                    else
+                    {
+                        _snackbarMessageQueue.Enqueue("Warning: Max log entries must be positive.");
+                        SharedSettings.LoggingMaxEntries = SharedSettings.AppSettings.LoggingMaxEntries;
+                    }
                 });
 
             // Guess the backend type from binary name.
@@ -117,7 +123,7 @@ namespace YoutubeDl.Wpf.ViewModels
             BrowseDlBinaryCommand = ReactiveCommand.Create(BrowseDlBinary);
             UpdateBackendCommand = ReactiveCommand.Create(_backendService.UpdateBackend, canUpdateBackend);
             BrowseFfmpegBinaryCommand = ReactiveCommand.Create(BrowseFfmpegBinary);
-            OpenUri = ReactiveCommand.Create<string>(uri => WpfHelper.OpenUri(uri));
+            OpenUri = ReactiveCommand.Create<string>(WpfHelper.OpenUri);
         }
 
         private void ChangeColorMode(BaseTheme colorMode)

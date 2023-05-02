@@ -45,7 +45,7 @@ namespace YoutubeDl.Wpf.ViewModels
             _snackbarMessageQueue = snackbarMessageQueue;
 
             // Configure logging.
-            var queuedTextBoxsink = new QueuedTextBoxSink(_observableSettings);
+            var queuedTextBoxsink = new QueuedTextBoxSink(_settings);
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(queuedTextBoxsink)
                 .CreateLogger();
@@ -64,11 +64,11 @@ namespace YoutubeDl.Wpf.ViewModels
             SaveSettingsAsyncCommand = ReactiveCommand.CreateFromTask<CancelEventArgs?, bool>(SaveSettingsAsync);
         }
 
-        public void ControlDialog(bool open) => IsDialogOpen = open;
+        private void ControlDialog(bool open) => IsDialogOpen = open;
 
-        public async Task<bool> SaveSettingsAsync(CancelEventArgs? cancelEventArgs = null, CancellationToken cancellationToken = default)
+        private async Task<bool> SaveSettingsAsync(CancelEventArgs? cancelEventArgs = null, CancellationToken cancellationToken = default)
         {
-            _observableSettings.UpdateSettings(_settings);
+            _observableSettings.UpdateAppSettings();
 
             try
             {
