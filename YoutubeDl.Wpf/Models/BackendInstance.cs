@@ -18,17 +18,8 @@ namespace YoutubeDl.Wpf.Models;
 public class BackendInstance : ReactiveObject, IEnableLogger
 {
     private readonly ObservableSettings _settings;
-    private readonly Process _dlProcess;
     private readonly BackendService _backendService;
-    private readonly string[] outputSeparators =
-    {
-        "[download]",
-        "of",
-        "at",
-        "ETA",
-        "in",
-        " ",
-    };
+    private readonly Process _process;
 
     public List<string> GeneratedDownloadArguments { get; } = new();
 
@@ -55,27 +46,27 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         _settings = settings;
         _backendService = backendService;
 
-        _dlProcess = new();
-        _dlProcess.StartInfo.CreateNoWindow = true;
-        _dlProcess.StartInfo.UseShellExecute = false;
-        _dlProcess.StartInfo.RedirectStandardError = true;
-        _dlProcess.StartInfo.RedirectStandardOutput = true;
-        _dlProcess.StartInfo.StandardErrorEncoding = Encoding.UTF8;
-        _dlProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-        _dlProcess.EnableRaisingEvents = true;
+        _process = new();
+        _process.StartInfo.CreateNoWindow = true;
+        _process.StartInfo.UseShellExecute = false;
+        _process.StartInfo.RedirectStandardError = true;
+        _process.StartInfo.RedirectStandardOutput = true;
+        _process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+        _process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+        _process.EnableRaisingEvents = true;
     }
 
-    private async Task RunDlAsync(CancellationToken cancellationToken = default)
+    private async Task RunAsync(CancellationToken cancellationToken = default)
     {
-        if (!_dlProcess.Start())
+        if (!_process.Start())
             throw new InvalidOperationException("Method called when the backend process is running.");
 
         SetStatusRunning();
 
         await Task.WhenAll(
-            ReadAndParseAsync(_dlProcess.StandardError, cancellationToken),
-            ReadAndParseAsync(_dlProcess.StandardOutput, cancellationToken),
-            _dlProcess.WaitForExitAsync(cancellationToken));
+            ReadAndParseLinesAsync(_process.StandardError, cancellationToken),
+            ReadAndParseLinesAsync(_process.StandardOutput, cancellationToken),
+            _process.WaitForExitAsync(cancellationToken));
 
         SetStatusStopped();
     }
@@ -95,7 +86,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         _backendService.UpdateProgress();
     }
 
-    private async Task ReadAndParseAsync(StreamReader reader, CancellationToken cancellationToken = default)
+    private async Task ReadAndParseLinesAsync(StreamReader reader, CancellationToken cancellationToken = default)
     {
         while (true)
         {
@@ -104,34 +95,61 @@ public class BackendInstance : ReactiveObject, IEnableLogger
                 return;
 
             this.Log().Info(line);
-            ParseDlOutput(line);
+            ParseLine(line);
         }
     }
 
-    private void ParseDlOutput(string output)
+    private void ParseLine(ReadOnlySpan<char> line)
     {
-        var parsedStringArray = output.Split(outputSeparators, StringSplitOptions.RemoveEmptyEntries);
-        if (parsedStringArray.Length >= 2) // valid [download] line
+        // Example lines:
+        // [download]   0.0% of 36.35MiB at 20.40KiB/s ETA 30:24
+        // [download]  65.1% of 36.35MiB at  2.81MiB/s ETA 00:04
+        // [download] 100% of 36.35MiB in 00:10
+
+        // Check and strip the download prefix.
+        const string downloadPrefix = "[download] ";
+        if (!line.StartsWith(downloadPrefix, StringComparison.Ordinal))
+            return;
+        line = line[downloadPrefix.Length..];
+
+        // Parse and strip the percentage.
+        const string percentageSuffix = "% of ";
+        var percentageEnd = line.IndexOf(percentageSuffix, StringComparison.Ordinal);
+        if (percentageEnd == -1 || !double.TryParse(line[..percentageEnd], NumberStyles.AllowLeadingWhite | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var percentage))
+            return;
+        DownloadProgressPercentage = percentage / 100;
+        StatusIndeterminate = false;
+        _backendService.UpdateProgress();
+        line = line[(percentageEnd + percentageSuffix.Length)..];
+
+        // Case 0: Download in progress
+        const string speedPrefix = " at ";
+        var sizeEnd = line.IndexOf(speedPrefix, StringComparison.Ordinal);
+        if (sizeEnd != -1)
         {
-            ReadOnlySpan<char> percentageString = parsedStringArray[0];
-            if (percentageString.Length >= 2 && percentageString.EndsWith("%")) // actual percentage
-            {
-                if (double.TryParse(percentageString[..^1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var percentageNumber))
-                {
-                    DownloadProgressPercentage = percentageNumber / 100;
-                    StatusIndeterminate = false;
-                    _backendService.UpdateProgress();
-                }
-            }
+            // Extract and strip file size.
+            FileSizeString = line[..sizeEnd].ToString();
+            line = line[(sizeEnd + speedPrefix.Length)..];
 
-            // save other info
-            FileSizeString = parsedStringArray[1];
+            // Extract and strip speed.
+            const string etaPrefix = " ETA ";
+            var speedEnd = line.IndexOf(etaPrefix, StringComparison.Ordinal);
+            if (speedEnd == -1)
+                return;
+            DownloadSpeedString = line[..speedEnd].TrimStart().ToString();
+            line = line[(speedEnd + etaPrefix.Length)..];
 
-            if (parsedStringArray.Length == 4)
-            {
-                DownloadSpeedString = parsedStringArray[2];
-                DownloadETAString = parsedStringArray[3];
-            }
+            // Extract ETA string.
+            DownloadETAString = line.ToString();
+            return;
+        }
+
+        // Case 1: Download finished
+        sizeEnd = line.IndexOf(" in ", StringComparison.Ordinal);
+        if (sizeEnd != -1)
+        {
+            // Extract file size.
+            FileSizeString = line[..sizeEnd].ToString();
         }
     }
 
@@ -248,16 +266,16 @@ public class BackendInstance : ReactiveObject, IEnableLogger
 
     public async Task StartDownloadAsync(string link, CancellationToken cancellationToken = default)
     {
-        _dlProcess.StartInfo.FileName = _settings.BackendPath;
-        _dlProcess.StartInfo.ArgumentList.Clear();
-        _dlProcess.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
-        _dlProcess.StartInfo.ArgumentList.AddRange(GeneratedDownloadArguments);
-        _dlProcess.StartInfo.ArgumentList.AddRange(_settings.BackendDownloadArguments.Select(x => x.Argument));
-        _dlProcess.StartInfo.ArgumentList.Add(link);
+        _process.StartInfo.FileName = _settings.BackendPath;
+        _process.StartInfo.ArgumentList.Clear();
+        _process.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
+        _process.StartInfo.ArgumentList.AddRange(GeneratedDownloadArguments);
+        _process.StartInfo.ArgumentList.AddRange(_settings.BackendDownloadArguments.Select(x => x.Argument));
+        _process.StartInfo.ArgumentList.Add(link);
 
         try
         {
-            await RunDlAsync(cancellationToken);
+            await RunAsync(cancellationToken);
         }
         catch (Exception ex)
         {
@@ -267,20 +285,20 @@ public class BackendInstance : ReactiveObject, IEnableLogger
 
     public async Task ListFormatsAsync(string link, CancellationToken cancellationToken = default)
     {
-        _dlProcess.StartInfo.FileName = _settings.BackendPath;
-        _dlProcess.StartInfo.ArgumentList.Clear();
-        _dlProcess.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
+        _process.StartInfo.FileName = _settings.BackendPath;
+        _process.StartInfo.ArgumentList.Clear();
+        _process.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
         if (!string.IsNullOrEmpty(_settings.Proxy))
         {
-            _dlProcess.StartInfo.ArgumentList.Add("--proxy");
-            _dlProcess.StartInfo.ArgumentList.Add(_settings.Proxy);
+            _process.StartInfo.ArgumentList.Add("--proxy");
+            _process.StartInfo.ArgumentList.Add(_settings.Proxy);
         }
-        _dlProcess.StartInfo.ArgumentList.Add("-F");
-        _dlProcess.StartInfo.ArgumentList.Add(link);
+        _process.StartInfo.ArgumentList.Add("-F");
+        _process.StartInfo.ArgumentList.Add(link);
 
         try
         {
-            await RunDlAsync(cancellationToken);
+            await RunAsync(cancellationToken);
         }
         catch (Exception ex)
         {
@@ -288,16 +306,39 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         }
     }
 
-    public async Task AbortDlAsync(CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(CancellationToken cancellationToken = default)
     {
-        if (CtrlCHelper.AttachConsole((uint)_dlProcess.Id))
+        _settings.BackendLastUpdateCheck = DateTimeOffset.Now;
+
+        _process.StartInfo.FileName = _settings.BackendPath;
+        _process.StartInfo.ArgumentList.Clear();
+        if (!string.IsNullOrEmpty(_settings.Proxy))
+        {
+            _process.StartInfo.ArgumentList.Add("--proxy");
+            _process.StartInfo.ArgumentList.Add(_settings.Proxy);
+        }
+        _process.StartInfo.ArgumentList.Add("-U");
+
+        try
+        {
+            await RunAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            this.Log().Error(ex);
+        }
+    }
+
+    public async Task AbortAsync(CancellationToken cancellationToken = default)
+    {
+        if (CtrlCHelper.AttachConsole((uint)_process.Id))
         {
             CtrlCHelper.SetConsoleCtrlHandler(null, true);
             try
             {
                 if (CtrlCHelper.GenerateConsoleCtrlEvent(CtrlCHelper.CTRL_C_EVENT, 0))
                 {
-                    await _dlProcess.WaitForExitAsync(cancellationToken);
+                    await _process.WaitForExitAsync(cancellationToken);
                 }
             }
             catch (Exception ex)
@@ -311,28 +352,5 @@ public class BackendInstance : ReactiveObject, IEnableLogger
             }
         }
         this.Log().Info("🛑 Aborted.");
-    }
-
-    public async Task UpdateDlAsync(CancellationToken cancellationToken = default)
-    {
-        _settings.BackendLastUpdateCheck = DateTimeOffset.Now;
-
-        _dlProcess.StartInfo.FileName = _settings.BackendPath;
-        _dlProcess.StartInfo.ArgumentList.Clear();
-        if (!string.IsNullOrEmpty(_settings.Proxy))
-        {
-            _dlProcess.StartInfo.ArgumentList.Add("--proxy");
-            _dlProcess.StartInfo.ArgumentList.Add(_settings.Proxy);
-        }
-        _dlProcess.StartInfo.ArgumentList.Add("-U");
-
-        try
-        {
-            await RunDlAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            this.Log().Error(ex);
-        }
     }
 }

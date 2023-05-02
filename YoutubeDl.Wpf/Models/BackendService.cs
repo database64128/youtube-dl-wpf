@@ -55,7 +55,7 @@ public class BackendService : ReactiveObject, IEnableLogger
 
     public Task UpdateBackendAsync(CancellationToken cancellationToken = default)
     {
-        var tasks = Instances.Select(x => x.UpdateDlAsync(cancellationToken));
+        var tasks = Instances.Select(x => x.UpdateAsync(cancellationToken));
         return Task.WhenAll(tasks);
     }
 }
