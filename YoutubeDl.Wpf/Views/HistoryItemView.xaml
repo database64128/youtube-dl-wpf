@@ -1,6 +1,6 @@
 ﻿<reactiveui:ReactiveUserControl
-    x:Class="YoutubeDl.Wpf.Views.DownloadPathItemView"
-    x:TypeArguments="viewmodels:DownloadPathItemViewModel"
+    x:Class="YoutubeDl.Wpf.Views.HistoryItemView"
+    x:TypeArguments="viewmodels:HistoryItemViewModel"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,7 +9,7 @@
     xmlns:reactiveui="http://reactiveui.net"
     xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance Type=viewmodels:DownloadPathItemViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:HistoryItemViewModel}"
     d:DesignHeight="30" d:DesignWidth="200">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -17,7 +17,7 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Column="0"
-                   x:Name="pathTextBlock"
+                   x:Name="textBlock"
                    VerticalAlignment="Center"/>
         <Button Grid.Column="1"
                 x:Name="deleteButton"

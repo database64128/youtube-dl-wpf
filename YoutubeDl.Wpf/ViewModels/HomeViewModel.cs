@@ -39,7 +39,7 @@ namespace YoutubeDl.Wpf.ViewModels
         /// This collection was first constructed from <see cref="ObservableSettings.DownloadPathHistory"/> in reverse order.
         /// So the newest path is always the first element.
         /// </summary>
-        public ObservableCollection<DownloadPathItemViewModel> DownloadPathHistory { get; } = new();
+        public ObservableCollection<HistoryItemViewModel> DownloadPathHistory { get; } = new();
 
         /// <summary>
         /// Gets the collection of view models of the arguments area.
@@ -113,7 +113,7 @@ namespace YoutubeDl.Wpf.ViewModels
                     Presets.AddRange(Preset.PredefinedPresets.Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
                 });
 
-            DownloadPathHistory.AddRange(SharedSettings.DownloadPathHistory.Select(x => new DownloadPathItemViewModel(x, DeleteDownloadPathItem)).Reverse());
+            DownloadPathHistory.AddRange(SharedSettings.DownloadPathHistory.Select(x => new HistoryItemViewModel(x, DeleteDownloadPathItem)).Reverse());
 
             DownloadArguments.AddRange(SharedSettings.BackendDownloadArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
             DownloadArguments.Add(new AddArgumentViewModel(AddArgument));
@@ -237,9 +237,9 @@ namespace YoutubeDl.Wpf.ViewModels
             SharedSettings.SelectedPreset = Presets.First();
         }
 
-        private void DeleteDownloadPathItem(DownloadPathItemViewModel item)
+        private void DeleteDownloadPathItem(HistoryItemViewModel item)
         {
-            SharedSettings.DownloadPathHistory.Remove(item.Path);
+            SharedSettings.DownloadPathHistory.Remove(item.Text);
             DownloadPathHistory.Remove(item);
         }
 

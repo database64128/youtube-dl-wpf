@@ -5,19 +5,19 @@ using System.Reactive.Linq;
 namespace YoutubeDl.Wpf.Views;
 
 /// <summary>
-/// Interaction logic for DownloadPathItemView.xaml
+/// Interaction logic for HistoryItemView.xaml
 /// </summary>
-public partial class DownloadPathItemView
+public partial class HistoryItemView
 {
-    public DownloadPathItemView()
+    public HistoryItemView()
     {
         InitializeComponent();
 
         this.WhenActivated(disposables =>
         {
             this.OneWayBind(ViewModel,
-                viewModel => viewModel.Path,
-                view => view.pathTextBlock.Text)
+                viewModel => viewModel.Text,
+                view => view.textBlock.Text)
                 .DisposeWith(disposables);
 
             this.BindCommand(ViewModel,
