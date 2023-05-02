@@ -233,6 +233,7 @@
                  TextWrapping="NoWrap"
                  IsReadOnly="True"
                  VerticalAlignment="Stretch"
+                 VerticalContentAlignment="Top"
                  VerticalScrollBarVisibility="Auto"
                  HorizontalScrollBarVisibility="Auto"
                  materialDesign:HintAssist.Hint="Output from backend"
