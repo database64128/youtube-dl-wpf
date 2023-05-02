@@ -172,12 +172,14 @@ namespace YoutubeDl.Wpf.Views
                 // Download, list, abort button
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.StartDownloadCommand,
-                    view => view.downloadButton)
+                    view => view.downloadButton,
+                    viewModel => viewModel.Link)
                     .DisposeWith(disposables);
 
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.ListFormatsCommand,
-                    view => view.listFormatsButton)
+                    view => view.listFormatsButton,
+                    viewModel => viewModel.Link)
                     .DisposeWith(disposables);
 
                 this.BindCommand(ViewModel,

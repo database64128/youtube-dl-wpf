@@ -121,7 +121,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
             ChangeColorModeCommand = ReactiveCommand.Create<BaseTheme>(ChangeColorMode);
             BrowseDlBinaryCommand = ReactiveCommand.Create(BrowseDlBinary);
-            UpdateBackendCommand = ReactiveCommand.Create(_backendService.UpdateBackend, canUpdateBackend);
+            UpdateBackendCommand = ReactiveCommand.CreateFromTask(_backendService.UpdateBackendAsync, canUpdateBackend);
             BrowseFfmpegBinaryCommand = ReactiveCommand.Create(BrowseFfmpegBinary);
             OpenUri = ReactiveCommand.Create<string>(WpfHelper.OpenUri);
         }

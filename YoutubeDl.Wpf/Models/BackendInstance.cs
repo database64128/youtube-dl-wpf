@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,19 +63,49 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         _dlProcess.StartInfo.StandardErrorEncoding = Encoding.UTF8;
         _dlProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
         _dlProcess.EnableRaisingEvents = true;
-        _dlProcess.ErrorDataReceived += DlOutputHandler;
-        _dlProcess.OutputDataReceived += DlOutputHandler;
-        _dlProcess.Exited += DlProcess_Exited;
     }
 
-    private void DlOutputHandler(object? sendingProcess, DataReceivedEventArgs outLine)
+    private async Task RunDlAsync(CancellationToken cancellationToken = default)
     {
-        if (outLine.Data is null)
-            return;
+        if (!_dlProcess.Start())
+            throw new InvalidOperationException("Method called when the backend process is running.");
 
-        this.Log().Info(outLine.Data);
+        SetStatusRunning();
 
-        RxApp.MainThreadScheduler.Schedule(() => ParseDlOutput(outLine.Data));
+        await Task.WhenAll(
+            ReadAndParseAsync(_dlProcess.StandardError, cancellationToken),
+            ReadAndParseAsync(_dlProcess.StandardOutput, cancellationToken),
+            _dlProcess.WaitForExitAsync(cancellationToken));
+
+        SetStatusStopped();
+    }
+
+    private void SetStatusRunning()
+    {
+        StatusIndeterminate = true;
+        IsRunning = true;
+        _backendService.UpdateProgress();
+    }
+
+    private void SetStatusStopped()
+    {
+        DownloadProgressPercentage = 0.0;
+        StatusIndeterminate = false;
+        IsRunning = false;
+        _backendService.UpdateProgress();
+    }
+
+    private async Task ReadAndParseAsync(StreamReader reader, CancellationToken cancellationToken = default)
+    {
+        while (true)
+        {
+            var line = await reader.ReadLineAsync(cancellationToken);
+            if (line is null)
+                return;
+
+            this.Log().Info(line);
+            ParseDlOutput(line);
+        }
     }
 
     private void ParseDlOutput(string output)
@@ -104,20 +133,6 @@ public class BackendInstance : ReactiveObject, IEnableLogger
                 DownloadETAString = parsedStringArray[3];
             }
         }
-    }
-
-    private void DlProcess_Exited(object? sender, EventArgs e)
-    {
-        _dlProcess.CancelErrorRead();
-        _dlProcess.CancelOutputRead();
-
-        RxApp.MainThreadScheduler.Schedule(() =>
-        {
-            DownloadProgressPercentage = 0.0;
-            StatusIndeterminate = false;
-            IsRunning = false;
-            _backendService.UpdateProgress();
-        });
     }
 
     public void GenerateDownloadArguments()
@@ -231,7 +246,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         }
     }
 
-    public void StartDownload(string link)
+    public async Task StartDownloadAsync(string link, CancellationToken cancellationToken = default)
     {
         _dlProcess.StartInfo.FileName = _settings.BackendPath;
         _dlProcess.StartInfo.ArgumentList.Clear();
@@ -242,13 +257,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
 
         try
         {
-            _dlProcess.Start();
-            _dlProcess.BeginErrorReadLine();
-            _dlProcess.BeginOutputReadLine();
-
-            StatusIndeterminate = true;
-            IsRunning = true;
-            _backendService.UpdateProgress();
+            await RunDlAsync(cancellationToken);
         }
         catch (Exception ex)
         {
@@ -256,7 +265,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         }
     }
 
-    public void ListFormats(string link)
+    public async Task ListFormatsAsync(string link, CancellationToken cancellationToken = default)
     {
         _dlProcess.StartInfo.FileName = _settings.BackendPath;
         _dlProcess.StartInfo.ArgumentList.Clear();
@@ -271,13 +280,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
 
         try
         {
-            _dlProcess.Start();
-            _dlProcess.BeginErrorReadLine();
-            _dlProcess.BeginOutputReadLine();
-
-            StatusIndeterminate = true;
-            IsRunning = true;
-            _backendService.UpdateProgress();
+            await RunDlAsync(cancellationToken);
         }
         catch (Exception ex)
         {
@@ -285,7 +288,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         }
     }
 
-    public async Task AbortDl(CancellationToken cancellationToken = default)
+    public async Task AbortDlAsync(CancellationToken cancellationToken = default)
     {
         if (CtrlCHelper.AttachConsole((uint)_dlProcess.Id))
         {
@@ -310,7 +313,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         this.Log().Info("🛑 Aborted.");
     }
 
-    public void UpdateDl()
+    public async Task UpdateDlAsync(CancellationToken cancellationToken = default)
     {
         _settings.BackendLastUpdateCheck = DateTimeOffset.Now;
 
@@ -325,13 +328,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
 
         try
         {
-            _dlProcess.Start();
-            _dlProcess.BeginErrorReadLine();
-            _dlProcess.BeginOutputReadLine();
-
-            StatusIndeterminate = true;
-            IsRunning = true;
-            _backendService.UpdateProgress();
+            await RunDlAsync(cancellationToken);
         }
         catch (Exception ex)
         {

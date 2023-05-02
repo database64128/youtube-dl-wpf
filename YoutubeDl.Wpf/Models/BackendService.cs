@@ -3,6 +3,8 @@ using ReactiveUI.Fody.Helpers;
 using Splat;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Shell;
 
 namespace YoutubeDl.Wpf.Models;
@@ -51,14 +53,9 @@ public class BackendService : ReactiveObject, IEnableLogger
         }
     }
 
-    public void UpdateBackend()
+    public Task UpdateBackendAsync(CancellationToken cancellationToken = default)
     {
-        var instance = Instances.Count switch
-        {
-            > 0 => Instances[0],
-            _ => new(_settings, this),
-        };
-
-        instance.UpdateDl();
+        var tasks = Instances.Select(x => x.UpdateDlAsync(cancellationToken));
+        return Task.WhenAll(tasks);
     }
 }

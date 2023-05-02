@@ -54,8 +54,8 @@ namespace YoutubeDl.Wpf.ViewModels
         public ReactiveCommand<Unit, Unit> ResetCustomFilenameTemplateCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseDownloadFolderCommand { get; }
         public ReactiveCommand<Unit, Unit> OpenDownloadFolderCommand { get; }
-        public ReactiveCommand<Unit, Unit> StartDownloadCommand { get; }
-        public ReactiveCommand<Unit, Unit> ListFormatsCommand { get; }
+        public ReactiveCommand<string, Unit> StartDownloadCommand { get; }
+        public ReactiveCommand<string, Unit> ListFormatsCommand { get; }
         public ReactiveCommand<Unit, Unit> AbortDlCommand { get; }
 
         public ReactiveCommand<Unit, Unit> OpenAddCustomPresetDialogCommand { get; }
@@ -80,6 +80,11 @@ namespace YoutubeDl.Wpf.ViewModels
                 2 => today.Day switch
                 {
                     14 => PackIconKind.Heart,
+                    _ => defaultIcon,
+                },
+                5 => today.Day switch
+                {
+                    8 => PackIconKind.Cake,
                     _ => defaultIcon,
                 },
                 10 => today.Day switch
@@ -182,9 +187,9 @@ namespace YoutubeDl.Wpf.ViewModels
             ResetCustomFilenameTemplateCommand = ReactiveCommand.Create(ResetCustomFilenameTemplate, canResetCustomFilenameTemplate);
             BrowseDownloadFolderCommand = ReactiveCommand.Create(BrowseDownloadFolder, canBrowseDownloadFolder);
             OpenDownloadFolderCommand = ReactiveCommand.Create(OpenDownloadFolder, canOpenDownloadFolder);
-            StartDownloadCommand = ReactiveCommand.Create(StartDownload, canStartDl);
-            ListFormatsCommand = ReactiveCommand.Create(ListFormats, canStartDl);
-            AbortDlCommand = ReactiveCommand.CreateFromTask(BackendInstance.AbortDl, canAbortDl);
+            StartDownloadCommand = ReactiveCommand.CreateFromTask<string>(BackendInstance.StartDownloadAsync, canStartDl);
+            ListFormatsCommand = ReactiveCommand.CreateFromTask<string>(BackendInstance.ListFormatsAsync, canStartDl);
+            AbortDlCommand = ReactiveCommand.CreateFromTask(BackendInstance.AbortDlAsync, canAbortDl);
 
             OpenAddCustomPresetDialogCommand = ReactiveCommand.Create(OpenAddCustomPresetDialog);
             OpenEditCustomPresetDialogCommand = ReactiveCommand.Create(OpenEditCustomPresetDialog, canEditOrDeletePreset);
@@ -193,7 +198,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
             if (SharedSettings.BackendAutoUpdate && !string.IsNullOrEmpty(SharedSettings.BackendPath))
             {
-                BackendInstance.UpdateDl();
+                _ = BackendInstance.UpdateDlAsync();
             }
         }
 
@@ -271,16 +276,6 @@ namespace YoutubeDl.Wpf.ViewModels
         private void ResetCustomFilenameTemplate()
         {
             SharedSettings.CustomOutputTemplate = Settings.DefaultCustomFilenameTemplate;
-        }
-
-        private void StartDownload()
-        {
-            BackendInstance.StartDownload(Link);
-        }
-
-        private void ListFormats()
-        {
-            BackendInstance.ListFormats(Link);
         }
 
         private void BrowseDownloadFolder()
