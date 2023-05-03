@@ -3,7 +3,7 @@
 [![Build](https://github.com/database64128/youtube-dl-wpf/actions/workflows/build.yml/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions/workflows/build.yml)
 [![Release](https://github.com/database64128/youtube-dl-wpf/actions/workflows/release.yml/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions/workflows/release.yml)
 
-A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) and [`yt-dlp`](https://github.com/yt-dlp/yt-dlp).
+WPF GUI for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) and [`yt-dlp`](https://github.com/yt-dlp/yt-dlp).
 
 ![Home](home.webp "Home")
 ![Settings](settings.webp "Settings")
@@ -16,9 +16,10 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) 
 - Override video, audio formats and output container.
 - Embed metadata into downloaded file.
 - Download and embed thumbnails.
-- Download playlists.
+- Download whole playlists.
+- Select items from playlist to download.
 - Select types of subtitles (default, all languages, auto-generated) to download and embed.
-- Specify custom download filename template.
+- Specify custom output template.
 - Specify custom download path.
 - Specify custom `ffmpeg` path.
 - Specify custom proxy.
@@ -40,7 +41,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) 
 
 2.  Q: How can I use a proxy to download?
 
-    A: Leave the proxy field empty to use system proxy settings. Otherwise the format is similar to how `curl` accepts proxy strings. Examples are, `socks5://localhost:1080/`, `http://localhost:8080/`. Currently the upstream doesn't accept `socks5h` protocol and treat `socks5` as `socks5h` by always resolving the hostname using the proxy. This is tracked in [this issue](https://github.com/ytdl-org/youtube-dl/issues/22618).
+    A: Leave the proxy field empty to use system proxy settings. Otherwise the format is similar to how `curl` accepts proxy strings (e.g. `socks5://localhost:1080/`, `http://localhost:8080/`). Currently the upstream doesn't accept `socks5h` protocol and treat `socks5` as `socks5h` by always resolving the hostname using the proxy. This is tracked in [this issue](https://github.com/ytdl-org/youtube-dl/issues/22618).
 
 3.  Q: Downloading the whole playlist doesn't work!
 
@@ -60,7 +61,7 @@ A simple GUI wrapper for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) 
 
 ## Build
 
-Prerequisites: .NET 6 SDK
+Prerequisites: .NET 7 SDK
 
 Note for packagers: The application by default uses executable directory as config directory. To use user's config directory, define the constant `PACKAGED` when building.
 

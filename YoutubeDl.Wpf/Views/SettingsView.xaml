@@ -272,7 +272,7 @@
                        Grid.ColumnSpan="3"
                        Margin="8 4 8 4"
                        Style="{StaticResource MaterialDesignBody1TextBlock}">
-                Cube YouTube Downloader is a simple GUI wrapper for
+                Cube YouTube Downloader is a WPF GUI for
                 <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">youtube-dl</Span>
                 and <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">yt-dlp</Span>.
             </TextBlock>
