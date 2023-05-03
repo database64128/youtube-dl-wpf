@@ -14,7 +14,7 @@
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1.5*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -38,8 +38,7 @@
                     <RowDefinition Height="40" />
                     <RowDefinition Height="40" />
                     <RowDefinition Height="40" />
-                    <RowDefinition Height="40" />
-                    <RowDefinition Height="40" />
+                    <RowDefinition Height="80" />
                     <RowDefinition Height="40" MaxHeight="40" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -140,15 +139,15 @@
                               Style="{StaticResource MaterialDesignFilterChipAccentOutlineCheckBox}"
                               Content="Auto-generated" />
                 </StackPanel>
+
                 <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
-                    <ToggleButton x:Name="metadataToggle"
-                                  Margin="4"/>
+                    <ToggleButton x:Name="metadataToggle" Margin="4"/>
                     <TextBlock VerticalAlignment="Center" Margin="4">Add metadata</TextBlock>
-                    <ToggleButton x:Name="thumbnailToggle"
-                                  Margin="8 4 4 4"/>
+
+                    <ToggleButton x:Name="thumbnailToggle" Margin="8 4 4 4"/>
                     <TextBlock VerticalAlignment="Center" Margin="4">Download thumbnail</TextBlock>
-                    <ToggleButton x:Name="playlistToggle"
-                                  Margin="8 4 4 4"/>
+
+                    <ToggleButton x:Name="playlistToggle" Margin="8 4 4 4"/>
                     <TextBlock VerticalAlignment="Center" Margin="4">Download playlist</TextBlock>
                     <TextBox x:Name="playlistItemsTextBox"
                              Margin="4"
@@ -156,16 +155,40 @@
                              VerticalAlignment="Center"
                              materialDesign:HintAssist.Hint="Items (optional)"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
+
+                <Grid Grid.Row="4" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
                     <ToggleButton x:Name="outputTemplateToggle"
+                                  Grid.Row="0"
+                                  Grid.Column="0"
                                   Margin="4"/>
-                    <TextBlock VerticalAlignment="Center" Margin="4">Custom output template</TextBlock>
+
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="1"
+                               Margin="4"
+                               VerticalAlignment="Center">
+                        Custom output template
+                    </TextBlock>
+
                     <ComboBox x:Name="outputTemplateComboBox"
+                              Grid.Row="0"
+                              Grid.Column="2"
+                              Margin="4"
                               IsEditable="True"
                               IsReadOnly="False"
                               StaysOpenOnEdit="True"
-                              Margin="4"
-                              Width="200"
                               VerticalAlignment="Center">
                         <ComboBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -173,21 +196,31 @@
                             </ItemsPanelTemplate>
                         </ComboBox.ItemsPanel>
                     </ComboBox>
+
                     <Button x:Name="resetOutputTemplateButton"
+                            Grid.Row="0"
+                            Grid.Column="3"
                             Margin="4"
                             Style="{StaticResource MaterialDesignFlatButton}"
                             Content="Reset"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1">
+
                     <ToggleButton x:Name="pathToggle"
+                                  Grid.Row="1"
+                                  Grid.Column="0"
                                   Margin="4"/>
-                    <TextBlock VerticalAlignment="Center" Margin="4">Custom download path</TextBlock>
+
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="1"
+                               Margin="4"
+                               VerticalAlignment="Center">Custom download path</TextBlock>
+
                     <ComboBox x:Name="pathComboBox"
+                              Grid.Row="1"
+                              Grid.Column="2"
+                              Margin="4"
                               IsEditable="True"
                               IsReadOnly="False"
                               StaysOpenOnEdit="True"
-                              Margin="4"
-                              Width="300"
                               VerticalAlignment="Center">
                         <ComboBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -195,24 +228,30 @@
                             </ItemsPanelTemplate>
                         </ComboBox.ItemsPanel>
                     </ComboBox>
+
                     <Button x:Name="browseButton"
+                            Grid.Row="1"
+                            Grid.Column="3"
                             Margin="4"
                             Style="{StaticResource MaterialDesignFlatButton}"
                             Content="Browse"/>
+
                     <Button x:Name="openFolderButton"
+                            Grid.Row="1"
+                            Grid.Column="4"
                             Margin="4"
                             Style="{StaticResource MaterialDesignFlatButton}"
                             Content="Open Folder"/>
-                </StackPanel>
+                </Grid>
 
-                <TextBlock Grid.Row="6"
+                <TextBlock Grid.Row="5"
                            Grid.Column="0"
                            Margin="8"
                            VerticalAlignment="Center"
                            Style="{StaticResource MaterialDesignSubtitle1TextBlock}">
                     Arguments
                 </TextBlock>
-                <ItemsControl Grid.Row="6"
+                <ItemsControl Grid.Row="5"
                               Grid.RowSpan="2"
                               Grid.Column="1"
                               x:Name="argumentsItemsControl">
