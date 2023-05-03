@@ -1,6 +1,7 @@
 ﻿using DynamicData;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 using System;
@@ -27,6 +28,9 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public ObservableSettings SharedSettings { get; }
 
+        [Reactive]
+        public string WindowSizeText { get; set; }
+
         /// <summary>
         /// Gets the collection of view models of the arguments area.
         /// A view model in this collection must be of either
@@ -34,6 +38,7 @@ namespace YoutubeDl.Wpf.ViewModels
         /// </summary>
         public ObservableCollection<object> GlobalArguments { get; } = new();
 
+        public ReactiveCommand<Unit, Unit> ResetWindowSizeCommand { get; }
         public ReactiveCommand<BaseTheme, Unit> ChangeColorModeCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseDlBinaryCommand { get; }
         public ReactiveCommand<Unit, Unit> UpdateBackendCommand { get; }
@@ -48,6 +53,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
             Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
             SharedSettings = settings;
+            WindowSizeText = GenerateWindowSizeText(settings.WindowWidth, settings.WindowHeight);
 
             GlobalArguments.AddRange(SharedSettings.BackendGlobalArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
             GlobalArguments.Add(new AddArgumentViewModel(AddArgument));
@@ -104,6 +110,10 @@ namespace YoutubeDl.Wpf.ViewModels
                     }
                 });
 
+            // Update window size text on size change.
+            this.WhenAnyValue(x => x.SharedSettings.WindowWidth, x => x.SharedSettings.WindowHeight)
+                .Subscribe(((double width, double height) x) => WindowSizeText = GenerateWindowSizeText(x.width, x.height));
+
             // Guess the backend type from binary name.
             this.WhenAnyValue(x => x.SharedSettings.BackendPath)
                 .Select(dlPath => Path.GetFileNameWithoutExtension(dlPath))
@@ -119,11 +129,20 @@ namespace YoutubeDl.Wpf.ViewModels
 
             var canUpdateBackend = this.WhenAnyValue(x => x._backendService.CanUpdate);
 
+            ResetWindowSizeCommand = ReactiveCommand.Create(ResetWindowSize);
             ChangeColorModeCommand = ReactiveCommand.Create<BaseTheme>(ChangeColorMode);
             BrowseDlBinaryCommand = ReactiveCommand.Create(BrowseDlBinary);
             UpdateBackendCommand = ReactiveCommand.CreateFromTask(_backendService.UpdateBackendAsync, canUpdateBackend);
             BrowseFfmpegBinaryCommand = ReactiveCommand.Create(BrowseFfmpegBinary);
             OpenUri = ReactiveCommand.Create<string>(WpfHelper.OpenUri);
+        }
+
+        private static string GenerateWindowSizeText(double width, double height) => $"{width:F} × {height:F}";
+
+        private void ResetWindowSize()
+        {
+            SharedSettings.WindowWidth = Settings.DefaultWindowWidth;
+            SharedSettings.WindowHeight = Settings.DefaultWindowHeight;
         }
 
         private void ChangeColorMode(BaseTheme colorMode)

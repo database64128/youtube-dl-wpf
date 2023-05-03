@@ -15,6 +15,12 @@ public class ObservableSettings : ReactiveObject
     public BaseTheme AppColorMode { get; set; }
 
     [Reactive]
+    public double WindowWidth { get; set; }
+
+    [Reactive]
+    public double WindowHeight { get; set; }
+
+    [Reactive]
     public BackendTypes Backend { get; set; }
 
     [Reactive]
@@ -106,6 +112,8 @@ public class ObservableSettings : ReactiveObject
     {
         AppSettings = settings;
         AppColorMode = settings.AppColorMode;
+        WindowWidth = settings.WindowWidth;
+        WindowHeight = settings.WindowHeight;
         Backend = settings.Backend;
         BackendPath = settings.BackendPath;
         BackendGlobalArguments = new(settings.BackendGlobalArguments);
@@ -135,6 +143,8 @@ public class ObservableSettings : ReactiveObject
     public void UpdateAppSettings()
     {
         AppSettings.AppColorMode = AppColorMode;
+        AppSettings.WindowWidth = WindowWidth;
+        AppSettings.WindowHeight = WindowHeight;
         AppSettings.Backend = Backend;
         AppSettings.BackendPath = BackendPath;
         AppSettings.BackendGlobalArguments = BackendGlobalArguments.ToArray();

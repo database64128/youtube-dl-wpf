@@ -14,14 +14,12 @@ namespace YoutubeDl.Wpf.ViewModels
 {
     public class MainWindowViewModel : ReactiveObject
     {
-        private readonly Settings _settings;
-        private readonly ObservableSettings _observableSettings;
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
+        private readonly Settings _settings;
 
+        public ObservableSettings SharedSettings { get; }
         public BackendService BackendService { get; }
         public PresetDialogViewModel PresetDialogVM { get; }
-        public HomeViewModel HomeVM { get; }
-        public SettingsViewModel SettingsVM { get; }
         public object[] Tabs { get; }
 
         [Reactive]
@@ -31,6 +29,8 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
+            _snackbarMessageQueue = snackbarMessageQueue;
+
             try
             {
                 _settings = Settings.LoadAsync().GetAwaiter().GetResult();
@@ -41,9 +41,6 @@ namespace YoutubeDl.Wpf.ViewModels
                 _settings = new();
             }
 
-            _observableSettings = new(_settings);
-            _snackbarMessageQueue = snackbarMessageQueue;
-
             // Configure logging.
             var queuedTextBoxsink = new QueuedTextBoxSink(_settings);
             var logger = new LoggerConfiguration()
@@ -51,14 +48,13 @@ namespace YoutubeDl.Wpf.ViewModels
                 .CreateLogger();
             Locator.CurrentMutable.UseSerilogFullLogger(logger);
 
-            BackendService = new(_observableSettings);
+            SharedSettings = new(_settings);
+            BackendService = new(SharedSettings);
             PresetDialogVM = new(ControlDialog);
-            HomeVM = new(_observableSettings, BackendService, queuedTextBoxsink, PresetDialogVM, snackbarMessageQueue);
-            SettingsVM = new(_observableSettings, BackendService, snackbarMessageQueue);
             Tabs = new object[]
             {
-                HomeVM,
-                SettingsVM,
+                new HomeViewModel(SharedSettings, BackendService, queuedTextBoxsink, PresetDialogVM, snackbarMessageQueue),
+                new SettingsViewModel(SharedSettings, BackendService, snackbarMessageQueue),
             };
 
             SaveSettingsAsyncCommand = ReactiveCommand.CreateFromTask<CancelEventArgs?, bool>(SaveSettingsAsync);
@@ -68,7 +64,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private async Task<bool> SaveSettingsAsync(CancelEventArgs? cancelEventArgs = null, CancellationToken cancellationToken = default)
         {
-            _observableSettings.UpdateAppSettings();
+            SharedSettings.UpdateAppSettings();
 
             try
             {

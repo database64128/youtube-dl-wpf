@@ -38,6 +38,12 @@ namespace YoutubeDl.Wpf.Views
                     colorMode => colorMode == BaseTheme.Dark)
                     .DisposeWith(disposables);
 
+                // Window size
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.WindowSizeText,
+                    view => view.windowSizeTextBlock.Text)
+                    .DisposeWith(disposables);
+
                 // Backend
                 this.Bind(ViewModel,
                     viewModel => viewModel.SharedSettings.Backend,
@@ -135,6 +141,12 @@ namespace YoutubeDl.Wpf.Views
                     viewModel => viewModel.ChangeColorModeCommand,
                     view => view.darkColorModeRadioButton,
                     Observable.Return(BaseTheme.Dark))
+                    .DisposeWith(disposables);
+
+                // Window size
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.ResetWindowSizeCommand,
+                    view => view.resetWindowSizeButton)
                     .DisposeWith(disposables);
 
                 // Browse buttons

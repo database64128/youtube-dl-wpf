@@ -12,11 +12,29 @@ namespace YoutubeDl.Wpf
         public MainWindow()
         {
             InitializeComponent();
-            TaskbarItemInfo = new();
-            ViewModel = new(MainSnackbar.MessageQueue!); // Null forgiving reason: following upstream
+
             MainSnackbar.MessageQueue!.DiscardDuplicates = true;
+            ViewModel = new(MainSnackbar.MessageQueue);
+
+            // Set window size here to avoid flickering.
+            Width = ViewModel.SharedSettings.WindowWidth;
+            Height = ViewModel.SharedSettings.WindowHeight;
+
+            TaskbarItemInfo = new();
+
             this.WhenActivated(disposables =>
             {
+                // Window size
+                this.Bind(ViewModel,
+                    viewModel => viewModel.SharedSettings.WindowWidth,
+                    view => view.Width)
+                    .DisposeWith(disposables);
+
+                this.Bind(ViewModel,
+                    viewModel => viewModel.SharedSettings.WindowHeight,
+                    view => view.Height)
+                    .DisposeWith(disposables);
+
                 // Window closing
                 this.Events().Closing
                     .InvokeCommand(ViewModel.SaveSettingsAsyncCommand)

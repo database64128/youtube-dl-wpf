@@ -16,6 +16,16 @@ public class Settings
     public const int DefaultVersion = 1;
 
     /// <summary>
+    /// Defines the default width of the main window.
+    /// </summary>
+    public const double DefaultWindowWidth = 904.0;
+
+    /// <summary>
+    /// Defines the default height of the main window.
+    /// </summary>
+    public const double DefaultWindowHeight = 720.0;
+
+    /// <summary>
     /// Defines the default limit on the number of log messages
     /// displayed in the logs view.
     /// </summary>
@@ -32,6 +42,10 @@ public class Settings
     /// Defaults to <see cref="DefaultVersion"/>.
     /// </summary>
     public int Version { get; set; } = DefaultVersion;
+
+    public double WindowWidth { get; set; } = DefaultWindowWidth;
+
+    public double WindowHeight { get; set; } = DefaultWindowHeight;
 
     public BaseTheme AppColorMode { get; set; } = BaseTheme.Inherit;
 
