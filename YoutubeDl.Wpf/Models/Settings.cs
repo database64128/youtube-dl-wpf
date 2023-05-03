@@ -25,7 +25,7 @@ public class Settings
     /// Defines the default custom output filename template.
     /// We use yt-dlp's default as the default custom value.
     /// </summary>
-    public const string DefaultCustomFilenameTemplate = "%(title)s [%(id)s].%(ext)s";
+    public const string DefaultCustomOutputTemplate = "%(title)s [%(id)s].%(ext)s";
 
     /// <summary>
     /// Gets or sets the settings version number.
@@ -73,7 +73,7 @@ public class Settings
 
     public bool UseCustomOutputTemplate { get; set; }
 
-    public string CustomOutputTemplate { get; set; } = DefaultCustomFilenameTemplate;
+    public string CustomOutputTemplate { get; set; } = DefaultCustomOutputTemplate;
 
     public string[] OutputTemplateHistory { get; set; } = Array.Empty<string>();
 

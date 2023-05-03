@@ -128,7 +128,7 @@ namespace YoutubeDl.Wpf.Views
                 // Options row 2
                 this.Bind(ViewModel,
                     viewModel => viewModel.SharedSettings.UseCustomOutputTemplate,
-                    view => view.filenameTemplateToggle.IsChecked)
+                    view => view.outputTemplateToggle.IsChecked)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
@@ -215,8 +215,8 @@ namespace YoutubeDl.Wpf.Views
 
                 // Reset custom filename template button
                 this.BindCommand(ViewModel,
-                    viewModel => viewModel.ResetCustomFilenameTemplateCommand,
-                    view => view.resetFilenameTemplateButton)
+                    viewModel => viewModel.ResetCustomOutputTemplateCommand,
+                    view => view.resetOutputTemplateButton)
                     .DisposeWith(disposables);
 
                 // Custom preset buttons

@@ -63,7 +63,7 @@ namespace YoutubeDl.Wpf.ViewModels
         [Reactive]
         public string PlaylistItems { get; set; } = "";
 
-        public ReactiveCommand<Unit, Unit> ResetCustomFilenameTemplateCommand { get; }
+        public ReactiveCommand<Unit, Unit> ResetCustomOutputTemplateCommand { get; }
         public ReactiveCommand<Unit, Unit> BrowseDownloadFolderCommand { get; }
         public ReactiveCommand<Unit, Unit> OpenDownloadFolderCommand { get; }
         public ReactiveCommand<string, Unit> StartDownloadCommand { get; }
@@ -165,10 +165,10 @@ namespace YoutubeDl.Wpf.ViewModels
                                            .ObserveOn(RxApp.MainThreadScheduler)
                                            .Subscribe(_ => GenerateGlobalArguments());
 
-            var canResetCustomFilenameTemplate = this.WhenAnyValue(
+            var canResetCustomOutputTemplate = this.WhenAnyValue(
                 x => x.SharedSettings.UseCustomOutputTemplate,
                 x => x.SharedSettings.CustomOutputTemplate,
-                (useTemplate, template) => useTemplate && template != Settings.DefaultCustomFilenameTemplate);
+                (useTemplate, template) => useTemplate && template != Settings.DefaultCustomOutputTemplate);
 
             var canBrowseDownloadFolder = this.WhenAnyValue(x => x.SharedSettings.UseCustomPath);
 
@@ -202,7 +202,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.SharedSettings.SelectedPreset,
                 selectedPreset => selectedPreset is not null && selectedPreset != Preset.Auto);
 
-            ResetCustomFilenameTemplateCommand = ReactiveCommand.Create(ResetCustomFilenameTemplate, canResetCustomFilenameTemplate);
+            ResetCustomOutputTemplateCommand = ReactiveCommand.Create(ResetCustomOutputTemplate, canResetCustomOutputTemplate);
             BrowseDownloadFolderCommand = ReactiveCommand.Create(BrowseDownloadFolder, canBrowseDownloadFolder);
             OpenDownloadFolderCommand = ReactiveCommand.Create(OpenDownloadFolder, canOpenDownloadFolder);
             StartDownloadCommand = ReactiveCommand.CreateFromTask<string>(StartDownloadAsync, canRun);
@@ -303,10 +303,7 @@ namespace YoutubeDl.Wpf.ViewModels
             DownloadArguments.Insert(DownloadArguments.Count - 1, new ArgumentChipViewModel(backendArgument, true, DeleteArgumentChip));
         }
 
-        private void ResetCustomFilenameTemplate()
-        {
-            SharedSettings.CustomOutputTemplate = Settings.DefaultCustomFilenameTemplate;
-        }
+        private void ResetCustomOutputTemplate() => SharedSettings.CustomOutputTemplate = Settings.DefaultCustomOutputTemplate;
 
         private void BrowseDownloadFolder()
         {

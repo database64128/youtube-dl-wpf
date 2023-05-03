@@ -157,9 +157,9 @@
                              materialDesign:HintAssist.Hint="Items (optional)"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
-                    <ToggleButton x:Name="filenameTemplateToggle"
+                    <ToggleButton x:Name="outputTemplateToggle"
                                   Margin="4"/>
-                    <TextBlock VerticalAlignment="Center" Margin="4">Custom filename template</TextBlock>
+                    <TextBlock VerticalAlignment="Center" Margin="4">Custom output template</TextBlock>
                     <ComboBox x:Name="outputTemplateComboBox"
                               IsEditable="True"
                               IsReadOnly="False"
@@ -173,7 +173,7 @@
                             </ItemsPanelTemplate>
                         </ComboBox.ItemsPanel>
                     </ComboBox>
-                    <Button x:Name="resetFilenameTemplateButton"
+                    <Button x:Name="resetOutputTemplateButton"
                             Margin="4"
                             Style="{StaticResource MaterialDesignFlatButton}"
                             Content="Reset"/>

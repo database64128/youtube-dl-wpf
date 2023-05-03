@@ -254,7 +254,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
             false => _settings.Backend switch
             {
                 BackendTypes.Ytdl => "%(title)s-%(id)s.%(ext)s",
-                _ => Settings.DefaultCustomFilenameTemplate,
+                _ => Settings.DefaultCustomOutputTemplate,
             },
         };
 
