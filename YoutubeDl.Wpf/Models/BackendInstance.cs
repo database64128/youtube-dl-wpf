@@ -153,7 +153,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         }
     }
 
-    public void GenerateDownloadArguments()
+    public void GenerateDownloadArguments(string playlistItems)
     {
         GeneratedDownloadArguments.Clear();
 
@@ -236,6 +236,12 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         if (_settings.DownloadPlaylist)
         {
             GeneratedDownloadArguments.Add("--yes-playlist");
+
+            if (!string.IsNullOrEmpty(playlistItems))
+            {
+                GeneratedDownloadArguments.Add("--playlist-items");
+                GeneratedDownloadArguments.Add(playlistItems);
+            }
         }
         else
         {

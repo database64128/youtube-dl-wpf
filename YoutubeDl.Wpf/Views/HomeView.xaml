@@ -150,6 +150,11 @@
                     <ToggleButton x:Name="playlistToggle"
                                   Margin="8 4 4 4"/>
                     <TextBlock VerticalAlignment="Center" Margin="4">Download playlist</TextBlock>
+                    <TextBox x:Name="playlistItemsTextBox"
+                             Margin="4"
+                             Width="96"
+                             VerticalAlignment="Center"
+                             materialDesign:HintAssist.Hint="Items (optional)"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
                     <ToggleButton x:Name="filenameTemplateToggle"

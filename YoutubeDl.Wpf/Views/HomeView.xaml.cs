@@ -115,6 +115,16 @@ namespace YoutubeDl.Wpf.Views
                     view => view.playlistToggle.IsChecked)
                     .DisposeWith(disposables);
 
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.SharedSettings.DownloadPlaylist,
+                    view => view.playlistItemsTextBox.IsEnabled)
+                    .DisposeWith(disposables);
+
+                this.Bind(ViewModel,
+                    viewModel => viewModel.PlaylistItems,
+                    view => view.playlistItemsTextBox.Text)
+                    .DisposeWith(disposables);
+
                 // Options row 2
                 this.Bind(ViewModel,
                     viewModel => viewModel.SharedSettings.UseCustomOutputTemplate,
