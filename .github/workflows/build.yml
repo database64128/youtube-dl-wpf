@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: windows-2022
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v3
@@ -47,22 +47,22 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows
-          path: YoutubeDl.Wpf/bin/Release/net7.0-windows10.0.22000.0/publish/
+          path: YoutubeDl.Wpf/bin/Release/net7.0-windows10.0.22621.0/publish/
 
       - name: Upload artifacts for Windows ARM64
         uses: actions/upload-artifact@v3
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows-arm64
-          path: YoutubeDl.Wpf/bin/Release/net7.0-windows10.0.22000.0/win-arm64/publish/
+          path: YoutubeDl.Wpf/bin/Release/net7.0-windows10.0.22621.0/win-arm64/publish/
 
       - name: Upload artifacts for Windows x64
         uses: actions/upload-artifact@v3
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows-x64
-          path: YoutubeDl.Wpf/bin/Release/net7.0-windows10.0.22000.0/win-x64/publish/
+          path: YoutubeDl.Wpf/bin/Release/net7.0-windows10.0.22621.0/win-x64/publish/
 
       - name: Upload artifacts for Windows x86
         uses: actions/upload-artifact@v3
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows-x86
-          path: YoutubeDl.Wpf/bin/Release/net7.0-windows10.0.22000.0/win-x86/publish/
+          path: YoutubeDl.Wpf/bin/Release/net7.0-windows10.0.22621.0/win-x86/publish/
