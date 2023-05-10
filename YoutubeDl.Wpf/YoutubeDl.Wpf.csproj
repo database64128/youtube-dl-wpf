@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="4.8.1-ci253" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.8.1-ci255" />
     <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.2.3" PrivateAssets="all" />
     <PackageReference Include="ReactiveUI.Fody" Version="18.4.34" />
     <PackageReference Include="ReactiveUI.Validation" Version="3.1.7" />
