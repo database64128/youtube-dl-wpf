@@ -21,6 +21,7 @@
     <PackageId>YoutubeDl.Wpf</PackageId>
     <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
