@@ -76,12 +76,17 @@ public static class FileHelper
 
         _ = Directory.CreateDirectory(directoryPath);
 
-        var newPath = $"{path}.new";
+        // File.Replace throws an exception when the destination file does not exist.
+        var canReplace = File.Exists(path);
+        var newPath = canReplace ? $"{path}.new" : path;
         var fileStream = new FileStream(newPath, FileMode.Create);
+
         await using (fileStream.ConfigureAwait(false))
         {
             await JsonSerializer.SerializeAsync(fileStream, value, jsonTypeInfo, cancellationToken);
         }
-        File.Replace(newPath, path, $"{path}.old");
+
+        if (canReplace)
+            File.Replace(newPath, path, $"{path}.old");
     }
 }
