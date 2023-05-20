@@ -243,8 +243,18 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private void DuplicatePreset()
         {
-            var dup = SharedSettings.SelectedPreset! with { Name = $"{SharedSettings.SelectedPreset.DisplayName} (1)", IsPredefined = false };
-            AddCustomPreset(dup);
+            var dupNum = 0;
+            string dupName;
+            var preset = SharedSettings.SelectedPreset!;
+
+            do
+            {
+                dupNum++;
+                dupName = $"{preset.DisplayName} ({dupNum})";
+            }
+            while (Presets.Any(x => x.DisplayName == dupName));
+
+            AddCustomPreset(preset with { Name = dupName, IsPredefined = false });
         }
 
         private void DeleteCustomPreset()
