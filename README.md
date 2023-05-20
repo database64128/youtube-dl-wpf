@@ -3,7 +3,7 @@
 [![Build](https://github.com/database64128/youtube-dl-wpf/actions/workflows/build.yml/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions/workflows/build.yml)
 [![Release](https://github.com/database64128/youtube-dl-wpf/actions/workflows/release.yml/badge.svg)](https://github.com/database64128/youtube-dl-wpf/actions/workflows/release.yml)
 
-WPF GUI for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) and [`yt-dlp`](https://github.com/yt-dlp/yt-dlp).
+WPF GUI for [youtube-dl](https://github.com/ytdl-org/youtube-dl) and [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 
 ![Home](home.webp "Home")
 ![Settings](settings.webp "Settings")
@@ -11,7 +11,7 @@ WPF GUI for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) and [`yt-dlp`
 ## Features
 
 - Follow 🎨 system color mode, or choose between 🌃 dark mode and 🔆 light mode.
-- Update `youtube-dl`/`yt-dlp` on startup.
+- Update youtube-dl/yt-dlp on startup.
 - List all available formats.
 - Override video, audio formats and output container.
 - Embed metadata into downloaded file.
@@ -21,23 +21,24 @@ WPF GUI for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) and [`yt-dlp`
 - Select types of subtitles (default, all languages, auto-generated) to download and embed.
 - Specify custom output template.
 - Specify custom download path.
-- Specify custom `ffmpeg` path.
+- Specify custom FFmpeg path.
 - Specify custom proxy.
 - Specify custom command-line arguments.
 
 ## Usage
 
 1. Download the pre-built binary or build it from source.
-2. Download [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) or [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) from the upstream. _Optionally but recommended_, get `ffmpeg` either by [building from source](https://www.ffmpeg.org/) or downloading [pre-built binaries](https://ffmpeg.zeranoe.com/builds/) for Windows.
-3. The framework-dependent binary requires an installed [.NET 6 Runtime](https://dotnet.microsoft.com/download/dotnet/6.0) to run. Alternatively, download the self-contained binary that bundles the runtime. The upstream `youtube-dl` binary requires MSVC++ 2010 x86 runtime.
-4. Run `youtube-dl-wpf.exe`. Go to __Settings__. Set the path to `youtube-dl`/`yt-dlp` and `ffmpeg`.
-5. Go back to the home tab. Paste a video URL and start downloading! 🚀
+2. Download [yt-dlp](https://github.com/yt-dlp/yt-dlp) or [youtube-dl](https://github.com/ytdl-org/youtube-dl).
+3. It's optional but highly recommended to also download [FFmpeg](https://ffmpeg.org/download.html). Otherwise you won't be able to merge separate video and audio tracks.
+4. The framework-dependent binary requires an installed [.NET Runtime](https://dotnet.microsoft.com/) to run. Alternatively, download the self-contained binary that bundles the runtime.
+5. Run `youtube-dl-wpf.exe`. Go to __Settings__. Set the path to youtube-dl/yt-dlp and FFmpeg.
+6. Go back to the home tab. Paste a video URL and start downloading! 🚀
 
 ## FAQ
 
 1.  Q: The __Download__ button is grayed out and I can't click it!
 
-    A: `youtube-dl-wpf` is a simple GUI wrapper. It doesn't bundle any downloader with it. You have to download `youtube-dl`/`yt-dlp` from the upstream. The `ffmpeg` binary is required by `youtube-dl`/`yt-dlp` when downloading and merging separate video and audio tracks, which is the case for any video resolution higher than 360p on YouTube.
+    A: `youtube-dl-wpf` is a simple GUI wrapper. It doesn't bundle any downloader with it. You have to download youtube-dl or yt-dlp for it to work. FFmpeg is required by youtube-dl and yt-dlp when merging separate video and audio tracks, which is the case for most formats on YouTube.
 
 2.  Q: How can I use a proxy to download?
 
@@ -45,7 +46,7 @@ WPF GUI for [`youtube-dl`](https://github.com/ytdl-org/youtube-dl) and [`yt-dlp`
 
 3.  Q: Downloading the whole playlist doesn't work!
 
-    A: It's an upstream bug, just like many other issues you might discover. There's nothing I can do. Just report the bug to the [upstream](https://github.com/ytdl-org/youtube-dl).
+    A: It's an upstream bug, just like many other issues you might discover. There's nothing I can do. Just report the bug to yt-dlp or youtube-dl, whichever you use.
 
 4.  Q: `youtube-dl` and `yt-dlp` behave differently!
 
