@@ -200,7 +200,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
             var canDuplicatePreset = this.WhenAnyValue(
                 x => x.SharedSettings.SelectedPreset,
-                selectedPreset => selectedPreset is not null && selectedPreset != Preset.Auto);
+                (Preset? selectedPreset) => selectedPreset is not null);
 
             ResetCustomOutputTemplateCommand = ReactiveCommand.Create(ResetCustomOutputTemplate, canResetCustomOutputTemplate);
             BrowseDownloadFolderCommand = ReactiveCommand.Create(BrowseDownloadFolder, canBrowseDownloadFolder);
@@ -237,7 +237,7 @@ namespace YoutubeDl.Wpf.ViewModels
             AddCustomPreset(preset);
         }
 
-        private void OpenAddCustomPresetDialog() => PresetDialogVM.AddOrEditPreset(Preset.Auto, AddCustomPreset);
+        private void OpenAddCustomPresetDialog() => PresetDialogVM.AddOrEditPreset(Preset.Empty, AddCustomPreset);
 
         private void OpenEditCustomPresetDialog() => PresetDialogVM.AddOrEditPreset(SharedSettings.SelectedPreset!, EditCustomPreset);
 

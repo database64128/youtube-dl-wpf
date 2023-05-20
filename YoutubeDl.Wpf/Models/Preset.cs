@@ -12,7 +12,7 @@ public record Preset(
 {
     public string DisplayName => Name ?? FormatArg ?? ContainerArg ?? "unnamed";
 
-    public IEnumerable<string> ToArgs()
+    public IEnumerable<string> GetNonExtraArgs()
     {
         if (this == Auto)
         {
@@ -33,6 +33,14 @@ public record Preset(
             yield return option;
             yield return ContainerArg;
         }
+    }
+
+    public IEnumerable<string> ToArgs()
+    {
+        foreach (var arg in GetNonExtraArgs())
+        {
+            yield return arg;
+        }
 
         foreach (var extraArg in ExtraArgs)
         {
@@ -43,6 +51,8 @@ public record Preset(
     public const string AutoName = "Auto";
 
     public static readonly Preset Auto = new(AutoName, IsPredefined: true);
+
+    public static readonly Preset Empty = new();
 
     public static readonly Preset[] PredefinedPresets =
     {
