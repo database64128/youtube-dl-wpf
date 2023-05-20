@@ -121,7 +121,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 .Subscribe(_ =>
                 {
                     Presets.Clear();
-                    Presets.AddRange(SharedSettings.CustomPresets.Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
+                    Presets.AddRange(SharedSettings.CustomPresets.AsEnumerable().Reverse().Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
                     Presets.AddRange(Preset.PredefinedPresets.Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
                 });
 
