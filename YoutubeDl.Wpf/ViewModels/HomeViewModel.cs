@@ -357,7 +357,7 @@ namespace YoutubeDl.Wpf.ViewModels
         /// </summary>
         private void GenerateDownloadArguments()
         {
-            for (var i = _globalArgCount; i < _globalArgCount + BackendInstance.GeneratedDownloadArguments.Count; i++)
+            for (var i = 0; i < BackendInstance.GeneratedDownloadArguments.Count; i++)
             {
                 DownloadArguments.RemoveAt(_globalArgCount);
             }

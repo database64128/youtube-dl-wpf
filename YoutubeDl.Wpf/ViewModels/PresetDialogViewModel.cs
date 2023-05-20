@@ -98,13 +98,12 @@ public class PresetDialogViewModel : ReactiveValidationObject
 
     private void LoadPresetExtraArgs(Preset preset)
     {
-        // ArgumentChips is guaranteed to have at least one element.
-        var index = ArgumentChips.Count - 1;
+        // Calculate index of first extra argument chip.
+        var index = ArgumentChips.Count - _backendArguments.Count - 1;
 
         // Remove extra argument chips.
         for (var i = 0; i < _backendArguments.Count; i++)
         {
-            index--;
             ArgumentChips.RemoveAt(index);
         }
 
@@ -184,9 +183,9 @@ public class PresetDialogViewModel : ReactiveValidationObject
     /// </summary>
     private void GenerateArgumentChips(Preset preset)
     {
-        for (var i = 0; i < ArgumentChips.Count - _backendArguments.Count - 1; i++)
+        while (ArgumentChips.Count - _backendArguments.Count - 1 > 0)
         {
-            ArgumentChips.RemoveAt(i);
+            ArgumentChips.RemoveAt(0);
         }
 
         var index = 0;
