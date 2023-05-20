@@ -67,9 +67,7 @@ public class Settings
 
     public int LoggingMaxEntries { get; set; } = DefaultLoggingMaxEntries;
 
-    public Preset? SelectedPreset { get; set; } = Preset.Auto;
-
-    public string SelectedPresetText { get; set; } = Preset.AutoName;
+    public Preset SelectedPreset { get; set; } = Preset.Auto;
 
     public Preset[] CustomPresets { get; set; } = Array.Empty<Preset>();
 

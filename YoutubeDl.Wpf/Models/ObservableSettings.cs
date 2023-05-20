@@ -124,7 +124,7 @@ public class ObservableSettings : ReactiveObject
         Proxy = settings.Proxy;
         LoggingMaxEntries = settings.LoggingMaxEntries;
         SelectedPreset = settings.SelectedPreset;
-        SelectedPresetText = settings.SelectedPresetText;
+        SelectedPresetText = settings.SelectedPreset.DisplayName;
         CustomPresets = new(settings.CustomPresets);
         AddMetadata = settings.AddMetadata;
         DownloadThumbnail = settings.DownloadThumbnail;
@@ -154,8 +154,7 @@ public class ObservableSettings : ReactiveObject
         AppSettings.FfmpegPath = FfmpegPath;
         AppSettings.Proxy = Proxy;
         // AppSettings.LoggingMaxEntries is managed by the validation handler.
-        AppSettings.SelectedPreset = SelectedPreset;
-        AppSettings.SelectedPresetText = SelectedPresetText;
+        AppSettings.SelectedPreset = SelectedPreset ?? Preset.Auto;
         AppSettings.CustomPresets = CustomPresets.ToArray();
         AppSettings.AddMetadata = AddMetadata;
         AppSettings.DownloadThumbnail = DownloadThumbnail;
