@@ -62,7 +62,7 @@ public class PresetDialogViewModel : ReactiveValidationObject
             x => x.ContainerArg,
             x => x.IsYtdlSupported,
             x => x.IsYtdlpSupported)
-            .Throttle(TimeSpan.FromSeconds(0.1))
+            .Throttle(TimeSpan.FromSeconds(0.25))
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(((string formatArg, string containerArg, bool isYtdlSupported, bool isYtdlpSupported) x) => UpdatePreset(x.formatArg, x.containerArg, x.isYtdlSupported, x.isYtdlpSupported));
     }
@@ -81,19 +81,13 @@ public class PresetDialogViewModel : ReactiveValidationObject
 
     private void Save()
     {
-        if (_preset is null)
-        {
-            throw new InvalidOperationException("Preset is not loaded.");
-        }
-
         if (_saveAction is null)
         {
             throw new InvalidOperationException("Missing save action for preset.");
         }
 
         CloseDialog();
-        UpdatePresetNameAndExtraArgs(_preset);
-        _saveAction(_preset);
+        _saveAction(ToPreset());
     }
 
     private void LoadPresetExtraArgs(Preset preset)
@@ -117,12 +111,6 @@ public class PresetDialogViewModel : ReactiveValidationObject
         }
     }
 
-    private void UpdatePresetNameAndExtraArgs(Preset preset) => _preset = preset with
-    {
-        Name = Name,
-        ExtraArgs = _backendArguments.Select(x => x.Argument).ToArray(),
-    };
-
     private void LoadPreset(Preset preset)
     {
         LoadPresetExtraArgs(preset);
@@ -131,6 +119,33 @@ public class PresetDialogViewModel : ReactiveValidationObject
         ContainerArg = preset.ContainerArg ?? "";
         IsYtdlSupported = (preset.SupportedBackends & BackendTypes.Ytdl) == BackendTypes.Ytdl;
         IsYtdlpSupported = (preset.SupportedBackends & BackendTypes.Ytdlp) == BackendTypes.Ytdlp;
+    }
+
+    private Preset ToPreset()
+    {
+        if (_preset is null)
+        {
+            throw new InvalidOperationException("Preset is not loaded.");
+        }
+
+        var supportedBackends = BackendTypes.None;
+        if (IsYtdlSupported)
+        {
+            supportedBackends |= BackendTypes.Ytdl;
+        }
+        if (IsYtdlpSupported)
+        {
+            supportedBackends |= BackendTypes.Ytdlp;
+        }
+
+        return _preset with
+        {
+            Name = Name,
+            FormatArg = string.IsNullOrEmpty(FormatArg) ? null : FormatArg,
+            ContainerArg = string.IsNullOrEmpty(ContainerArg) ? null : ContainerArg,
+            SupportedBackends = supportedBackends,
+            ExtraArgs = _backendArguments.Select(x => x.Argument).ToArray(),
+        };
     }
 
     private void UpdatePreset(string formatArg, string containerArg, bool isYtdlSupported, bool isYtdlpSupported)
