@@ -2,7 +2,6 @@
 using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
 using System;
-using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -30,7 +29,7 @@ namespace YoutubeDl.Wpf.Views
 
                 linkTextBox.Events().KeyDown
                            .Where(x => x.Key == Key.Enter)
-                           .Select(x => Unit.Default)
+                           .Select(_ => ViewModel!.Link)
                            .InvokeCommand(ViewModel!.StartDownloadCommand) // Null forgiving reason: upstream limitation.
                            .DisposeWith(disposables);
 
