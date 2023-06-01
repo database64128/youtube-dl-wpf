@@ -7,7 +7,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Product>Cube YouTube Downloader</Product>
     <Authors>database64128</Authors>
-    <Version>1.12.1</Version>
+    <Version>1.12.2</Version>
     <ApplicationIcon>CubeYouTubeDownloader.ico</ApplicationIcon>
     <Description>WPF GUI for https://github.com/ytdl-org/youtube-dl and https://github.com/yt-dlp/yt-dlp.</Description>
     <Copyright>© 2022 database64128</Copyright>
