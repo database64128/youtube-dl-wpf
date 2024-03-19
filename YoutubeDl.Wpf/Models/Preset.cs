@@ -55,7 +55,7 @@ public record Preset(
     public static readonly Preset Empty = new();
 
     public static readonly Preset[] PredefinedPresets =
-    {
+    [
         Auto,
         new(FormatArg: "bestvideo+bestaudio/best", IsPredefined: true),
         new(FormatArg: "bestvideo+bestaudio", IsPredefined: true),
@@ -105,5 +105,5 @@ public record Preset(
         new(ContainerArg: "ogg", IsPredefined: true),
         new(ContainerArg: "m4a", IsPredefined: true),
         new(ContainerArg: "mp3", IsPredefined: true),
-    };
+    ];
 }

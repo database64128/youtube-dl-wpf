@@ -21,7 +21,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
     private readonly BackendService _backendService;
     private readonly Process _process;
 
-    public List<string> GeneratedDownloadArguments { get; } = new();
+    public List<string> GeneratedDownloadArguments { get; } = [];
 
     [Reactive]
     public double DownloadProgressPercentage { get; set; } // 0.99 is 99%.

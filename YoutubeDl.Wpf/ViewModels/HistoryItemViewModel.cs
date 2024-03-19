@@ -6,18 +6,12 @@ using System.Reactive;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
-public class HistoryItemViewModel : ReactiveValidationObject
+public class HistoryItemViewModel(string text, Action<HistoryItemViewModel> action) : ReactiveValidationObject
 {
     [Reactive]
-    public string Text { get; set; }
+    public string Text { get; set; } = text;
 
-    public ReactiveCommand<HistoryItemViewModel, Unit> DeleteItemCommand { get; }
-
-    public HistoryItemViewModel(string text, Action<HistoryItemViewModel> action)
-    {
-        Text = text;
-        DeleteItemCommand = ReactiveCommand.Create(action);
-    }
+    public ReactiveCommand<HistoryItemViewModel, Unit> DeleteItemCommand { get; } = ReactiveCommand.Create(action);
 
     public override string ToString() => Text;
 }

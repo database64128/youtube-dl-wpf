@@ -34,7 +34,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public PresetDialogViewModel PresetDialogVM { get; }
 
-        public ObservableCollection<Preset> Presets { get; } = new();
+        public ObservableCollection<Preset> Presets { get; } = [];
 
         /// <summary>
         /// Gets the output template history.

@@ -13,7 +13,7 @@ namespace YoutubeDl.Wpf.ViewModels;
 
 public class PresetDialogViewModel : ReactiveValidationObject
 {
-    private readonly List<BackendArgument> _backendArguments = new();
+    private readonly List<BackendArgument> _backendArguments = [];
     private readonly Action<bool> _controlDialogAction;
     private Preset? _preset;
     private Action<Preset>? _saveAction;
@@ -33,7 +33,7 @@ public class PresetDialogViewModel : ReactiveValidationObject
     [Reactive]
     public bool IsYtdlpSupported { get; set; } = true;
 
-    public ObservableCollection<object> ArgumentChips { get; set; } = new();
+    public ObservableCollection<object> ArgumentChips { get; set; } = [];
 
     public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
@@ -43,10 +43,10 @@ public class PresetDialogViewModel : ReactiveValidationObject
     {
         _controlDialogAction = controlDialogAction;
 
-        ArgumentChips = new()
-        {
+        ArgumentChips =
+        [
             new AddArgumentViewModel(AddArgument),
-        };
+        ];
 
         var canSave = this.WhenAnyValue(
             x => x.Name,

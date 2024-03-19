@@ -9,11 +9,9 @@ using System.Windows.Shell;
 
 namespace YoutubeDl.Wpf.Models;
 
-public class BackendService : ReactiveObject, IEnableLogger
+public class BackendService(ObservableSettings settings) : ReactiveObject, IEnableLogger
 {
-    private readonly ObservableSettings _settings;
-
-    public List<BackendInstance> Instances { get; } = new();
+    public List<BackendInstance> Instances { get; } = [];
 
     [Reactive]
     public bool CanUpdate { get; set; } = true;
@@ -24,11 +22,9 @@ public class BackendService : ReactiveObject, IEnableLogger
     [Reactive]
     public TaskbarItemProgressState ProgressState { get; set; }
 
-    public BackendService(ObservableSettings settings) => _settings = settings;
-
     public BackendInstance CreateInstance()
     {
-        var instance = new BackendInstance(_settings, this);
+        var instance = new BackendInstance(settings, this);
         Instances.Add(instance);
         return instance;
     }

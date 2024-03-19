@@ -8,23 +8,14 @@ using System.Reactive.Concurrency;
 
 namespace YoutubeDl.Wpf.Models;
 
-public class QueuedTextBoxSink : ReactiveObject, ILogEventSink
+public class QueuedTextBoxSink(Settings settings, IFormatProvider? formatProvider = null) : ReactiveObject, ILogEventSink
 {
     private readonly object _locker = new();
-    private readonly Settings _settings;
-    private readonly Queue<string> _queuedLogMessages;
-    private readonly IFormatProvider? _formatProvider;
+    private readonly Queue<string> _queuedLogMessages = new(settings.LoggingMaxEntries);
     private int _contentLength;
 
     [Reactive]
     public string Content { get; set; } = "";
-
-    public QueuedTextBoxSink(Settings settings, IFormatProvider? formatProvider = null)
-    {
-        _settings = settings;
-        _queuedLogMessages = new(settings.LoggingMaxEntries);
-        _formatProvider = formatProvider;
-    }
 
     public void Emit(LogEvent logEvent)
     {
@@ -34,7 +25,7 @@ public class QueuedTextBoxSink : ReactiveObject, ILogEventSink
             return;
         }
 
-        var renderedMessage = logEvent.RenderMessage(_formatProvider);
+        var renderedMessage = logEvent.RenderMessage(formatProvider);
 
         // 2023-04-24T10:24:00.000+00:00 [I] Hi!
         var length = 29 + 1 + 3 + 1 + renderedMessage.Length + Environment.NewLine.Length;
@@ -65,7 +56,7 @@ public class QueuedTextBoxSink : ReactiveObject, ILogEventSink
 
         lock (_locker)
         {
-            while (_queuedLogMessages.Count >= _settings.LoggingMaxEntries)
+            while (_queuedLogMessages.Count >= settings.LoggingMaxEntries)
             {
                 var dequeuedMessage = _queuedLogMessages.Dequeue();
                 _contentLength -= dequeuedMessage.Length;

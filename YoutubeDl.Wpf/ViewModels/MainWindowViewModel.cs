@@ -51,11 +51,11 @@ namespace YoutubeDl.Wpf.ViewModels
             SharedSettings = new(_settings);
             BackendService = new(SharedSettings);
             PresetDialogVM = new(ControlDialog);
-            Tabs = new object[]
-            {
+            Tabs =
+            [
                 new HomeViewModel(SharedSettings, BackendService, queuedTextBoxsink, PresetDialogVM, snackbarMessageQueue),
                 new SettingsViewModel(SharedSettings, BackendService, snackbarMessageQueue),
-            };
+            ];
 
             SaveSettingsAsyncCommand = ReactiveCommand.CreateFromTask<CancelEventArgs?, bool>(SaveSettingsAsync);
         }

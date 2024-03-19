@@ -53,9 +53,9 @@ public class Settings
 
     public string BackendPath { get; set; } = "";
 
-    public BackendArgument[] BackendGlobalArguments { get; set; } = Array.Empty<BackendArgument>();
+    public BackendArgument[] BackendGlobalArguments { get; set; } = [];
 
-    public BackendArgument[] BackendDownloadArguments { get; set; } = Array.Empty<BackendArgument>();
+    public BackendArgument[] BackendDownloadArguments { get; set; } = [];
 
     public bool BackendAutoUpdate { get; set; } = true;
 
@@ -69,7 +69,7 @@ public class Settings
 
     public Preset SelectedPreset { get; set; } = Preset.Auto;
 
-    public Preset[] CustomPresets { get; set; } = Array.Empty<Preset>();
+    public Preset[] CustomPresets { get; set; } = [];
 
     public bool AddMetadata { get; set; } = true;
 
@@ -87,13 +87,13 @@ public class Settings
 
     public string CustomOutputTemplate { get; set; } = DefaultCustomOutputTemplate;
 
-    public string[] OutputTemplateHistory { get; set; } = Array.Empty<string>();
+    public string[] OutputTemplateHistory { get; set; } = [];
 
     public bool UseCustomPath { get; set; }
 
     public string DownloadPath { get; set; } = "";
 
-    public string[] DownloadPathHistory { get; set; } = Array.Empty<string>();
+    public string[] DownloadPathHistory { get; set; } = [];
 
     /// <summary>
     /// Loads settings from Settings.json.

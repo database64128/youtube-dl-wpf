@@ -36,7 +36,7 @@ namespace YoutubeDl.Wpf.ViewModels
         /// A view model in this collection must be of either
         /// <see cref="ArgumentChipViewModel"/> or <see cref="AddArgumentViewModel"/> type.
         /// </summary>
-        public ObservableCollection<object> GlobalArguments { get; } = new();
+        public ObservableCollection<object> GlobalArguments { get; } = [];
 
         public ReactiveCommand<Unit, Unit> ResetWindowSizeCommand { get; }
         public ReactiveCommand<BaseTheme, Unit> ChangeColorModeCommand { get; }

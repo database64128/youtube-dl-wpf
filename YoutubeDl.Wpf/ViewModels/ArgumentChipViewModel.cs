@@ -7,20 +7,13 @@ using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
-public class ArgumentChipViewModel : ReactiveValidationObject
+public class ArgumentChipViewModel(BackendArgument argument, bool isRemovable, Action<ArgumentChipViewModel> action) : ReactiveValidationObject
 {
     [Reactive]
-    public BackendArgument Argument { get; set; }
+    public BackendArgument Argument { get; set; } = argument;
 
     [Reactive]
-    public bool IsRemovable { get; set; }
+    public bool IsRemovable { get; set; } = isRemovable;
 
-    public ReactiveCommand<ArgumentChipViewModel, Unit> RemoveArgumentCommand { get; }
-
-    public ArgumentChipViewModel(BackendArgument argument, bool isRemovable, Action<ArgumentChipViewModel> action)
-    {
-        Argument = argument;
-        IsRemovable = isRemovable;
-        RemoveArgumentCommand = ReactiveCommand.Create(action);
-    }
+    public ReactiveCommand<ArgumentChipViewModel, Unit> RemoveArgumentCommand { get; } = ReactiveCommand.Create(action);
 }
