@@ -28,7 +28,7 @@
             </DataTemplate>
         </materialDesign:DialogHost.DialogContentTemplate>
         <Grid>
-            <TabControl x:Name="mainTabControl" SelectedIndex="0" Style="{StaticResource MaterialDesignNavigatilRailTabControl}">
+            <TabControl x:Name="mainTabControl" SelectedIndex="0" Style="{StaticResource MaterialDesignNavigationRailTabControl}">
                 <TabControl.ItemContainerStyle>
                     <Style TargetType="TabItem" BasedOn="{StaticResource MaterialDesignNavigationRailTabItem}">
                         <Setter Property="Height" Value="56" />

@@ -150,23 +150,8 @@ namespace YoutubeDl.Wpf.ViewModels
             // Get current theme.
             var theme = _paletteHelper.GetTheme();
 
-            // Get current system theme if required.
-            var targetColorMode = colorMode switch
-            {
-                BaseTheme.Inherit => Theme.GetSystemTheme() ?? BaseTheme.Dark,
-                _ => colorMode,
-            };
-
             // Apply base theme
-            switch (targetColorMode)
-            {
-                case BaseTheme.Light:
-                    theme.SetBaseTheme(Theme.Light);
-                    break;
-                case BaseTheme.Dark:
-                    theme.SetBaseTheme(Theme.Dark);
-                    break;
-            }
+            theme.SetBaseTheme(colorMode);
 
             // Apply theme
             _paletteHelper.SetTheme(theme);

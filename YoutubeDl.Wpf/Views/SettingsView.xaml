@@ -71,7 +71,7 @@
                 </RadioButton>
                 <RadioButton
                     x:Name="lightColorModeRadioButton"
-                    Style="{StaticResource MaterialDesignChoiceChipAccentOutlineRadioButton}"
+                    Style="{StaticResource MaterialDesignChoiceChipSecondaryOutlineRadioButton}"
                     GroupName="ColorMode">
                     Light
                 </RadioButton>
@@ -121,7 +121,7 @@
             <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
                 <RadioButton
                     x:Name="ytdlBackendTypeRadioButton"
-                    Style="{StaticResource MaterialDesignChoiceChipAccentOutlineRadioButton}"
+                    Style="{StaticResource MaterialDesignChoiceChipSecondaryOutlineRadioButton}"
                     GroupName="BackendType">
                     youtube-dl
                 </RadioButton>
