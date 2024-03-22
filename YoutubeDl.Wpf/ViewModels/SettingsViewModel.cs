@@ -6,6 +6,7 @@ using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -174,7 +175,19 @@ namespace YoutubeDl.Wpf.ViewModels
                 InitialDirectory = Path.GetDirectoryName(path),
             };
 
-            var result = openFileDialog.ShowDialog();
+            bool? result;
+            try
+            {
+                result = openFileDialog.ShowDialog();
+            }
+            catch (Win32Exception)
+            {
+                // ShowDialog silently ignores InitialDirectory when the path points to a non-existent directory on an existing volume.
+                // But it throws a System.ComponentModel.Win32Exception when the path points to a non-existent volume.
+                // So we catch the exception and try again with an empty InitialDirectory.
+                openFileDialog.InitialDirectory = "";
+                result = openFileDialog.ShowDialog();
+            }
             return result == true ? openFileDialog.FileName : path;
         }
 
