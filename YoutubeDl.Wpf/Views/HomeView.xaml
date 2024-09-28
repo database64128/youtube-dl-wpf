@@ -16,6 +16,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
@@ -265,14 +266,20 @@
 			</Grid>
 		</ScrollViewer>
 
-		<TextBlock Grid.Row="2"
+		<Button x:Name="clearLogsButton"
+				Grid.Row="2"
+				Margin="8"
+				Style="{StaticResource MaterialDesignOutlinedButton}"
+				Content="_Clear logs"/>
+
+		<TextBlock Grid.Row="3"
                    Margin="8 20 8 8"
                    Style="{StaticResource MaterialDesignHeadline5TextBlock}">
 			Logs
 		</TextBlock>
 
 		<TextBox x:Name="resultTextBox"
-                 Grid.Row="3"
+                 Grid.Row="4"
                  Margin="8"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                  TextWrapping="NoWrap"
