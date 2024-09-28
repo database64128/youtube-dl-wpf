@@ -36,6 +36,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public ObservableCollection<Preset> Presets { get; } = [];
 
+
         /// <summary>
         /// Gets the output template history.
         /// This collection was first constructed from <see cref="ObservableSettings.OutputTemplateHistory"/> in reverse order.
@@ -74,6 +75,7 @@ namespace YoutubeDl.Wpf.ViewModels
         public ReactiveCommand<Unit, Unit> OpenEditCustomPresetDialogCommand { get; }
         public ReactiveCommand<Unit, Unit> DuplicatePresetCommand { get; }
         public ReactiveCommand<Unit, Unit> DeleteCustomPresetCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClearLogsCommand { get; }
 
         public HomeViewModel(ObservableSettings settings, BackendService backendService, QueuedTextBoxSink queuedTextBoxSink, PresetDialogViewModel presetDialogViewModel, ISnackbarMessageQueue snackbarMessageQueue)
         {
@@ -83,6 +85,7 @@ namespace YoutubeDl.Wpf.ViewModels
             QueuedTextBoxSink = queuedTextBoxSink;
             PresetDialogVM = presetDialogViewModel;
             _snackbarMessageQueue = snackbarMessageQueue;
+
 
             // Tab icon Easter egg.
             const PackIconKind defaultIcon = PackIconKind.Download;
@@ -208,6 +211,7 @@ namespace YoutubeDl.Wpf.ViewModels
             StartDownloadCommand = ReactiveCommand.CreateFromTask<string>(StartDownloadAsync, canRun);
             ListFormatsCommand = ReactiveCommand.CreateFromTask<string>(BackendInstance.ListFormatsAsync, canRun);
             AbortCommand = ReactiveCommand.CreateFromTask(BackendInstance.AbortAsync, canAbort);
+            ClearLogsCommand = ReactiveCommand.Create(ClearLogs);
 
             OpenAddCustomPresetDialogCommand = ReactiveCommand.Create(OpenAddCustomPresetDialog);
             OpenEditCustomPresetDialogCommand = ReactiveCommand.Create(OpenEditCustomPresetDialog, canEditOrDeletePreset);
@@ -392,6 +396,11 @@ namespace YoutubeDl.Wpf.ViewModels
                 UpdateDownloadPathHistory();
 
             return BackendInstance.StartDownloadAsync(link, cancellationToken);
+        }
+
+        private void ClearLogs()
+        {
+            QueuedTextBoxSink.Content = string.Empty;
         }
     }
 }
