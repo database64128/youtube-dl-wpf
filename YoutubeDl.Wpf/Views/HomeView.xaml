@@ -276,6 +276,7 @@
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                  TextWrapping="NoWrap"
                  IsReadOnly="True"
+                 VerticalContentAlignment="Top"
                  VerticalScrollBarVisibility="Auto"
                  HorizontalScrollBarVisibility="Auto"
                  materialDesign:HintAssist.Hint="Output from backend"
