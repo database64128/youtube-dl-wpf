@@ -54,6 +54,27 @@ public static class FileHelper
     }
 
     /// <summary>
+    /// Loads the specified JSON file and deserializes its content as a <typeparamref name="TValue"/>.
+    /// </summary>
+    /// <typeparam name="TValue">The type to deserialize the JSON value into.</typeparam>
+    /// <param name="path">JSON file path.</param>
+    /// <param name="jsonSerializerOptions">Deserialization options.</param>
+    /// <param name="cancellationToken">A token that may be used to cancel the read operation.</param>
+    /// <returns>A <typeparamref name="TValue"/>.</returns>
+    public static async Task<TValue> LoadFromJsonFileAsync<TValue>(string path, JsonSerializerOptions? jsonSerializerOptions = null, CancellationToken cancellationToken = default) where TValue : class, new()
+    {
+        path = GetAbsolutePath(path);
+        if (!File.Exists(path))
+            return new();
+
+        var fileStream = new FileStream(path, FileMode.Open);
+        await using (fileStream.ConfigureAwait(false))
+        {
+            return await JsonSerializer.DeserializeAsync<TValue>(fileStream, jsonSerializerOptions, cancellationToken).ConfigureAwait(false) ?? new();
+        }
+    }
+
+    /// <summary>
     /// Serializes the provided value as JSON and saves to the specified file.
     /// </summary>
     /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
@@ -84,6 +105,43 @@ public static class FileHelper
         await using (fileStream.ConfigureAwait(false))
         {
             await JsonSerializer.SerializeAsync(fileStream, value, jsonTypeInfo, cancellationToken);
+        }
+
+        if (canReplace)
+            File.Replace(newPath, path, $"{path}.old");
+    }
+
+    /// <summary>
+    /// Serializes the provided value as JSON and saves to the specified file.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
+    /// <param name="path">JSON file path.</param>
+    /// <param name="value">The value to save.</param>
+    /// <param name="jsonSerializerOptions">Serialization options.</param>
+    /// <param name="cancellationToken">A token that may be used to cancel the write operation.</param>
+    /// <returns>A task that represents the asynchronous write operation.</returns>
+    public static async Task SaveToJsonFileAsync<TValue>(
+        string path,
+        TValue value,
+        JsonSerializerOptions? jsonSerializerOptions = null,
+        CancellationToken cancellationToken = default)
+    {
+        path = GetAbsolutePath(path);
+
+        var directoryPath = Path.GetDirectoryName(path);
+        if (string.IsNullOrEmpty(directoryPath))
+            throw new ArgumentException("Invalid path.", nameof(path));
+
+        _ = Directory.CreateDirectory(directoryPath);
+
+        // File.Replace throws an exception when the destination file does not exist.
+        var canReplace = File.Exists(path);
+        var newPath = canReplace ? $"{path}.new" : path;
+        var fileStream = new FileStream(newPath, FileMode.Create);
+
+        await using (fileStream.ConfigureAwait(false))
+        {
+            await JsonSerializer.SerializeAsync(fileStream, value, jsonSerializerOptions, cancellationToken);
         }
 
         if (canReplace)

@@ -1,6 +1,8 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
 using System.ComponentModel;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeDl.Wpf.Utils;
@@ -95,6 +97,15 @@ public class Settings
 
     public string[] DownloadPathHistory { get; set; } = [];
 
+    private static readonly JsonSerializerOptions s_jsonSerializerOptions = new()
+    {
+        AllowTrailingCommas = true,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        IgnoreReadOnlyProperties = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        WriteIndented = true,
+    };
+
     /// <summary>
     /// Loads settings from Settings.json.
     /// </summary>
@@ -102,7 +113,7 @@ public class Settings
     /// <returns>The <see cref="Settings"/> object.</returns>
     public static async Task<Settings> LoadAsync(CancellationToken cancellationToken = default)
     {
-        var settings = await FileHelper.LoadFromJsonFileAsync("Settings.json", SettingsJsonSerializerContext.Default.Settings, cancellationToken).ConfigureAwait(false);
+        Settings settings = await FileHelper.LoadFromJsonFileAsync<Settings>("Settings.json", s_jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
         settings.Update();
         settings.Validate();
         return settings;
@@ -114,7 +125,7 @@ public class Settings
     /// <param name="cancellationToken">A token that may be used to cancel the write operation.</param>
     /// <returns>A task that represents the asynchronous write operation.</returns>
     public Task SaveAsync(CancellationToken cancellationToken = default)
-        => FileHelper.SaveToJsonFileAsync("Settings.json", this, SettingsJsonSerializerContext.Default.Settings, cancellationToken);
+        => FileHelper.SaveToJsonFileAsync("Settings.json", this, s_jsonSerializerOptions, cancellationToken);
 
     /// <summary>
     /// Updates settings to the latest version.
