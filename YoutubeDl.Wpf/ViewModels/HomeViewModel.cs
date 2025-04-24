@@ -125,12 +125,13 @@ namespace YoutubeDl.Wpf.ViewModels
                     Presets.AddRange(Preset.PredefinedPresets.Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
                 });
 
-            OutputTemplateHistory = new(SharedSettings.OutputTemplateHistory.Select(x => new HistoryItemViewModel(x, DeleteOutputTemplateItem)).Reverse());
-            DownloadPathHistory = new(SharedSettings.DownloadPathHistory.Select(x => new HistoryItemViewModel(x, DeleteDownloadPathItem)).Reverse());
-            DownloadArguments = new(SharedSettings.BackendDownloadArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)))
-            {
+            OutputTemplateHistory = [.. SharedSettings.OutputTemplateHistory.Select(x => new HistoryItemViewModel(x, DeleteOutputTemplateItem)).Reverse()];
+            DownloadPathHistory = [.. SharedSettings.DownloadPathHistory.Select(x => new HistoryItemViewModel(x, DeleteDownloadPathItem)).Reverse()];
+            DownloadArguments =
+            [
+                .. SharedSettings.BackendDownloadArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)),
                 new AddArgumentViewModel(AddArgument),
-            };
+            ];
 
             var gdaA = this.WhenAnyValue(
                 x => x.SharedSettings.Backend,

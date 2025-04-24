@@ -62,7 +62,7 @@ WPF GUI for [youtube-dl](https://github.com/ytdl-org/youtube-dl) and [yt-dlp](ht
 
 ## Build
 
-Prerequisites: .NET 8 SDK
+Prerequisites: .NET 9 SDK
 
 Note for packagers: The application by default uses executable directory as config directory. To use user's config directory, define the constant `PACKAGED` when building.
 
@@ -99,4 +99,4 @@ dotnet publish YoutubeDl.Wpf -c Release -p:DefineConstants=PACKAGED -r win-x64 -
 - [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono) is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 - [ReactiveUI](https://github.com/reactiveui/ReactiveUI) and its dependencies are licensed under [MIT](https://github.com/reactiveui/ReactiveUI/blob/main/LICENSE).
 
-© 2024 database64128
+© 2025 database64128

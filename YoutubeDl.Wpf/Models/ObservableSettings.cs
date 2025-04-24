@@ -29,13 +29,13 @@ public class ObservableSettings(Settings settings) : ReactiveObject
     /// Gets or sets the list of arguments passed
     /// to the backend process for all types of operations.
     /// </summary>
-    public ObservableCollection<BackendArgument> BackendGlobalArguments { get; set; } = new(settings.BackendGlobalArguments);
+    public ObservableCollection<BackendArgument> BackendGlobalArguments { get; set; } = [.. settings.BackendGlobalArguments];
 
     /// <summary>
     /// Gets or sets the list of arguments passed
     /// to the backend process for download operations.
     /// </summary>
-    public List<BackendArgument> BackendDownloadArguments { get; set; } = new(settings.BackendDownloadArguments);
+    public List<BackendArgument> BackendDownloadArguments { get; set; } = [.. settings.BackendDownloadArguments];
 
     [Reactive]
     public bool BackendAutoUpdate { get; set; } = settings.BackendAutoUpdate;
@@ -63,7 +63,7 @@ public class ObservableSettings(Settings settings) : ReactiveObject
     [Reactive]
     public string SelectedPresetText { get; set; } = settings.SelectedPreset.DisplayName;
 
-    public List<Preset> CustomPresets { get; set; } = new(settings.CustomPresets);
+    public List<Preset> CustomPresets { get; set; } = [.. settings.CustomPresets];
 
     [Reactive]
     public bool AddMetadata { get; set; } = settings.AddMetadata;
@@ -93,7 +93,7 @@ public class ObservableSettings(Settings settings) : ReactiveObject
     /// Gets the list of used output templates.
     /// New templates are appended to the list.
     /// </summary>
-    public List<string> OutputTemplateHistory { get; } = new(settings.OutputTemplateHistory);
+    public List<string> OutputTemplateHistory { get; } = [.. settings.OutputTemplateHistory];
 
     [Reactive]
     public bool UseCustomPath { get; set; } = settings.UseCustomPath;
@@ -105,7 +105,7 @@ public class ObservableSettings(Settings settings) : ReactiveObject
     /// Gets the list of used download paths.
     /// New paths are appended to the list.
     /// </summary>
-    public List<string> DownloadPathHistory { get; } = new(settings.DownloadPathHistory);
+    public List<string> DownloadPathHistory { get; } = [.. settings.DownloadPathHistory];
 
     public void UpdateAppSettings()
     {

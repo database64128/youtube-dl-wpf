@@ -144,7 +144,7 @@ public class PresetDialogViewModel : ReactiveValidationObject
             FormatArg = string.IsNullOrEmpty(FormatArg) ? null : FormatArg,
             ContainerArg = string.IsNullOrEmpty(ContainerArg) ? null : ContainerArg,
             SupportedBackends = supportedBackends,
-            ExtraArgs = _backendArguments.Select(x => x.Argument).ToArray(),
+            ExtraArgs = [.. _backendArguments.Select(x => x.Argument)],
         };
     }
 

@@ -5,12 +5,13 @@ using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
+using System.Threading;
 
 namespace YoutubeDl.Wpf.Models;
 
 public class QueuedTextBoxSink(Settings settings, IFormatProvider? formatProvider = null) : ReactiveObject, ILogEventSink
 {
-    private readonly object _locker = new();
+    private readonly Lock _lock = new();
     private readonly Queue<string> _queuedLogMessages = new(settings.LoggingMaxEntries);
     private int _contentLength;
 
@@ -54,7 +55,7 @@ public class QueuedTextBoxSink(Settings settings, IFormatProvider? formatProvide
             Environment.NewLine.CopyTo(buf[(34 + renderedMessage.Length)..]);
         });
 
-        lock (_locker)
+        lock (_lock)
         {
             while (_queuedLogMessages.Count >= settings.LoggingMaxEntries)
             {
