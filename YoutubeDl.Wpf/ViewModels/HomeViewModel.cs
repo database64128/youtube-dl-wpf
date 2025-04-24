@@ -318,19 +318,16 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private void BrowseDownloadFolder()
         {
-            Microsoft.Win32.OpenFileDialog folderDialog = new()
+            Microsoft.Win32.OpenFolderDialog folderDialog = new()
             {
-                FileName = "Folder Selection.",
                 ValidateNames = false,
-                CheckFileExists = false,
-                CheckPathExists = true,
                 InitialDirectory = SharedSettings.DownloadPath,
             };
 
             var result = folderDialog.ShowDialog();
             if (result == true)
             {
-                SharedSettings.DownloadPath = Path.GetDirectoryName(folderDialog.FileName) ?? "";
+                SharedSettings.DownloadPath = folderDialog.FolderName;
             }
         }
 
