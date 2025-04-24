@@ -178,10 +178,11 @@ namespace YoutubeDl.Wpf.Views
                     view => view.resultTextBox.Text)
                     .DisposeWith(disposables);
 
-                resultTextBox.Events().TextChanged
-                             .Where(_ => WpfHelper.IsScrolledToEnd(resultTextBox))
-                             .Subscribe(_ => resultTextBox.ScrollToEnd())
-                             .DisposeWith(disposables);
+                ViewModel.WhenAnyValue(x => x.QueuedTextBoxSink.Content)
+                    .Where(_ => WpfHelper.IsScrolledToEnd(resultTextBox))
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Subscribe(_ => resultTextBox.ScrollToEnd())
+                    .DisposeWith(disposables);
 
                 // Download, list, abort button
                 this.BindCommand(ViewModel,
