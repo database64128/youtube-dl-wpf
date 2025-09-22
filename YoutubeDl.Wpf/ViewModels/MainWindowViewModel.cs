@@ -41,9 +41,13 @@ namespace YoutubeDl.Wpf.ViewModels
 
             // Configure logging.
             var queuedTextBoxsink = new QueuedTextBoxSink(_settings);
-            var logger = new LoggerConfiguration()
-                .WriteTo.Sink(queuedTextBoxsink)
-                .CreateLogger();
+            var loggerConfiguration = new LoggerConfiguration()
+                .WriteTo.Sink(queuedTextBoxsink);
+            if (_settings.LogToFiles)
+            {
+                loggerConfiguration = loggerConfiguration.WriteTo.File(".log", rollingInterval: RollingInterval.Day);
+            }
+            var logger = loggerConfiguration.CreateLogger();
             Locator.CurrentMutable.UseSerilogFullLogger(logger);
 
             SharedSettings = new(_settings);

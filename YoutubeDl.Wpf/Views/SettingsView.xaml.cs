@@ -104,6 +104,16 @@ namespace YoutubeDl.Wpf.Views
                     view => view.maxLogEntriesTextBox.Text)
                     .DisposeWith(disposables);
 
+                this.Bind(ViewModel,
+                    viewModel => viewModel.SharedSettings.LogToFiles,
+                    view => view.logToFilesToggle.IsChecked)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.IsLogToFilesHintVisible,
+                    view => view.logToFilesHintTextBlock.Visibility)
+                    .DisposeWith(disposables);
+
                 // About
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.Version,
@@ -165,6 +175,12 @@ namespace YoutubeDl.Wpf.Views
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.BackendService.UpdateBackendCommand,
                     view => view.updateBackendButton)
+                    .DisposeWith(disposables);
+
+                // Log to files toggle
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.ToggleLogToFilesHintCommand,
+                    view => view.logToFilesToggle)
                     .DisposeWith(disposables);
             });
         }

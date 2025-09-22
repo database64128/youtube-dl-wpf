@@ -10,7 +10,7 @@
     xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
-    d:DesignHeight="720" d:DesignWidth="848">
+    d:DesignHeight="960" d:DesignWidth="848">
     <ScrollViewer materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
                   HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
@@ -30,6 +30,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="40" />
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -262,12 +263,32 @@
 
             <TextBlock Grid.Row="15"
                        Grid.Column="0"
+                       Margin="8"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource MaterialDesignBody2TextBlock}">
+                Log to files
+            </TextBlock>
+            <StackPanel Grid.Row="15" Grid.Column="1" Orientation="Horizontal">
+                <ToggleButton x:Name="logToFilesToggle"
+                              Margin="4"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"/>
+                <TextBlock x:Name="logToFilesHintTextBlock"
+                           Margin="4"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}">
+                    This will take effect on the next run.
+                </TextBlock>
+            </StackPanel>
+
+            <TextBlock Grid.Row="16"
+                       Grid.Column="0"
                        Margin="8 32 8 8"
                        Style="{StaticResource MaterialDesignHeadline5TextBlock}">
                 About
             </TextBlock>
 
-            <TextBlock Grid.Row="16"
+            <TextBlock Grid.Row="17"
                        Grid.Column="0"
                        Grid.ColumnSpan="3"
                        Margin="8 4 8 4"
@@ -277,7 +298,7 @@
                 and <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">yt-dlp</Span>.
             </TextBlock>
 
-            <Grid Grid.Row="17"
+            <Grid Grid.Row="18"
                   Grid.Column="0"
                   Grid.ColumnSpan="3"
                   Margin="4">

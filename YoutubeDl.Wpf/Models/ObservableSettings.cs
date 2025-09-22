@@ -56,6 +56,9 @@ public partial class ObservableSettings(Settings settings) : ReactiveObject
     private int _loggingMaxEntries = settings.LoggingMaxEntries;
 
     [Reactive]
+    private bool _logToFiles = settings.LogToFiles;
+
+    [Reactive]
     private Preset? _selectedPreset = settings.SelectedPreset;
 
     /// <summary>
@@ -125,6 +128,7 @@ public partial class ObservableSettings(Settings settings) : ReactiveObject
         AppSettings.FfmpegPath = FfmpegPath;
         AppSettings.Proxy = Proxy;
         // AppSettings.LoggingMaxEntries is managed by the validation handler.
+        AppSettings.LogToFiles = LogToFiles;
         AppSettings.SelectedPreset = SelectedPreset ?? Preset.Auto;
         AppSettings.CustomPresets = [.. CustomPresets];
         AppSettings.AddMetadata = AddMetadata;

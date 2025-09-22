@@ -31,6 +31,9 @@ namespace YoutubeDl.Wpf.ViewModels
         [Reactive]
         private string _windowSizeText;
 
+        [Reactive]
+        private bool _isLogToFilesHintVisible;
+
         /// <summary>
         /// Gets the collection of view models of the arguments area.
         /// A view model in this collection must be of either
@@ -177,6 +180,9 @@ namespace YoutubeDl.Wpf.ViewModels
             }
             return result == true ? openFileDialog.FileName : path;
         }
+
+        [ReactiveCommand]
+        private void ToggleLogToFilesHint() => IsLogToFilesHintVisible = !IsLogToFilesHintVisible;
 
         private void DeleteArgumentChip(ArgumentChipViewModel item)
         {

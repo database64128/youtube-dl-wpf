@@ -69,6 +69,8 @@ public class Settings
 
     public int LoggingMaxEntries { get; set; } = DefaultLoggingMaxEntries;
 
+    public bool LogToFiles { get; set; }
+
     public Preset SelectedPreset { get; set; } = Preset.Auto;
 
     public Preset[] CustomPresets { get; set; } = [];
