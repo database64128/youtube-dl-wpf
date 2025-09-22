@@ -1,5 +1,5 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using Serilog.Core;
 using Serilog.Events;
 using System;
@@ -9,14 +9,14 @@ using System.Threading;
 
 namespace YoutubeDl.Wpf.Models;
 
-public class QueuedTextBoxSink(Settings settings, IFormatProvider? formatProvider = null) : ReactiveObject, ILogEventSink
+public partial class QueuedTextBoxSink(Settings settings, IFormatProvider? formatProvider = null) : ReactiveObject, ILogEventSink
 {
     private readonly Lock _lock = new();
     private readonly Queue<string> _queuedLogMessages = new(settings.LoggingMaxEntries);
     private int _contentLength;
 
     [Reactive]
-    public string Content { get; set; } = "";
+    private string _content = "";
 
     public void Emit(LogEvent logEvent)
     {

@@ -1,15 +1,15 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using ReactiveUI.Validation.Helpers;
 using System;
 using System.Reactive;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
-public class AddArgumentViewModel : ReactiveValidationObject
+public partial class AddArgumentViewModel : ReactiveValidationObject
 {
     [Reactive]
-    public string Argument { get; set; } = "";
+    private string _argument = "";
 
     public ReactiveCommand<string, Unit> AddArgumentCommand { get; }
 

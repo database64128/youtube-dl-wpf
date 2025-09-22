@@ -1,6 +1,6 @@
 ﻿using DynamicData;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using Splat;
 using System;
 using System.Collections.Generic;
@@ -15,31 +15,32 @@ using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Models;
 
-public class BackendInstance : ReactiveObject, IEnableLogger
+public partial class BackendInstance : ReactiveObject, IEnableLogger
 {
     private readonly ObservableSettings _settings;
     private readonly BackendService _backendService;
     private readonly Process _process;
+    private readonly IObservable<bool> _canAbort;
 
     public List<string> GeneratedDownloadArguments { get; } = [];
 
     [Reactive]
-    public double DownloadProgressPercentage { get; set; } // 0.99 is 99%.
+    private double _downloadProgressPercentage; // 0.99 is 99%.
 
     [Reactive]
-    public bool StatusIndeterminate { get; set; }
+    private bool _statusIndeterminate;
 
     [Reactive]
-    public bool IsRunning { get; set; }
+    private bool _isRunning;
 
     [Reactive]
-    public string FileSizeString { get; set; } = "";
+    private string _fileSizeString = "";
 
     [Reactive]
-    public string DownloadSpeedString { get; set; } = "";
+    private string _downloadSpeedString = "";
 
     [Reactive]
-    public string DownloadETAString { get; set; } = "";
+    private string _downloadETAString = "";
 
     public BackendInstance(ObservableSettings settings, BackendService backendService)
     {
@@ -54,6 +55,8 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         _process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
         _process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
         _process.EnableRaisingEvents = true;
+
+        _canAbort = this.WhenAnyValue(x => x.IsRunning);
     }
 
     private async Task RunAsync(CancellationToken cancellationToken = default)
@@ -335,6 +338,7 @@ public class BackendInstance : ReactiveObject, IEnableLogger
         }
     }
 
+    [ReactiveCommand(CanExecute = nameof(_canAbort))]
     public async Task AbortAsync(CancellationToken cancellationToken = default)
     {
         if (CtrlCHelper.AttachConsole((uint)_process.Id))

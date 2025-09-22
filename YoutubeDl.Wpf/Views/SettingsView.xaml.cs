@@ -5,6 +5,7 @@ using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using YoutubeDl.Wpf.Models;
+using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Views
 {
@@ -111,17 +112,17 @@ namespace YoutubeDl.Wpf.Views
 
                 projectRepoHyperlink.Events().RequestNavigate
                                     .Select(args => args.Uri.AbsoluteUri)
-                                    .InvokeCommand(ViewModel!.OpenUri) // Null forgiving reason: upstream limitation.
+                                    .Subscribe(WpfHelper.OpenUri)
                                     .DisposeWith(disposables);
 
                 ytdlRepoHyperlink.Events().RequestNavigate
                                  .Select(args => args.Uri.AbsoluteUri)
-                                 .InvokeCommand(ViewModel.OpenUri)
+                                 .Subscribe(WpfHelper.OpenUri)
                                  .DisposeWith(disposables);
 
                 ytdlpRepoHyperlink.Events().RequestNavigate
                                   .Select(args => args.Uri.AbsoluteUri)
-                                  .InvokeCommand(ViewModel.OpenUri)
+                                  .Subscribe(WpfHelper.OpenUri)
                                   .DisposeWith(disposables);
 
                 // Color mode
@@ -162,7 +163,7 @@ namespace YoutubeDl.Wpf.Views
 
                 // Check now button
                 this.BindCommand(ViewModel,
-                    viewModel => viewModel.UpdateBackendCommand,
+                    viewModel => viewModel.BackendService.UpdateBackendCommand,
                     view => view.updateBackendButton)
                     .DisposeWith(disposables);
             });

@@ -50,7 +50,7 @@ public partial class PresetDialogView
                 .DisposeWith(disposables);
 
             this.BindCommand(ViewModel,
-                viewModel => viewModel.DiscardCommand,
+                viewModel => viewModel.CloseDialogCommand,
                 view => view.discardButton)
                 .DisposeWith(disposables);
         });

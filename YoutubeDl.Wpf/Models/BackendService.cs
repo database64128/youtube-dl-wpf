@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using Splat;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,22 +10,31 @@ using System.Windows.Shell;
 
 namespace YoutubeDl.Wpf.Models;
 
-public class BackendService(ObservableSettings settings) : ReactiveObject, IEnableLogger
+public partial class BackendService : ReactiveObject, IEnableLogger
 {
+    private readonly ObservableSettings _settings;
+    private readonly IObservable<bool> _canUpdateBackend;
+
     public List<BackendInstance> Instances { get; } = [];
 
     [Reactive]
-    public bool CanUpdate { get; set; } = true;
+    private bool _canUpdate = true;
 
     [Reactive]
-    public double GlobalDownloadProgressPercentage { get; set; } // 0.99 is 99%.
+    private double _globalDownloadProgressPercentage; // 0.99 is 99%.
 
     [Reactive]
-    public TaskbarItemProgressState ProgressState { get; set; }
+    private TaskbarItemProgressState _progressState;
+
+    public BackendService(ObservableSettings settings)
+    {
+        _settings = settings;
+        _canUpdateBackend = this.WhenAnyValue(x => x.CanUpdate);
+    }
 
     public BackendInstance CreateInstance()
     {
-        var instance = new BackendInstance(settings, this);
+        var instance = new BackendInstance(_settings, this);
         Instances.Add(instance);
         return instance;
     }
@@ -49,6 +59,7 @@ public class BackendService(ObservableSettings settings) : ReactiveObject, IEnab
         }
     }
 
+    [ReactiveCommand(CanExecute = nameof(_canUpdateBackend))]
     public Task UpdateBackendAsync(CancellationToken cancellationToken = default)
     {
         var tasks = Instances.Select(x => x.UpdateAsync(cancellationToken));

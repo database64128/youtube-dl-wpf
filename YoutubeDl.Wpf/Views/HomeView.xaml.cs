@@ -198,7 +198,7 @@ namespace YoutubeDl.Wpf.Views
                     .DisposeWith(disposables);
 
                 this.BindCommand(ViewModel,
-                    viewModel => viewModel.AbortCommand,
+                    viewModel => viewModel.BackendInstance.AbortCommand,
                     view => view.abortButton)
                     .DisposeWith(disposables);
 

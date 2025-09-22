@@ -37,7 +37,7 @@ namespace YoutubeDl.Wpf
 
                 // Window closing
                 this.Events().Closing
-                    .InvokeCommand(ViewModel.SaveSettingsAsyncCommand)
+                    .InvokeCommand(ViewModel.SaveSettingsCommand)
                     .DisposeWith(disposables);
 
                 // DialogHost

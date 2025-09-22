@@ -1,6 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using Serilog;
 using Splat;
 using Splat.Serilog;
@@ -12,7 +12,7 @@ using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public class MainWindowViewModel : ReactiveObject
+    public partial class MainWindowViewModel : ReactiveObject
     {
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
         private readonly Settings _settings;
@@ -23,9 +23,7 @@ namespace YoutubeDl.Wpf.ViewModels
         public object[] Tabs { get; }
 
         [Reactive]
-        public bool IsDialogOpen { get; set; }
-
-        public ReactiveCommand<CancelEventArgs?, bool> SaveSettingsAsyncCommand { get; }
+        private bool _isDialogOpen;
 
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue)
         {
@@ -56,12 +54,11 @@ namespace YoutubeDl.Wpf.ViewModels
                 new HomeViewModel(SharedSettings, BackendService, queuedTextBoxsink, PresetDialogVM, snackbarMessageQueue),
                 new SettingsViewModel(SharedSettings, BackendService, snackbarMessageQueue),
             ];
-
-            SaveSettingsAsyncCommand = ReactiveCommand.CreateFromTask<CancelEventArgs?, bool>(SaveSettingsAsync);
         }
 
         private void ControlDialog(bool open) => IsDialogOpen = open;
 
+        [ReactiveCommand]
         private async Task<bool> SaveSettingsAsync(CancelEventArgs? cancelEventArgs = null, CancellationToken cancellationToken = default)
         {
             SharedSettings.UpdateAppSettings();

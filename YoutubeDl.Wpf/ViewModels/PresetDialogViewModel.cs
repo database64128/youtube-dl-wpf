@@ -1,43 +1,40 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using ReactiveUI.Validation.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
-public class PresetDialogViewModel : ReactiveValidationObject
+public partial class PresetDialogViewModel : ReactiveValidationObject
 {
     private readonly List<BackendArgument> _backendArguments = [];
     private readonly Action<bool> _controlDialogAction;
+    private readonly IObservable<bool> _canSave;
     private Preset? _preset;
     private Action<Preset>? _saveAction;
 
     [Reactive]
-    public string Name { get; set; } = "";
+    private string _name = "";
 
     [Reactive]
-    public string FormatArg { get; set; } = "";
+    private string _formatArg = "";
 
     [Reactive]
-    public string ContainerArg { get; set; } = "";
+    private string _containerArg = "";
 
     [Reactive]
-    public bool IsYtdlSupported { get; set; } = true;
+    private bool _isYtdlSupported = true;
 
     [Reactive]
-    public bool IsYtdlpSupported { get; set; } = true;
+    private bool _isYtdlpSupported = true;
 
-    public ObservableCollection<object> ArgumentChips { get; set; } = [];
-
-    public ReactiveCommand<Unit, Unit> SaveCommand { get; }
-
-    public ReactiveCommand<Unit, Unit> DiscardCommand { get; }
+    [Reactive]
+    private ObservableCollection<object> _argumentChips;
 
     public PresetDialogViewModel(Action<bool> controlDialogAction)
     {
@@ -48,14 +45,11 @@ public class PresetDialogViewModel : ReactiveValidationObject
             new AddArgumentViewModel(AddArgument),
         ];
 
-        var canSave = this.WhenAnyValue(
+        _canSave = this.WhenAnyValue(
             x => x.Name,
             x => x.IsYtdlSupported,
             x => x.IsYtdlpSupported,
             (name, ytdl, ytdlp) => !string.IsNullOrEmpty(name) && (ytdl || ytdlp));
-
-        SaveCommand = ReactiveCommand.Create(Save, canSave);
-        DiscardCommand = ReactiveCommand.Create(CloseDialog);
 
         this.WhenAnyValue(
             x => x.FormatArg,
@@ -77,8 +71,10 @@ public class PresetDialogViewModel : ReactiveValidationObject
 
     private void OpenDialog() => _controlDialogAction(true);
 
+    [ReactiveCommand]
     private void CloseDialog() => _controlDialogAction(false);
 
+    [ReactiveCommand(CanExecute = nameof(_canSave))]
     private void Save()
     {
         if (_saveAction is null)

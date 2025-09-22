@@ -1,7 +1,7 @@
 ﻿using DynamicData;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 using System;
@@ -9,17 +9,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Reflection;
 using YoutubeDl.Wpf.Models;
-using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public class SettingsViewModel : ReactiveValidationObject
+    public partial class SettingsViewModel : ReactiveValidationObject
     {
-        private readonly BackendService _backendService;
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
         private readonly PaletteHelper _paletteHelper;
 
@@ -29,8 +26,10 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public ObservableSettings SharedSettings { get; }
 
+        public BackendService BackendService { get; }
+
         [Reactive]
-        public string WindowSizeText { get; set; }
+        private string _windowSizeText;
 
         /// <summary>
         /// Gets the collection of view models of the arguments area.
@@ -39,21 +38,14 @@ namespace YoutubeDl.Wpf.ViewModels
         /// </summary>
         public ObservableCollection<object> GlobalArguments { get; } = [];
 
-        public ReactiveCommand<Unit, Unit> ResetWindowSizeCommand { get; }
-        public ReactiveCommand<BaseTheme, Unit> ChangeColorModeCommand { get; }
-        public ReactiveCommand<Unit, Unit> BrowseDlBinaryCommand { get; }
-        public ReactiveCommand<Unit, Unit> UpdateBackendCommand { get; }
-        public ReactiveCommand<Unit, Unit> BrowseFfmpegBinaryCommand { get; }
-        public ReactiveCommand<string, Unit> OpenUri { get; }
-
         public SettingsViewModel(ObservableSettings settings, BackendService backendService, ISnackbarMessageQueue snackbarMessageQueue)
         {
-            _backendService = backendService;
             _snackbarMessageQueue = snackbarMessageQueue;
             _paletteHelper = new();
 
             Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
             SharedSettings = settings;
+            BackendService = backendService;
             WindowSizeText = GenerateWindowSizeText(settings.WindowWidth, settings.WindowHeight);
 
             GlobalArguments.AddRange(SharedSettings.BackendGlobalArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
@@ -127,25 +119,18 @@ namespace YoutubeDl.Wpf.ViewModels
                         _ => SharedSettings.Backend,
                     };
                 });
-
-            var canUpdateBackend = this.WhenAnyValue(x => x._backendService.CanUpdate);
-
-            ResetWindowSizeCommand = ReactiveCommand.Create(ResetWindowSize);
-            ChangeColorModeCommand = ReactiveCommand.Create<BaseTheme>(ChangeColorMode);
-            BrowseDlBinaryCommand = ReactiveCommand.Create(BrowseDlBinary);
-            UpdateBackendCommand = ReactiveCommand.CreateFromTask(_backendService.UpdateBackendAsync, canUpdateBackend);
-            BrowseFfmpegBinaryCommand = ReactiveCommand.Create(BrowseFfmpegBinary);
-            OpenUri = ReactiveCommand.Create<string>(WpfHelper.OpenUri);
         }
 
         private static string GenerateWindowSizeText(double width, double height) => $"{width:F} × {height:F}";
 
+        [ReactiveCommand]
         private void ResetWindowSize()
         {
             SharedSettings.WindowWidth = Settings.DefaultWindowWidth;
             SharedSettings.WindowHeight = Settings.DefaultWindowHeight;
         }
 
+        [ReactiveCommand]
         private void ChangeColorMode(BaseTheme colorMode)
         {
             // Get current theme.
@@ -161,8 +146,10 @@ namespace YoutubeDl.Wpf.ViewModels
             SharedSettings.AppColorMode = colorMode;
         }
 
+        [ReactiveCommand]
         private void BrowseDlBinary() => SharedSettings.BackendPath = BrowseBinary(SharedSettings.Backend.ToExecutableName(), SharedSettings.BackendPath);
 
+        [ReactiveCommand]
         private void BrowseFfmpegBinary() => SharedSettings.FfmpegPath = BrowseBinary("ffmpeg", SharedSettings.FfmpegPath);
 
         private static string BrowseBinary(string filename, string path)

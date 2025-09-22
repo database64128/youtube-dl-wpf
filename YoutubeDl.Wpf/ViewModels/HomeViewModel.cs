@@ -2,7 +2,7 @@
 using DynamicData.Binding;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using ReactiveUI.Validation.Helpers;
 using System;
 using System.Collections.ObjectModel;
@@ -17,9 +17,15 @@ using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public class HomeViewModel : ReactiveValidationObject
+    public partial class HomeViewModel : ReactiveValidationObject
     {
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
+        private readonly IObservable<bool> _canResetCustomOutputTemplate;
+        private readonly IObservable<bool> _canBrowseDownloadFolder;
+        private readonly IObservable<bool> _canOpenDownloadFolder;
+        private readonly IObservable<bool> _canRun;
+        private readonly IObservable<bool> _canEditOrDeletePreset;
+        private readonly IObservable<bool> _canDuplicatePreset;
         private int _globalArgCount;
 
         public PackIconKind TabItemHeaderIconKind { get; }
@@ -58,22 +64,10 @@ namespace YoutubeDl.Wpf.ViewModels
         public ObservableCollection<object> DownloadArguments { get; }
 
         [Reactive]
-        public string Link { get; set; } = "";
+        private string _link = "";
 
         [Reactive]
-        public string PlaylistItems { get; set; } = "";
-
-        public ReactiveCommand<Unit, Unit> ResetCustomOutputTemplateCommand { get; }
-        public ReactiveCommand<Unit, Unit> BrowseDownloadFolderCommand { get; }
-        public ReactiveCommand<Unit, Unit> OpenDownloadFolderCommand { get; }
-        public ReactiveCommand<string, Unit> StartDownloadCommand { get; }
-        public ReactiveCommand<string, Unit> ListFormatsCommand { get; }
-        public ReactiveCommand<Unit, Unit> AbortCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> OpenAddCustomPresetDialogCommand { get; }
-        public ReactiveCommand<Unit, Unit> OpenEditCustomPresetDialogCommand { get; }
-        public ReactiveCommand<Unit, Unit> DuplicatePresetCommand { get; }
-        public ReactiveCommand<Unit, Unit> DeleteCustomPresetCommand { get; }
+        private string _playlistItems = "";
 
         public HomeViewModel(ObservableSettings settings, BackendService backendService, QueuedTextBoxSink queuedTextBoxSink, PresetDialogViewModel presetDialogViewModel, ISnackbarMessageQueue snackbarMessageQueue)
         {
@@ -166,19 +160,19 @@ namespace YoutubeDl.Wpf.ViewModels
                                            .ObserveOn(RxApp.MainThreadScheduler)
                                            .Subscribe(_ => GenerateGlobalArguments());
 
-            var canResetCustomOutputTemplate = this.WhenAnyValue(
+            _canResetCustomOutputTemplate = this.WhenAnyValue(
                 x => x.SharedSettings.UseCustomOutputTemplate,
                 x => x.SharedSettings.CustomOutputTemplate,
                 (useTemplate, template) => useTemplate && template != Settings.DefaultCustomOutputTemplate);
 
-            var canBrowseDownloadFolder = this.WhenAnyValue(x => x.SharedSettings.UseCustomPath);
+            _canBrowseDownloadFolder = this.WhenAnyValue(x => x.SharedSettings.UseCustomPath);
 
-            var canOpenDownloadFolder = this.WhenAnyValue(
+            _canOpenDownloadFolder = this.WhenAnyValue(
                 x => x.SharedSettings.UseCustomPath,
                 x => x.SharedSettings.DownloadPath,
                 (useCustomPath, path) => useCustomPath && Directory.Exists(path));
 
-            var canRun = this.WhenAnyValue(
+            _canRun = this.WhenAnyValue(
                 x => x.Link,
                 x => x.BackendInstance.IsRunning,
                 x => x.SharedSettings.UseCustomOutputTemplate,
@@ -195,25 +189,13 @@ namespace YoutubeDl.Wpf.ViewModels
 
             var canAbort = this.WhenAnyValue(x => x.BackendInstance.IsRunning);
 
-            var canEditOrDeletePreset = this.WhenAnyValue(
+            _canEditOrDeletePreset = this.WhenAnyValue(
                 x => x.SharedSettings.SelectedPreset,
                 selectedPreset => selectedPreset is not null && !selectedPreset.IsPredefined);
 
-            var canDuplicatePreset = this.WhenAnyValue(
+            _canDuplicatePreset = this.WhenAnyValue(
                 x => x.SharedSettings.SelectedPreset,
                 (Preset? selectedPreset) => selectedPreset is not null);
-
-            ResetCustomOutputTemplateCommand = ReactiveCommand.Create(ResetCustomOutputTemplate, canResetCustomOutputTemplate);
-            BrowseDownloadFolderCommand = ReactiveCommand.Create(BrowseDownloadFolder, canBrowseDownloadFolder);
-            OpenDownloadFolderCommand = ReactiveCommand.Create(OpenDownloadFolder, canOpenDownloadFolder);
-            StartDownloadCommand = ReactiveCommand.CreateFromTask<string>(StartDownloadAsync, canRun);
-            ListFormatsCommand = ReactiveCommand.CreateFromTask<string>(BackendInstance.ListFormatsAsync, canRun);
-            AbortCommand = ReactiveCommand.CreateFromTask(BackendInstance.AbortAsync, canAbort);
-
-            OpenAddCustomPresetDialogCommand = ReactiveCommand.Create(OpenAddCustomPresetDialog);
-            OpenEditCustomPresetDialogCommand = ReactiveCommand.Create(OpenEditCustomPresetDialog, canEditOrDeletePreset);
-            DuplicatePresetCommand = ReactiveCommand.Create(DuplicatePreset, canDuplicatePreset);
-            DeleteCustomPresetCommand = ReactiveCommand.Create(DeleteCustomPreset, canEditOrDeletePreset);
 
             if (SharedSettings.BackendAutoUpdate && !string.IsNullOrEmpty(SharedSettings.BackendPath))
             {
@@ -238,10 +220,13 @@ namespace YoutubeDl.Wpf.ViewModels
             AddCustomPreset(preset);
         }
 
+        [ReactiveCommand]
         private void OpenAddCustomPresetDialog() => PresetDialogVM.AddOrEditPreset(Preset.Empty, AddCustomPreset);
 
+        [ReactiveCommand(CanExecute = nameof(_canEditOrDeletePreset))]
         private void OpenEditCustomPresetDialog() => PresetDialogVM.AddOrEditPreset(SharedSettings.SelectedPreset!, EditCustomPreset);
 
+        [ReactiveCommand(CanExecute = nameof(_canDuplicatePreset))]
         private void DuplicatePreset()
         {
             var dupNum = 0;
@@ -258,6 +243,7 @@ namespace YoutubeDl.Wpf.ViewModels
             AddCustomPreset(preset with { Name = dupName, IsPredefined = false });
         }
 
+        [ReactiveCommand(CanExecute = nameof(_canEditOrDeletePreset))]
         private void DeleteCustomPreset()
         {
             var preset = SharedSettings.SelectedPreset!;
@@ -314,8 +300,10 @@ namespace YoutubeDl.Wpf.ViewModels
             DownloadArguments.Insert(DownloadArguments.Count - 1, new ArgumentChipViewModel(backendArgument, true, DeleteArgumentChip));
         }
 
+        [ReactiveCommand(CanExecute = nameof(_canResetCustomOutputTemplate))]
         private void ResetCustomOutputTemplate() => SharedSettings.CustomOutputTemplate = Settings.DefaultCustomOutputTemplate;
 
+        [ReactiveCommand(CanExecute = nameof(_canBrowseDownloadFolder))]
         private void BrowseDownloadFolder()
         {
             Microsoft.Win32.OpenFolderDialog folderDialog = new()
@@ -331,6 +319,7 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
+        [ReactiveCommand(CanExecute = nameof(_canOpenDownloadFolder))]
         private void OpenDownloadFolder()
         {
             try
@@ -381,6 +370,7 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
+        [ReactiveCommand(CanExecute = nameof(_canRun))]
         private Task StartDownloadAsync(string link, CancellationToken cancellationToken = default)
         {
             if (SharedSettings.UseCustomOutputTemplate)
@@ -391,5 +381,9 @@ namespace YoutubeDl.Wpf.ViewModels
 
             return BackendInstance.StartDownloadAsync(link, cancellationToken);
         }
+
+        [ReactiveCommand(CanExecute = nameof(_canRun))]
+        private Task ListFormatsAsync(string link, CancellationToken cancellationToken = default) =>
+            BackendInstance.ListFormatsAsync(link, cancellationToken);
     }
 }

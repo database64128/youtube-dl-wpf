@@ -1,17 +1,17 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using ReactiveUI.Validation.Helpers;
 using System;
 using System.Reactive;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
-public class HistoryItemViewModel(string text, Action<HistoryItemViewModel> action) : ReactiveValidationObject
+public partial class HistoryItemViewModel(string text, Action<HistoryItemViewModel> action) : ReactiveValidationObject
 {
     [Reactive]
-    public string Text { get; set; } = text;
+    private string _text = text;
 
     public ReactiveCommand<HistoryItemViewModel, Unit> DeleteItemCommand { get; } = ReactiveCommand.Create(action);
 
-    public override string ToString() => Text;
+    public override string ToString() => _text;
 }
