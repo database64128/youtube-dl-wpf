@@ -64,8 +64,6 @@ WPF GUI for [youtube-dl](https://github.com/ytdl-org/youtube-dl) and [yt-dlp](ht
 
 Prerequisites: .NET 9 SDK
 
-Note for packagers: The application by default uses executable directory as config directory. To use user's config directory, define the constant `PACKAGED` when building.
-
 ###  Build with Release configuration
 
 ```bash
@@ -82,12 +80,6 @@ dotnet publish YoutubeDl.Wpf -c Release
 
 ```bash
 dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
-```
-
-### Publish as self-contained for packaging on Windows x64
-
-```bash
-dotnet publish YoutubeDl.Wpf -c Release -p:DefineConstants=PACKAGED -r win-x64 --self-contained
 ```
 
 ## License
