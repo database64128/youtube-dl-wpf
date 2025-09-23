@@ -210,6 +210,8 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
             {
                 GeneratedDownloadArguments.Add("--write-auto-subs");
                 // --embed-auto-subs pending https://github.com/yt-dlp/yt-dlp/issues/826
+                GeneratedDownloadArguments.Add("--compat-options");
+                GeneratedDownloadArguments.Add("no-keep-subs");
             }
         }
 
