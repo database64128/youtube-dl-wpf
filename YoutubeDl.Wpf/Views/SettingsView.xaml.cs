@@ -65,6 +65,12 @@ namespace YoutubeDl.Wpf.Views
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
+                    viewModel => viewModel.SharedSettings.IsDlBinaryValid,
+                    view => view.dlPathHintTextBlock.Visibility,
+                    conversionHint: BooleanToVisibilityHint.Inverse)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
                     viewModel => viewModel.GlobalArguments,
                     view => view.argumentsItemsControl.ItemsSource)
                     .DisposeWith(disposables);
@@ -90,6 +96,12 @@ namespace YoutubeDl.Wpf.Views
                 this.Bind(ViewModel,
                     viewModel => viewModel.SharedSettings.FfmpegPath,
                     view => view.ffmpegPathTextBox.Text)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.SharedSettings.IsFfmpegBinaryValid,
+                    view => view.ffmpegPathHintTextBlock.Visibility,
+                    conversionHint: BooleanToVisibilityHint.Inverse)
                     .DisposeWith(disposables);
 
                 // Network
@@ -162,13 +174,24 @@ namespace YoutubeDl.Wpf.Views
 
                 // Browse buttons
                 this.BindCommand(ViewModel,
-                    viewModel => viewModel.BrowseDlBinaryCommand,
+                    viewModel => viewModel.SharedSettings.BrowseDlBinaryCommand,
                     view => view.dlPathBrowseButton)
                     .DisposeWith(disposables);
 
                 this.BindCommand(ViewModel,
-                    viewModel => viewModel.BrowseFfmpegBinaryCommand,
+                    viewModel => viewModel.SharedSettings.BrowseFfmpegBinaryCommand,
                     view => view.ffmpegPathBrowseButton)
+                    .DisposeWith(disposables);
+
+                // Show in folder buttons
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.SharedSettings.ShowDlBinaryInFolderCommand,
+                    view => view.dlPathShowInFolderButton)
+                    .DisposeWith(disposables);
+
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.SharedSettings.ShowFfmpegBinaryInFolderCommand,
+                    view => view.ffmpegPathShowInFolderButton)
                     .DisposeWith(disposables);
 
                 // Check now button

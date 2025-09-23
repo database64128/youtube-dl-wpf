@@ -10,7 +10,7 @@
     xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
-    d:DesignHeight="960" d:DesignWidth="848">
+    d:DesignHeight="960" d:DesignWidth="1024">
     <ScrollViewer materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
                   HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
@@ -147,13 +147,25 @@
                      Margin="4"
                      VerticalAlignment="Center"
                      materialDesign:HintAssist.Hint="Required. Path to youtube-dl.exe or yt-dlp.exe"/>
-            <Button x:Name="dlPathBrowseButton"
-                    Grid.Row="6"
-                    Grid.Column="2"
-                    Margin="4"
-                    Style="{StaticResource MaterialDesignFlatButton}">
-                Browse
-            </Button>
+            <StackPanel Grid.Row="6" Grid.Column="2" Orientation="Horizontal">
+                <Button x:Name="dlPathBrowseButton"
+                        Margin="4"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                    Browse
+                </Button>
+                <Button x:Name="dlPathShowInFolderButton"
+                        Margin="4"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                    Show in folder
+                </Button>
+                <TextBlock x:Name="dlPathHintTextBlock"
+                           Margin="4"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                           Foreground="{DynamicResource MaterialDesign.Brush.ValidationError}">
+                    ⚠️ Invalid path
+                </TextBlock>
+            </StackPanel>
 
             <TextBlock Grid.Row="7"
                        Grid.Column="0"
@@ -209,13 +221,25 @@
                      Margin="4"
                      VerticalAlignment="Center"
                      materialDesign:HintAssist.Hint="Optional but recommended. Path to ffmpeg.exe"/>
-            <Button x:Name="ffmpegPathBrowseButton"
-                    Grid.Row="10"
-                    Grid.Column="2"
-                    Margin="4"
-                    Style="{StaticResource MaterialDesignFlatButton}">
-                Browse
-            </Button>
+            <StackPanel Grid.Row="10" Grid.Column="2" Orientation="Horizontal">
+                <Button x:Name="ffmpegPathBrowseButton"
+                        Margin="4"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                    Browse
+                </Button>
+                <Button x:Name="ffmpegPathShowInFolderButton"
+                        Margin="4"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                    Show in folder
+                </Button>
+                <TextBlock x:Name="ffmpegPathHintTextBlock"
+                           Margin="4"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                           Foreground="{DynamicResource MaterialDesign.Brush.ValidationError}">
+                    ⚠️ Invalid path
+                </TextBlock>
+            </StackPanel>
 
             <TextBlock Grid.Row="11"
                        Grid.Column="0"
@@ -276,7 +300,7 @@
                 <TextBlock x:Name="logToFilesHintTextBlock"
                            Margin="4"
                            VerticalAlignment="Center"
-                           Style="{StaticResource MaterialDesignBody2TextBlock}">
+                           Style="{StaticResource MaterialDesignCaptionTextBlock}">
                     This will take effect on the next run.
                 </TextBlock>
             </StackPanel>

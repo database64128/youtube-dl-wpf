@@ -6,7 +6,6 @@ using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -80,14 +79,6 @@ namespace YoutubeDl.Wpf.ViewModels
                 "Max log entries must be greater than 0.");
 
             // The actual validation mechanisms.
-            this.WhenAnyValue(x => x.SharedSettings.BackendPath)
-                .Where(dlPath => !File.Exists(dlPath))
-                .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid backend binary path"));
-
-            this.WhenAnyValue(x => x.SharedSettings.FfmpegPath)
-                .Where(ffmpegPath => !string.IsNullOrEmpty(ffmpegPath) && !File.Exists(ffmpegPath))
-                .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid ffmpeg binary path"));
-
             this.WhenAnyValue(x => x.SharedSettings.Proxy)
                 .Where(proxy => !string.IsNullOrEmpty(proxy) && !(Uri.TryCreate(proxy, UriKind.Absolute, out var uri) && (uri.Scheme is "socks5" or "http" or "https")))
                 .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid proxy URL"));
@@ -147,38 +138,6 @@ namespace YoutubeDl.Wpf.ViewModels
 
             // Save setting
             SharedSettings.AppColorMode = colorMode;
-        }
-
-        [ReactiveCommand]
-        private void BrowseDlBinary() => SharedSettings.BackendPath = BrowseBinary(SharedSettings.Backend.ToExecutableName(), SharedSettings.BackendPath);
-
-        [ReactiveCommand]
-        private void BrowseFfmpegBinary() => SharedSettings.FfmpegPath = BrowseBinary("ffmpeg", SharedSettings.FfmpegPath);
-
-        private static string BrowseBinary(string filename, string path)
-        {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new()
-            {
-                FileName = filename,
-                DefaultExt = ".exe",
-                Filter = "Executables (.exe)|*.exe",
-                InitialDirectory = Path.GetDirectoryName(path),
-            };
-
-            bool? result;
-            try
-            {
-                result = openFileDialog.ShowDialog();
-            }
-            catch (Win32Exception)
-            {
-                // ShowDialog silently ignores InitialDirectory when the path points to a non-existent directory on an existing volume.
-                // But it throws a System.ComponentModel.Win32Exception when the path points to a non-existent volume.
-                // So we catch the exception and try again with an empty InitialDirectory.
-                openFileDialog.InitialDirectory = "";
-                result = openFileDialog.ShowDialog();
-            }
-            return result == true ? openFileDialog.FileName : path;
         }
 
         [ReactiveCommand]

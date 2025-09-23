@@ -3,3 +3,7 @@ GenerateConsoleCtrlEvent
 AttachConsole
 FreeConsole
 SetConsoleCtrlHandler
+
+SHOpenFolderAndSelectItems
+ILCreateFromPath
+ILFree
