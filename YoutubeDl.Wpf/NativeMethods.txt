@@ -1,0 +1,5 @@
+CTRL_C_EVENT
+GenerateConsoleCtrlEvent
+AttachConsole
+FreeConsole
+SetConsoleCtrlHandler

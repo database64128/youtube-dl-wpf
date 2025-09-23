@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeDl.Wpf.Utils;
+using Windows.Win32;
 
 namespace YoutubeDl.Wpf.Models;
 
@@ -341,12 +341,12 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
     [ReactiveCommand(CanExecute = nameof(_canAbort))]
     public async Task AbortAsync(CancellationToken cancellationToken = default)
     {
-        if (CtrlCHelper.AttachConsole((uint)_process.Id))
+        if (PInvoke.AttachConsole((uint)_process.Id))
         {
-            CtrlCHelper.SetConsoleCtrlHandler(null, true);
+            PInvoke.SetConsoleCtrlHandler(null, true);
             try
             {
-                if (CtrlCHelper.GenerateConsoleCtrlEvent(CtrlCHelper.CTRL_C_EVENT, 0))
+                if (PInvoke.GenerateConsoleCtrlEvent(PInvoke.CTRL_C_EVENT, 0u))
                 {
                     await _process.WaitForExitAsync(cancellationToken);
                 }
@@ -357,8 +357,8 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
             }
             finally
             {
-                CtrlCHelper.SetConsoleCtrlHandler(null, false);
-                CtrlCHelper.FreeConsole();
+                PInvoke.SetConsoleCtrlHandler(null, false);
+                PInvoke.FreeConsole();
             }
         }
         this.Log().Info("🛑 Aborted.");
