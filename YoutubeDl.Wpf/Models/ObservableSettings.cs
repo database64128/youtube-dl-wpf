@@ -148,7 +148,7 @@ public partial class ObservableSettings : ReactiveObject
         _loggingMaxEntries = settings.LoggingMaxEntries;
         _logToFiles = settings.LogToFiles;
         _selectedPreset = settings.SelectedPreset;
-        _selectedPresetText = settings.SelectedPreset.DisplayName;
+        _selectedPresetText = settings.SelectedPreset.Name;
         _customPresets = [.. settings.CustomPresets];
         _addMetadata = settings.AddMetadata;
         _downloadThumbnail = settings.DownloadThumbnail;

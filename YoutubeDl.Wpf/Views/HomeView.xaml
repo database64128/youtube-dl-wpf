@@ -84,7 +84,7 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
                     <TextBlock VerticalAlignment="Center" Margin="4 4 8 4">Preset</TextBlock>
                     <ComboBox x:Name="presetComboBox"
-                              DisplayMemberPath="DisplayName"
+                              DisplayMemberPath="Name"
                               StaysOpenOnEdit="True"
                               Margin="4"
                               VerticalAlignment="Center">

@@ -237,11 +237,11 @@ namespace YoutubeDl.Wpf.ViewModels
             do
             {
                 dupNum++;
-                dupName = $"{preset.DisplayName} ({dupNum})";
+                dupName = $"{preset.Name} ({dupNum})";
             }
-            while (Presets.Any(x => x.DisplayName == dupName));
+            while (Presets.Any(x => x.Name == dupName));
 
-            AddCustomPreset(preset with { Name = dupName, IsPredefined = false });
+            AddCustomPreset(preset.Duplicate(dupName));
         }
 
         [ReactiveCommand(CanExecute = nameof(_canEditOrDeletePreset))]
