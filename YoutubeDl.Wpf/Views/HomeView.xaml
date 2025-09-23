@@ -14,7 +14,7 @@
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition x:Name="configureDownloadRowDefinition" Height="Auto" />
+            <RowDefinition x:Name="configureDownloadRowDefinition" Height="Auto" MinHeight="80" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -30,7 +30,7 @@
         </TextBlock>
 
         <ScrollViewer Grid.Row="1"
-                      MaxHeight="{Binding ElementName=configureDownloadRowDefinition, Path=MaxHeight}"
+                      MaxHeight="{Binding ElementName=configureDownloadRowDefinition, Path=MaxHeight, Mode=OneWay}"
                       materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto">
@@ -46,7 +46,7 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="690" />
+                    <ColumnDefinition Width="688" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Row="0"

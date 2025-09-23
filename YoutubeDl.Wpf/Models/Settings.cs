@@ -28,6 +28,11 @@ public class Settings
     public const double DefaultWindowHeight = 720.0;
 
     /// <summary>
+    /// Defines the default height of configureDownloadRowDefinition.
+    /// </summary>
+    public const double DefaultConfigureDownloadRowDefinitionHeight = 394.0;
+
+    /// <summary>
     /// Defines the default limit on the number of log messages
     /// displayed in the logs view.
     /// </summary>
@@ -48,6 +53,8 @@ public class Settings
     public double WindowWidth { get; set; } = DefaultWindowWidth;
 
     public double WindowHeight { get; set; } = DefaultWindowHeight;
+
+    public double ConfigureDownloadRowDefinitionHeight { get; set; } = DefaultConfigureDownloadRowDefinitionHeight;
 
     public BaseTheme AppColorMode { get; set; } = BaseTheme.Inherit;
 

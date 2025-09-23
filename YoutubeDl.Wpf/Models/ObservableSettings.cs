@@ -29,6 +29,9 @@ public partial class ObservableSettings : ReactiveObject
     private double _windowHeight;
 
     [Reactive]
+    private double _configureDownloadRowDefinitionHeight;
+
+    [Reactive]
     private BackendTypes _backend;
 
     [Reactive]
@@ -137,6 +140,7 @@ public partial class ObservableSettings : ReactiveObject
         _appColorMode = settings.AppColorMode;
         _windowWidth = settings.WindowWidth;
         _windowHeight = settings.WindowHeight;
+        _configureDownloadRowDefinitionHeight = settings.ConfigureDownloadRowDefinitionHeight;
         _backend = settings.Backend;
         _backendPath = settings.BackendPath;
         _backendGlobalArguments = [.. settings.BackendGlobalArguments];
@@ -205,6 +209,7 @@ public partial class ObservableSettings : ReactiveObject
         AppSettings.AppColorMode = AppColorMode;
         AppSettings.WindowWidth = WindowWidth;
         AppSettings.WindowHeight = WindowHeight;
+        AppSettings.ConfigureDownloadRowDefinitionHeight = ConfigureDownloadRowDefinitionHeight;
         AppSettings.Backend = Backend;
         AppSettings.BackendPath = BackendPath;
         AppSettings.BackendGlobalArguments = [.. BackendGlobalArguments];

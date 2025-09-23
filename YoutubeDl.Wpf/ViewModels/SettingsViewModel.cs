@@ -78,6 +78,7 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             SharedSettings.WindowWidth = Settings.DefaultWindowWidth;
             SharedSettings.WindowHeight = Settings.DefaultWindowHeight;
+            SharedSettings.ConfigureDownloadRowDefinitionHeight = Settings.DefaultConfigureDownloadRowDefinitionHeight;
         }
 
         [ReactiveCommand]

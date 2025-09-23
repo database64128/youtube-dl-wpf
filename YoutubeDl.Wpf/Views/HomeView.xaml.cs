@@ -30,6 +30,13 @@ namespace YoutubeDl.Wpf.Views
                     windowHeight => windowHeight - 258.0)
                     .DisposeWith(disposables);
 
+                this.Bind(ViewModel,
+                    viewModel => viewModel.SharedSettings.ConfigureDownloadRowDefinitionHeight,
+                    view => view.configureDownloadRowDefinition.Height,
+                    heightPixels => new(heightPixels),
+                    height => height.Value)
+                    .DisposeWith(disposables);
+
                 // Link and Start
                 this.Bind(ViewModel,
                     viewModel => viewModel.Link,
