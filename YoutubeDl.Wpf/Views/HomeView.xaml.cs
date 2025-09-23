@@ -21,6 +21,15 @@ namespace YoutubeDl.Wpf.Views
 
             this.WhenActivated(disposables =>
             {
+                // configureDownloadRowDefinition: Set MaxHeight to prevent GridSplitter
+                // from being dragged beyond window bounds. The inner ScrollViewer's
+                // MaxHeight is then bound to that in XAML to keep them in sync.
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.SharedSettings.WindowHeight,
+                    view => view.configureDownloadRowDefinition.MaxHeight,
+                    windowHeight => windowHeight - 258.0)
+                    .DisposeWith(disposables);
+
                 // Link and Start
                 this.Bind(ViewModel,
                     viewModel => viewModel.Link,
