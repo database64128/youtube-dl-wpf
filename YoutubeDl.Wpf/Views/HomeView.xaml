@@ -14,7 +14,8 @@
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="1.5*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -264,14 +265,19 @@
             </Grid>
         </ScrollViewer>
 
-        <TextBlock Grid.Row="2"
-                   Margin="8 20 8 8"
+        <GridSplitter Grid.Row="2"
+                      Height="5"
+                      Margin="0 8 0 8"
+                      HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="3"
+                   Margin="8"
                    Style="{StaticResource MaterialDesignHeadline5TextBlock}">
             Logs
         </TextBlock>
 
         <TextBox x:Name="resultTextBox"
-                 Grid.Row="3"
+                 Grid.Row="4"
                  Margin="8"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                  TextWrapping="NoWrap"
