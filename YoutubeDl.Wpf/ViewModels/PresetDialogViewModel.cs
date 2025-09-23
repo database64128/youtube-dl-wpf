@@ -1,6 +1,5 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using ReactiveUI.Validation.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +9,7 @@ using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
-public partial class PresetDialogViewModel : ReactiveValidationObject
+public partial class PresetDialogViewModel : ReactiveObject
 {
     private readonly List<BackendArgument> _backendArguments = [];
     private readonly Action<bool> _controlDialogAction;

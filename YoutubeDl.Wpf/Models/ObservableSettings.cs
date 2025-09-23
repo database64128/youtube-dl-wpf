@@ -128,6 +128,9 @@ public partial class ObservableSettings : ReactiveObject
     [ObservableAsProperty]
     private bool _isFfmpegBinaryValid;
 
+    [ObservableAsProperty]
+    private bool _isProxyUrlValid;
+
     public ObservableSettings(Settings settings)
     {
         AppSettings = settings;
@@ -160,20 +163,41 @@ public partial class ObservableSettings : ReactiveObject
         _downloadPath = settings.DownloadPath;
         DownloadPathHistory = [.. settings.DownloadPathHistory];
 
-        _canShowDlBinaryInFolder = this
-            .WhenAnyValue(x => x.BackendPath)
-            .Select(dlPath => File.Exists(dlPath));
+        IObservable<(string dlPath, bool dlBinaryExists)> backendPathObservable = this
+            .WhenAnyValue(x => x.BackendPath, dlPath => (dlPath, File.Exists(dlPath)));
+        _canShowDlBinaryInFolder = backendPathObservable
+            .Select(x => x.dlBinaryExists);
         _isDlBinaryValidHelper = _canShowDlBinaryInFolder
-            .ToProperty(this, viewModel => viewModel.IsDlBinaryValid);
+            .ToProperty(this, x => x.IsDlBinaryValid);
+
+        // Guess the backend type from binary name.
+        backendPathObservable.Subscribe(x =>
+        {
+            if (x.dlBinaryExists)
+            {
+                switch (Path.GetFileNameWithoutExtension(x.dlPath))
+                {
+                    case "youtube-dl":
+                        Backend = BackendTypes.Ytdl;
+                        break;
+                    case "yt-dlp":
+                        Backend = BackendTypes.Ytdlp;
+                        break;
+                }
+            }
+        });
 
         IObservable<(string ffmpegPath, bool ffmpegBinaryExists)> ffmpegPathObservable = this
-            .WhenAnyValue(x => x.FfmpegPath)
-            .Select(ffmpegPath => (ffmpegPath, File.Exists(ffmpegPath)));
+            .WhenAnyValue(x => x.FfmpegPath, ffmpegPath => (ffmpegPath, File.Exists(ffmpegPath)));
         _canShowFfmpegBinaryInFolder = ffmpegPathObservable
             .Select(x => x.ffmpegBinaryExists);
         _isFfmpegBinaryValidHelper = ffmpegPathObservable
             .Select(x => x.ffmpegBinaryExists || string.IsNullOrEmpty(x.ffmpegPath))
-            .ToProperty(this, viewModel => viewModel.IsFfmpegBinaryValid);
+            .ToProperty(this, x => x.IsFfmpegBinaryValid);
+
+        _isProxyUrlValidHelper = this
+            .WhenAnyValue(x => x.Proxy, proxy => string.IsNullOrEmpty(proxy) || (Uri.TryCreate(proxy, UriKind.Absolute, out Uri? uri) && (uri.Scheme is "socks5" or "http" or "https")))
+            .ToProperty(this, x => x.IsProxyUrlValid);
     }
 
     public void UpdateAppSettings()

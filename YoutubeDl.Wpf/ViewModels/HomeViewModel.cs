@@ -3,7 +3,6 @@ using DynamicData.Binding;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using ReactiveUI.Validation.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -17,7 +16,7 @@ using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public partial class HomeViewModel : ReactiveValidationObject
+    public partial class HomeViewModel : ReactiveObject
     {
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
         private readonly IObservable<bool> _canResetCustomOutputTemplate;
@@ -131,8 +130,8 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.SharedSettings.Backend,
                 x => x.SharedSettings.FfmpegPath,
                 x => x.SharedSettings.Proxy,
-                x => x.SharedSettings.SelectedPreset)
-                .Select(_ => Unit.Default);
+                x => x.SharedSettings.SelectedPreset,
+                (_, _, _, _) => Unit.Default);
 
             var gdaB = this.WhenAnyValue(
                 x => x.SharedSettings.DownloadSubtitles,
@@ -141,15 +140,15 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.SharedSettings.AddMetadata,
                 x => x.SharedSettings.DownloadThumbnail,
                 x => x.SharedSettings.DownloadPlaylist,
-                x => x.PlaylistItems)
-                .Select(_ => Unit.Default);
+                x => x.PlaylistItems,
+                (_, _, _, _, _, _, _) => Unit.Default);
 
             var gdaC = this.WhenAnyValue(
                 x => x.SharedSettings.UseCustomOutputTemplate,
                 x => x.SharedSettings.CustomOutputTemplate,
                 x => x.SharedSettings.UseCustomPath,
-                x => x.SharedSettings.DownloadPath)
-                .Select(_ => Unit.Default);
+                x => x.SharedSettings.DownloadPath,
+                (_, _, _, _) => Unit.Default);
 
             Observable.Merge(gdaA, gdaB, gdaC)
                       .Throttle(TimeSpan.FromSeconds(0.25))
@@ -179,13 +178,15 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.SharedSettings.UseCustomPath,
                 x => x.SharedSettings.CustomOutputTemplate,
                 x => x.SharedSettings.DownloadPath,
-                x => x.SharedSettings.BackendPath,
-                (link, isRunning, useCustomOutputTemplate, useCustomPath, outputTemplate, downloadPath, backendPath) =>
+                x => x.SharedSettings.IsDlBinaryValid,
+                x => x.SharedSettings.IsFfmpegBinaryValid,
+                (link, isRunning, useCustomOutputTemplate, useCustomPath, outputTemplate, downloadPath, isDlBinaryValid, isFfmpegBinaryValid) =>
                     !string.IsNullOrEmpty(link) &&
                     !isRunning &&
                     (!useCustomOutputTemplate || !string.IsNullOrEmpty(outputTemplate)) &&
                     (!useCustomPath || Directory.Exists(downloadPath)) &&
-                    !string.IsNullOrEmpty(backendPath));
+                    isDlBinaryValid &&
+                    isFfmpegBinaryValid);
 
             var canAbort = this.WhenAnyValue(x => x.BackendInstance.IsRunning);
 
@@ -197,7 +198,7 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.SharedSettings.SelectedPreset,
                 (Preset? selectedPreset) => selectedPreset is not null);
 
-            if (SharedSettings.BackendAutoUpdate && !string.IsNullOrEmpty(SharedSettings.BackendPath))
+            if (SharedSettings.BackendAutoUpdate && SharedSettings.IsDlBinaryValid)
             {
                 _ = BackendInstance.UpdateAsync();
             }

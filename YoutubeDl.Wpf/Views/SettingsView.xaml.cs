@@ -110,6 +110,12 @@ namespace YoutubeDl.Wpf.Views
                     view => view.proxyTextBox.Text)
                     .DisposeWith(disposables);
 
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.SharedSettings.IsProxyUrlValid,
+                    view => view.proxyHintTextBlock.Visibility,
+                    conversionHint: BooleanToVisibilityHint.Inverse)
+                    .DisposeWith(disposables);
+
                 // Logging
                 this.Bind(ViewModel,
                     viewModel => viewModel.SharedSettings.LoggingMaxEntries,

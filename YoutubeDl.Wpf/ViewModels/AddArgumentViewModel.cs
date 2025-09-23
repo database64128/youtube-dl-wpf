@@ -1,12 +1,11 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using ReactiveUI.Validation.Helpers;
 using System;
 using System.Reactive;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
-public partial class AddArgumentViewModel : ReactiveValidationObject
+public partial class AddArgumentViewModel : ReactiveObject
 {
     [Reactive]
     private string _argument = "";

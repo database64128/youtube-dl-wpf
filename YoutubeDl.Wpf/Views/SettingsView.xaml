@@ -261,6 +261,15 @@
                      Margin="4"
                      VerticalAlignment="Center"
                      materialDesign:HintAssist.Hint="Optional. Override system proxy settings. Example: socks5://localhost:1080/"/>
+            <TextBlock x:Name="proxyHintTextBlock"
+                       Grid.Row="12"
+                       Grid.Column="2"
+                       Margin="4"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                       Foreground="{DynamicResource MaterialDesign.Brush.ValidationError}">
+                ⚠️ Invalid proxy URL
+            </TextBlock>
 
             <TextBlock Grid.Row="13"
                        Grid.Column="0"

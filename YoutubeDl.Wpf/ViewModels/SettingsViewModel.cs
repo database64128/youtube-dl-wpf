@@ -2,11 +2,8 @@
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
 using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
@@ -14,7 +11,7 @@ using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels
 {
-    public partial class SettingsViewModel : ReactiveValidationObject
+    public partial class SettingsViewModel : ReactiveObject
     {
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
         private readonly PaletteHelper _paletteHelper;
@@ -27,8 +24,8 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public BackendService BackendService { get; }
 
-        [Reactive]
-        private string _windowSizeText;
+        [ObservableAsProperty]
+        private string _windowSizeText = "";
 
         [Reactive]
         private bool _isLogToFilesHintVisible;
@@ -48,40 +45,11 @@ namespace YoutubeDl.Wpf.ViewModels
             Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
             SharedSettings = settings;
             BackendService = backendService;
-            WindowSizeText = GenerateWindowSizeText(settings.WindowWidth, settings.WindowHeight);
 
             GlobalArguments.AddRange(SharedSettings.BackendGlobalArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
             GlobalArguments.Add(new AddArgumentViewModel(AddArgument));
 
             ChangeColorMode(SharedSettings.AppColorMode);
-
-            // The error messages won't be shown because INotifyDataErrorInfo only works with XAML bindings.
-            // See https://github.com/reactiveui/ReactiveUI.Validation/issues/237.
-            // These rules are kept here as a reference in case support gets added in a future version.
-            this.ValidationRule(
-                viewModel => viewModel.SharedSettings.BackendPath,
-                dlPath => File.Exists(dlPath),
-                "Invalid backend binary path.");
-
-            this.ValidationRule(
-                viewModel => viewModel.SharedSettings.FfmpegPath,
-                ffmpegPath => string.IsNullOrEmpty(ffmpegPath) || File.Exists(ffmpegPath),
-                "Invalid ffmpeg binary path.");
-
-            this.ValidationRule(
-                viewModel => viewModel.SharedSettings.Proxy,
-                proxy => string.IsNullOrEmpty(proxy) || (Uri.TryCreate(proxy, UriKind.Absolute, out var uri) && (uri.Scheme is "socks5" or "http" or "https")),
-                "Invalid proxy URL.");
-
-            this.ValidationRule(
-                viewModel => viewModel.SharedSettings.LoggingMaxEntries,
-                loggingMaxEntries => loggingMaxEntries > 0,
-                "Max log entries must be greater than 0.");
-
-            // The actual validation mechanisms.
-            this.WhenAnyValue(x => x.SharedSettings.Proxy)
-                .Where(proxy => !string.IsNullOrEmpty(proxy) && !(Uri.TryCreate(proxy, UriKind.Absolute, out var uri) && (uri.Scheme is "socks5" or "http" or "https")))
-                .Subscribe(_ => _snackbarMessageQueue.Enqueue("Warning: Invalid proxy URL"));
 
             this.WhenAnyValue(x => x.SharedSettings.LoggingMaxEntries)
                 .Subscribe(loggingMaxEntries =>
@@ -98,21 +66,9 @@ namespace YoutubeDl.Wpf.ViewModels
                 });
 
             // Update window size text on size change.
-            this.WhenAnyValue(x => x.SharedSettings.WindowWidth, x => x.SharedSettings.WindowHeight)
-                .Subscribe(((double width, double height) x) => WindowSizeText = GenerateWindowSizeText(x.width, x.height));
-
-            // Guess the backend type from binary name.
-            this.WhenAnyValue(x => x.SharedSettings.BackendPath)
-                .Select(dlPath => Path.GetFileNameWithoutExtension(dlPath))
-                .Subscribe(name =>
-                {
-                    SharedSettings.Backend = name switch
-                    {
-                        "youtube-dl" => BackendTypes.Ytdl,
-                        "yt-dlp" => BackendTypes.Ytdlp,
-                        _ => SharedSettings.Backend,
-                    };
-                });
+            _windowSizeTextHelper = this
+                .WhenAnyValue(x => x.SharedSettings.WindowWidth, x => x.SharedSettings.WindowHeight, GenerateWindowSizeText)
+                .ToProperty(this, x => x.WindowSizeText);
         }
 
         private static string GenerateWindowSizeText(double width, double height) => $"{width:F} × {height:F}";

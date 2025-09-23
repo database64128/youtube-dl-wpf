@@ -1,12 +1,11 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using ReactiveUI.Validation.Helpers;
 using System;
 using System.Reactive;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
-public partial class HistoryItemViewModel(string text, Action<HistoryItemViewModel> action) : ReactiveValidationObject
+public partial class HistoryItemViewModel(string text, Action<HistoryItemViewModel> action) : ReactiveObject
 {
     [Reactive]
     private string _text = text;

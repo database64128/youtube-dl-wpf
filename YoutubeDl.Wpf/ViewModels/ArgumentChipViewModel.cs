@@ -1,13 +1,12 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using ReactiveUI.Validation.Helpers;
 using System;
 using System.Reactive;
 using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
-public partial class ArgumentChipViewModel(BackendArgument argument, bool isRemovable, Action<ArgumentChipViewModel> action) : ReactiveValidationObject
+public partial class ArgumentChipViewModel(BackendArgument argument, bool isRemovable, Action<ArgumentChipViewModel> action) : ReactiveObject
 {
     [Reactive]
     private BackendArgument _argument = argument;
