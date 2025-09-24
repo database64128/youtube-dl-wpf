@@ -16,9 +16,10 @@
             <ColumnDefinition Width="128" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBox Grid.Column="0"
+        <TextBox x:Name="argumentTextBox"
+                 Grid.Column="0"
                  VerticalAlignment="Center"
-                 x:Name="argumentTextBox"/>
+                 FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono" />
         <Button Grid.Column="1"
                 x:Name="addButton"
                 Style="{StaticResource MaterialDesignIconForegroundButton}"

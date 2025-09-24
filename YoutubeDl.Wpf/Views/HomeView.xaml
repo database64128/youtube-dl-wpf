@@ -191,7 +191,8 @@
                               IsEditable="True"
                               IsReadOnly="False"
                               StaysOpenOnEdit="True"
-                              VerticalAlignment="Center">
+                              VerticalAlignment="Center"
+                              FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">
                         <ComboBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <VirtualizingStackPanel />
