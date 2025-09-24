@@ -47,7 +47,7 @@ namespace YoutubeDl.Wpf
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel,
-                    viewModel => viewModel.PresetDialogVM,
+                    viewModel => viewModel.DialogVM,
                     view => view.rootDialogHost.DialogContent)
                     .DisposeWith(disposables);
 

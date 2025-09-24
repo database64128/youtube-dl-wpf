@@ -19,8 +19,10 @@ namespace YoutubeDl.Wpf.ViewModels
 
         public ObservableSettings SharedSettings { get; }
         public BackendService BackendService { get; }
-        public PresetDialogViewModel PresetDialogVM { get; }
         public object[] Tabs { get; }
+
+        [Reactive]
+        private object? _dialogVM;
 
         [Reactive]
         private bool _isDialogOpen;
@@ -52,15 +54,21 @@ namespace YoutubeDl.Wpf.ViewModels
 
             SharedSettings = new(_settings);
             BackendService = new(SharedSettings);
-            PresetDialogVM = new(ControlDialog);
             Tabs =
             [
-                new HomeViewModel(SharedSettings, BackendService, queuedTextBoxsink, PresetDialogVM, snackbarMessageQueue),
+                new HomeViewModel(SharedSettings, BackendService, queuedTextBoxsink, snackbarMessageQueue, OpenDialog, CloseDialog, CloseDialogCommand),
                 new SettingsViewModel(SharedSettings, BackendService, snackbarMessageQueue),
             ];
         }
 
-        private void ControlDialog(bool open) => IsDialogOpen = open;
+        private void OpenDialog(object? vm)
+        {
+            DialogVM = vm;
+            IsDialogOpen = true;
+        }
+
+        [ReactiveCommand]
+        private void CloseDialog() => IsDialogOpen = false;
 
         [ReactiveCommand]
         private async Task<bool> SaveSettingsAsync(CancelEventArgs? cancelEventArgs = null, CancellationToken cancellationToken = default)

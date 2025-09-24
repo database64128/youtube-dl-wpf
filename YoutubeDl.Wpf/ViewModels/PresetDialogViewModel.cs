@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using YoutubeDl.Wpf.Models;
 
@@ -12,7 +13,8 @@ namespace YoutubeDl.Wpf.ViewModels;
 public partial class PresetDialogViewModel : ReactiveObject
 {
     private readonly List<BackendArgument> _backendArguments = [];
-    private readonly Action<bool> _controlDialogAction;
+    private readonly Action<object?> _openDialog;
+    private readonly Action _closeDialog;
     private readonly IObservable<bool> _canSave;
     private Preset? _preset;
     private Action<Preset>? _saveAction;
@@ -35,9 +37,11 @@ public partial class PresetDialogViewModel : ReactiveObject
     [Reactive]
     private ObservableCollection<object> _argumentChips;
 
-    public PresetDialogViewModel(Action<bool> controlDialogAction)
+    public PresetDialogViewModel(Action<object?> openDialog, Action closeDialog, ReactiveCommand<Unit, Unit> closeDialogCommand)
     {
-        _controlDialogAction = controlDialogAction;
+        _openDialog = openDialog;
+        _closeDialog = closeDialog;
+        CloseDialogCommand = closeDialogCommand;
 
         ArgumentChips =
         [
@@ -65,13 +69,10 @@ public partial class PresetDialogViewModel : ReactiveObject
         _preset = preset;
         _saveAction = saveAction;
         LoadPreset(preset);
-        OpenDialog();
+        _openDialog(this);
     }
 
-    private void OpenDialog() => _controlDialogAction(true);
-
-    [ReactiveCommand]
-    private void CloseDialog() => _controlDialogAction(false);
+    public ReactiveCommand<Unit, Unit> CloseDialogCommand { get; }
 
     [ReactiveCommand(CanExecute = nameof(_canSave))]
     private void Save()
@@ -81,7 +82,7 @@ public partial class PresetDialogViewModel : ReactiveObject
             throw new InvalidOperationException("Missing save action for preset.");
         }
 
-        CloseDialog();
+        _closeDialog();
         _saveAction(ToPreset());
     }
 

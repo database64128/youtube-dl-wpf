@@ -19,6 +19,7 @@ namespace YoutubeDl.Wpf.ViewModels
     public partial class HomeViewModel : ReactiveObject
     {
         private readonly ISnackbarMessageQueue _snackbarMessageQueue;
+        private readonly PresetDialogViewModel _presetDialogVM;
         private readonly IObservable<bool> _canResetCustomOutputTemplate;
         private readonly IObservable<bool> _canBrowseDownloadFolder;
         private readonly IObservable<bool> _canOpenDownloadFolder;
@@ -36,8 +37,6 @@ namespace YoutubeDl.Wpf.ViewModels
         public BackendInstance BackendInstance { get; }
 
         public QueuedTextBoxSink QueuedTextBoxSink { get; }
-
-        public PresetDialogViewModel PresetDialogVM { get; }
 
         public ObservableCollection<Preset> Presets { get; } = [];
 
@@ -68,14 +67,21 @@ namespace YoutubeDl.Wpf.ViewModels
         [Reactive]
         private string _playlistItems = "";
 
-        public HomeViewModel(ObservableSettings settings, BackendService backendService, QueuedTextBoxSink queuedTextBoxSink, PresetDialogViewModel presetDialogViewModel, ISnackbarMessageQueue snackbarMessageQueue)
+        public HomeViewModel(
+            ObservableSettings settings,
+            BackendService backendService,
+            QueuedTextBoxSink queuedTextBoxSink,
+            ISnackbarMessageQueue snackbarMessageQueue,
+            Action<object?> openDialog,
+            Action closeDialog,
+            ReactiveCommand<Unit, Unit> closeDialogCommand)
         {
             SharedSettings = settings;
             BackendService = backendService;
             BackendInstance = backendService.CreateInstance();
             QueuedTextBoxSink = queuedTextBoxSink;
-            PresetDialogVM = presetDialogViewModel;
             _snackbarMessageQueue = snackbarMessageQueue;
+            _presetDialogVM = new(openDialog, closeDialog, closeDialogCommand);
 
             // Tab icon Easter egg.
             const PackIconKind defaultIcon = PackIconKind.Download;
@@ -204,9 +210,16 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.SharedSettings.SelectedPreset,
                 (Preset? selectedPreset) => selectedPreset is not null);
 
-            if (SharedSettings.BackendAutoUpdate && SharedSettings.IsDlBinaryValid)
+            if (SharedSettings.IsDlBinaryValid)
             {
-                _ = BackendInstance.UpdateAsync();
+                if (SharedSettings.BackendAutoUpdate)
+                {
+                    _ = BackendInstance.UpdateAsync();
+                }
+            }
+            else
+            {
+                openDialog(new GetStartedDialogViewModel(SharedSettings, closeDialog));
             }
         }
 
@@ -228,10 +241,10 @@ namespace YoutubeDl.Wpf.ViewModels
         }
 
         [ReactiveCommand]
-        private void OpenAddCustomPresetDialog() => PresetDialogVM.AddOrEditPreset(Preset.Empty, AddCustomPreset);
+        private void OpenAddCustomPresetDialog() => _presetDialogVM.AddOrEditPreset(Preset.Empty, AddCustomPreset);
 
         [ReactiveCommand(CanExecute = nameof(_canEditOrDeletePreset))]
-        private void OpenEditCustomPresetDialog() => PresetDialogVM.AddOrEditPreset(SharedSettings.SelectedPreset!, EditCustomPreset);
+        private void OpenEditCustomPresetDialog() => _presetDialogVM.AddOrEditPreset(SharedSettings.SelectedPreset!, EditCustomPreset);
 
         [ReactiveCommand(CanExecute = nameof(_canDuplicatePreset))]
         private void DuplicatePreset()

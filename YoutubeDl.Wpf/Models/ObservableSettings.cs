@@ -17,6 +17,8 @@ public partial class ObservableSettings : ReactiveObject
     private readonly IObservable<bool> _canShowDlBinaryInFolder;
     private readonly IObservable<bool> _canShowFfmpegBinaryInFolder;
 
+    public IObservable<bool> IsDlBinaryValidObservable => _canShowDlBinaryInFolder;
+
     public Settings AppSettings { get; }
 
     [Reactive]
@@ -129,6 +131,9 @@ public partial class ObservableSettings : ReactiveObject
     private bool _isDlBinaryValid;
 
     [ObservableAsProperty]
+    private bool _isDlBinaryHintVisible;
+
+    [ObservableAsProperty]
     private bool _isFfmpegBinaryValid;
 
     [ObservableAsProperty]
@@ -173,6 +178,9 @@ public partial class ObservableSettings : ReactiveObject
             .Select(x => x.dlBinaryExists);
         _isDlBinaryValidHelper = _canShowDlBinaryInFolder
             .ToProperty(this, x => x.IsDlBinaryValid);
+        _isDlBinaryHintVisibleHelper = backendPathObservable
+            .Select(x => !x.dlBinaryExists && !string.IsNullOrEmpty(x.dlPath))
+            .ToProperty(this, x => x.IsDlBinaryHintVisible);
 
         // Guess the backend type from binary name.
         backendPathObservable.Subscribe(x =>
