@@ -126,6 +126,12 @@ namespace YoutubeDl.Wpf.ViewModels
                 new AddArgumentViewModel(AddArgument),
             ];
 
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                _link = args[1];
+            }
+
             var gdaA = this.WhenAnyValue(
                 x => x.SharedSettings.Backend,
                 x => x.SharedSettings.FfmpegPath,
