@@ -10,7 +10,8 @@
     xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodels:PresetDialogViewModel}"
-    d:DesignHeight="360" d:DesignWidth="640">
+    d:DesignWidth="640" d:DesignHeight="360"
+    MinWidth="480" MinHeight="270">
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -18,8 +19,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" MaxHeight="40" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -56,17 +57,19 @@
                       Content="yt-dlp" />
         </StackPanel>
 
-        <ItemsControl Grid.Row="4"
+        <ScrollViewer Grid.Row="4"
                       Grid.RowSpan="2"
-                      x:Name="argumentsItemsControl">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+                      VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="argumentsItemsControl">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
 
-        <StackPanel Grid.Row="6" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="saveButton"
                     Margin="0 16 4 0"
                     Style="{StaticResource MaterialDesignFlatButton}">

@@ -10,16 +10,16 @@
     xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodels:GetStartedDialogViewModel}"
-    d:DesignHeight="540" d:DesignWidth="800" Width="800">
+    d:DesignHeight="540" d:DesignWidth="800">
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -33,117 +33,128 @@
 
         <TextBlock Grid.Row="1"
                    Margin="8 8 8 4"
+                   TextWrapping="WrapWithOverflow"
+                   TextTrimming="CharacterEllipsis"
                    Style="{StaticResource MaterialDesignBody1TextBlock}">
             Cube YouTube Downloader requires a backend to function. It works best with an FFmpeg installation.
         </TextBlock>
 
         <TextBlock Grid.Row="2"
                    Margin="8 4 8 8"
+                   TextWrapping="WrapWithOverflow"
+                   TextTrimming="CharacterEllipsis"
                    Style="{StaticResource MaterialDesignBody1TextBlock}">
             Don't worry, you can adjust these options later in Settings.
         </TextBlock>
 
-        <Grid Grid.Row="3" Margin="0 16">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="400" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Row="3"
+                      Margin="8 16"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <Grid Width="752">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="400" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0"
-                       Grid.Column="0"
-                       Margin="8"
-                       Style="{StaticResource MaterialDesignBody2TextBlock}">
-                Backend type
-            </TextBlock>
-            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                <RadioButton x:Name="ytdlBackendTypeRadioButton"
-                             GroupName="BackendType"
-                             Style="{StaticResource MaterialDesignChoiceChipSecondaryOutlineRadioButton}">
-                    youtube-dl
-                </RadioButton>
-                <RadioButton x:Name="ytdlpBackendTypeRadioButton"
-                             GroupName="BackendType"
-                             Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
-                    yt-dlp
-                </RadioButton>
-            </StackPanel>
-
-            <TextBlock Grid.Row="1"
-                       Grid.Column="0"
-                       Margin="8"
-                       Style="{StaticResource MaterialDesignBody2TextBlock}">
-                Backend path
-            </TextBlock>
-            <TextBox x:Name="dlPathTextBox"
-                     Grid.Row="1"
-                     Grid.Column="1"
-                     Margin="4"
-                     VerticalAlignment="Center"
-                     materialDesign:HintAssist.Hint="Required. Path to youtube-dl.exe or yt-dlp.exe"/>
-            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
-                <Button x:Name="dlPathBrowseButton"
-                        Margin="4"
-                        Style="{StaticResource MaterialDesignFlatButton}">
-                    Browse
-                </Button>
-                <TextBlock x:Name="dlPathHintTextBlock"
-                           Margin="4"
-                           VerticalAlignment="Center"
-                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                           Foreground="{DynamicResource MaterialDesign.Brush.ValidationError}">
-                    ⚠️ Invalid path
+                <TextBlock Grid.Row="0"
+                           Grid.Column="0"
+                           Margin="0 8 8 8"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}">
+                    Backend type
                 </TextBlock>
-            </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton x:Name="ytdlBackendTypeRadioButton"
+                                 GroupName="BackendType"
+                                 Style="{StaticResource MaterialDesignChoiceChipSecondaryOutlineRadioButton}">
+                        youtube-dl
+                    </RadioButton>
+                    <RadioButton x:Name="ytdlpBackendTypeRadioButton"
+                                 GroupName="BackendType"
+                                 Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
+                        yt-dlp
+                    </RadioButton>
+                </StackPanel>
 
-            <TextBlock Grid.Row="2"
-                       Grid.Column="0"
-                       Margin="8"
-                       Style="{StaticResource MaterialDesignBody2TextBlock}">
-                Update backend on startup
-            </TextBlock>
-            <ToggleButton x:Name="autoUpdateDlToggle"
-                          Grid.Row="2"
-                          Grid.Column="1"
-                          Margin="4"
-                          HorizontalAlignment="Left"/>
-
-            <TextBlock Grid.Row="3"
-                       Grid.Column="0"
-                       Margin="8"
-                       Style="{StaticResource MaterialDesignBody2TextBlock}">
-                FFmpeg path
-            </TextBlock>
-            <TextBox x:Name="ffmpegPathTextBox"
-                     Grid.Row="3"
-                     Grid.Column="1"
-                     Margin="4"
-                     VerticalAlignment="Center"
-                     materialDesign:HintAssist.Hint="Optional but recommended. Path to ffmpeg.exe"/>
-            <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
-                <Button x:Name="ffmpegPathBrowseButton"
-                        Margin="4"
-                        Style="{StaticResource MaterialDesignFlatButton}">
-                    Browse
-                </Button>
-                <TextBlock x:Name="ffmpegPathHintTextBlock"
-                           Margin="4"
-                           VerticalAlignment="Center"
-                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                           Foreground="{DynamicResource MaterialDesign.Brush.ValidationError}">
-                    ⚠️ Invalid path
+                <TextBlock Grid.Row="1"
+                           Grid.Column="0"
+                           Margin="0 8 8 8"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}">
+                    Backend path
                 </TextBlock>
-            </StackPanel>
-        </Grid>
+                <TextBox x:Name="dlPathTextBox"
+                         Grid.Row="1"
+                         Grid.Column="1"
+                         Margin="4"
+                         VerticalAlignment="Center"
+                         materialDesign:HintAssist.Hint="Required. Path to youtube-dl.exe or yt-dlp.exe"/>
+                <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
+                    <Button x:Name="dlPathBrowseButton"
+                            Margin="4"
+                            Style="{StaticResource MaterialDesignFlatButton}">
+                        Browse
+                    </Button>
+                    <TextBlock x:Name="dlPathHintTextBlock"
+                               Margin="4 4 0 4"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                               Foreground="{DynamicResource MaterialDesign.Brush.ValidationError}">
+                        ⚠️ Invalid path
+                    </TextBlock>
+                </StackPanel>
+
+                <TextBlock Grid.Row="2"
+                           Grid.Column="0"
+                           Margin="0 8 8 8"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}">
+                    Update backend on startup
+                </TextBlock>
+                <ToggleButton x:Name="autoUpdateDlToggle"
+                              Grid.Row="2"
+                              Grid.Column="1"
+                              Margin="4"
+                              HorizontalAlignment="Left"/>
+
+                <TextBlock Grid.Row="3"
+                           Grid.Column="0"
+                           Margin="0 8 8 8"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}">
+                    FFmpeg path
+                </TextBlock>
+                <TextBox x:Name="ffmpegPathTextBox"
+                         Grid.Row="3"
+                         Grid.Column="1"
+                         Margin="4"
+                         VerticalAlignment="Center"
+                         materialDesign:HintAssist.Hint="Optional but recommended. Path to ffmpeg.exe"/>
+                <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
+                    <Button x:Name="ffmpegPathBrowseButton"
+                            Margin="4"
+                            Style="{StaticResource MaterialDesignFlatButton}">
+                        Browse
+                    </Button>
+                    <TextBlock x:Name="ffmpegPathHintTextBlock"
+                               Margin="4 4 0 4"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                               Foreground="{DynamicResource MaterialDesign.Brush.ValidationError}">
+                        ⚠️ Invalid path
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
 
         <TextBlock Grid.Row="4"
                    Margin="8"
+                   TextWrapping="WrapWithOverflow"
+                   TextTrimming="CharacterEllipsis"
                    Style="{StaticResource MaterialDesignBody1TextBlock}">
             Hint: You can use <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">winget</Span>
             to install yt-dlp and FFmpeg, and then restart the app to auto-detect them.
@@ -160,8 +171,7 @@
                      IsReadOnly="True"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"
-                     Text="winget install yt-dlp 'FFmpeg (Shared)'" />
-            <!-- Keep text in sync with view model copy code. -->
+                     Text="{x:Static viewmodels:GetStartedDialogViewModel.WingetInstallCommandText}" />
             <Button x:Name="copyWingetInstallButton"
                     Grid.Column="1"
                     Margin="4 0 0 0"
@@ -174,7 +184,6 @@
         <Button x:Name="goButton"
                 Grid.Row="6"
                 Margin="8 8 8 0"
-                VerticalAlignment="Bottom"
                 Style="{StaticResource MaterialDesignRaisedButton}">
             Go
         </Button>

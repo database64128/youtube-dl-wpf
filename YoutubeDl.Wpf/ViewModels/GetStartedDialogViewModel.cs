@@ -14,5 +14,7 @@ public partial class GetStartedDialogViewModel(ObservableSettings settings, Acti
     public ReactiveCommand<Unit, Unit> CloseDialogCommand { get; } = ReactiveCommand.Create(closeDialog, settings.IsDlBinaryValidObservable);
 
     [ReactiveCommand]
-    private static void CopyWingetInstall() => Clipboard.SetText("winget install yt-dlp 'FFmpeg (Shared)'"); // Keep in sync with XAML.
+    private static void CopyWingetInstall() => Clipboard.SetText(WingetInstallCommandText);
+
+    public const string WingetInstallCommandText = "winget install yt-dlp 'FFmpeg (Shared)'";
 }

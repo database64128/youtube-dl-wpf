@@ -68,7 +68,7 @@ namespace YoutubeDl.Wpf.ViewModels
         }
 
         [ReactiveCommand]
-        private void CloseDialog() => IsDialogOpen = false;
+        private void CloseDialog() => IsDialogOpen = false; // Setting DialogVM to null here causes flicker.
 
         [ReactiveCommand]
         private async Task<bool> SaveSettingsAsync(CancelEventArgs? cancelEventArgs = null, CancellationToken cancellationToken = default)
