@@ -27,7 +27,8 @@ namespace YoutubeDl.Wpf.Views
                 this.OneWayBind(ViewModel,
                     viewModel => viewModel.SharedSettings.WindowHeight,
                     view => view.configureDownloadRowDefinition.MaxHeight,
-                    windowHeight => windowHeight - 258.0)
+                    // WindowHeight becomes something like 26 when minimized.
+                    windowHeight => Math.Max(windowHeight - 258.0, MainWindow.MinWindowHeight - 258.0))
                     .DisposeWith(disposables);
 
                 this.Bind(ViewModel,

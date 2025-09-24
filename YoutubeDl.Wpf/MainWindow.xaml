@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:reactiveui="http://reactiveui.net"
+    xmlns:local="clr-namespace:YoutubeDl.Wpf"
     xmlns:viewmodels="clr-namespace:YoutubeDl.Wpf.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
     mc:Ignorable="d"
@@ -17,7 +18,9 @@
     TextOptions.TextRenderingMode="Auto"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{materialDesign:MaterialDesignFont}"
-    Title="Cube YouTube Downloader" MinHeight="644" MinWidth="620">
+    MinWidth="{x:Static local:MainWindow.MinWindowWidth}"
+    MinHeight="{x:Static local:MainWindow.MinWindowHeight}"
+    Title="Cube YouTube Downloader">
     <materialDesign:DialogHost x:Name="rootDialogHost" Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
         <materialDesign:DialogHost.DialogContentTemplate>
             <DataTemplate>
