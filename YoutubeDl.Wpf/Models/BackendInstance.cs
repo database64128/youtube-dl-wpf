@@ -22,6 +22,14 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
     private readonly Process _process;
     private readonly IObservable<bool> _canAbort;
 
+    /// <summary>
+    /// Gets the list of arguments to be passed to the backend process for all operations.
+    /// </summary>
+    public List<string> GenericArguments { get; } = [];
+
+    /// <summary>
+    /// Gets the list of arguments to be passed to the backend process for download operations.
+    /// </summary>
     public List<string> GeneratedDownloadArguments { get; } = [];
 
     [Reactive]
@@ -156,27 +164,32 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         }
     }
 
-    public void GenerateDownloadArguments(string playlistItems)
+    public void GenerateGenericArguments()
     {
-        GeneratedDownloadArguments.Clear();
+        GenericArguments.Clear();
 
         if (!string.IsNullOrEmpty(_settings.Proxy))
         {
-            GeneratedDownloadArguments.Add("--proxy");
-            GeneratedDownloadArguments.Add(_settings.Proxy);
+            GenericArguments.Add("--proxy");
+            GenericArguments.Add(_settings.Proxy);
         }
 
         if (!string.IsNullOrEmpty(_settings.FfmpegPath))
         {
-            GeneratedDownloadArguments.Add("--ffmpeg-location");
-            GeneratedDownloadArguments.Add(_settings.FfmpegPath);
+            GenericArguments.Add("--ffmpeg-location");
+            GenericArguments.Add(_settings.FfmpegPath);
         }
 
         if (_settings.UseCookiesFile)
         {
-            GeneratedDownloadArguments.Add("--cookies");
-            GeneratedDownloadArguments.Add(_settings.CookiesFilePath);
+            GenericArguments.Add("--cookies");
+            GenericArguments.Add(_settings.CookiesFilePath);
         }
+    }
+
+    public void GenerateDownloadArguments(string playlistItems)
+    {
+        GeneratedDownloadArguments.Clear();
 
         if (_settings.SelectedPreset is not null)
         {
@@ -281,11 +294,17 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         }
     }
 
-    public async Task StartDownloadAsync(string link, CancellationToken cancellationToken = default)
+    private void PrepareProcessStartInfo()
     {
         _process.StartInfo.FileName = _settings.BackendPath;
         _process.StartInfo.ArgumentList.Clear();
         _process.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
+        _process.StartInfo.ArgumentList.AddRange(GenericArguments);
+    }
+
+    public async Task StartDownloadAsync(string link, CancellationToken cancellationToken = default)
+    {
+        PrepareProcessStartInfo();
         _process.StartInfo.ArgumentList.AddRange(GeneratedDownloadArguments);
         _process.StartInfo.ArgumentList.AddRange(_settings.AppSettings.BackendDownloadArguments.Select(x => x.Argument));
         _process.StartInfo.ArgumentList.Add(link);
@@ -302,14 +321,7 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
 
     public async Task ListFormatsAsync(string link, CancellationToken cancellationToken = default)
     {
-        _process.StartInfo.FileName = _settings.BackendPath;
-        _process.StartInfo.ArgumentList.Clear();
-        _process.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
-        if (!string.IsNullOrEmpty(_settings.Proxy))
-        {
-            _process.StartInfo.ArgumentList.Add("--proxy");
-            _process.StartInfo.ArgumentList.Add(_settings.Proxy);
-        }
+        PrepareProcessStartInfo();
         _process.StartInfo.ArgumentList.Add("-F");
         _process.StartInfo.ArgumentList.Add(link);
 
@@ -327,13 +339,7 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
     {
         _settings.BackendLastUpdateCheck = DateTimeOffset.Now;
 
-        _process.StartInfo.FileName = _settings.BackendPath;
-        _process.StartInfo.ArgumentList.Clear();
-        if (!string.IsNullOrEmpty(_settings.Proxy))
-        {
-            _process.StartInfo.ArgumentList.Add("--proxy");
-            _process.StartInfo.ArgumentList.Add(_settings.Proxy);
-        }
+        PrepareProcessStartInfo();
         _process.StartInfo.ArgumentList.Add("-U");
 
         try

@@ -4,8 +4,8 @@ namespace YoutubeDl.Wpf.Models;
 
 public record Preset(
     string Name,
-    string? FormatArg = null,
-    string? ContainerArg = null,
+    string FormatArg = "",
+    string ContainerArg = "",
     BackendTypes SupportedBackends = BackendTypes.Ytdl | BackendTypes.Ytdlp,
     params string[] ExtraArgs)
 {
@@ -13,8 +13,8 @@ public record Preset(
 
     private static Preset CreatePredefined(
         string name,
-        string? formatArg = null,
-        string? containerArg = null,
+        string formatArg = "",
+        string containerArg = "",
         BackendTypes supportedBackends = BackendTypes.Ytdl | BackendTypes.Ytdlp,
         params string[] extraArgs) =>
         new(name, formatArg, containerArg, supportedBackends, extraArgs) { IsPredefined = true, };
@@ -23,13 +23,13 @@ public record Preset(
 
     public IEnumerable<string> GetNonExtraArgs()
     {
-        if (FormatArg is not null)
+        if (!string.IsNullOrEmpty(FormatArg))
         {
             yield return "-f";
             yield return FormatArg;
         }
 
-        if (ContainerArg is not null)
+        if (!string.IsNullOrEmpty(ContainerArg))
         {
             yield return "--merge-output-format";
             yield return ContainerArg;
@@ -94,7 +94,7 @@ public record Preset(
         CreatePredefined("YouTube 720p AV1 + Opus WebM (398+251)", "398+251", "webm"),
         CreatePredefined("YouTube 720p VP9 + Opus WebM (247+251)", "247+251", "webm"),
         CreatePredefined("YouTube 720p AVC + AAC (136+140)", "136+140"),
-        CreatePredefined("YouTube Opus Audio (251)", "251", null, BackendTypes.Ytdlp, "--remux-video", "opus"),
+        CreatePredefined("YouTube Opus Audio (251)", "251", "", BackendTypes.Ytdlp, "--remux-video", "opus"),
         CreatePredefined("YouTube AAC Audio (140)", "140"),
         CreatePredefined("1080p", formatArg : "1080p"),
         CreatePredefined("720p", formatArg : "720p"),

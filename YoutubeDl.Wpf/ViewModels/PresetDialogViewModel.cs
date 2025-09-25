@@ -58,7 +58,7 @@ public partial class PresetDialogViewModel : ReactiveObject
             x => x.ContainerArg,
             x => x.IsYtdlSupported,
             x => x.IsYtdlpSupported)
-            .Throttle(TimeSpan.FromSeconds(0.25))
+            .Throttle(TimeSpan.FromMilliseconds(250))
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(((string formatArg, string containerArg, bool isYtdlSupported, bool isYtdlpSupported) x) => UpdatePreset(x.formatArg, x.containerArg, x.isYtdlSupported, x.isYtdlpSupported));
     }
@@ -136,8 +136,8 @@ public partial class PresetDialogViewModel : ReactiveObject
         return _preset with
         {
             Name = Name,
-            FormatArg = string.IsNullOrEmpty(FormatArg) ? null : FormatArg,
-            ContainerArg = string.IsNullOrEmpty(ContainerArg) ? null : ContainerArg,
+            FormatArg = FormatArg,
+            ContainerArg = ContainerArg,
             SupportedBackends = supportedBackends,
             ExtraArgs = [.. _backendArguments.Select(x => x.Argument)],
         };
@@ -162,8 +162,8 @@ public partial class PresetDialogViewModel : ReactiveObject
 
         _preset = _preset with
         {
-            FormatArg = string.IsNullOrEmpty(formatArg) ? null : formatArg,
-            ContainerArg = string.IsNullOrEmpty(containerArg) ? null : containerArg,
+            FormatArg = formatArg,
+            ContainerArg = containerArg,
             SupportedBackends = supportedBackends,
         };
 
