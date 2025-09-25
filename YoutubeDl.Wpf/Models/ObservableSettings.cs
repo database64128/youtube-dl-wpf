@@ -108,6 +108,12 @@ public partial class ObservableSettings : ReactiveObject
     [Reactive]
     private string _cookiesFilePath;
 
+    [Reactive]
+    private bool _useCookiesBrowser;
+
+    [Reactive]
+    private string _cookiesBrowserArg;
+
     [ObservableAsProperty]
     private bool _isDlBinaryValid;
 
@@ -150,6 +156,8 @@ public partial class ObservableSettings : ReactiveObject
         _downloadPath = settings.DownloadPath;
         _useCookiesFile = settings.UseCookiesFile;
         _cookiesFilePath = settings.CookiesFilePath;
+        _useCookiesBrowser = settings.UseCookiesBrowser;
+        _cookiesBrowserArg = settings.CookiesBrowserArg;
 
         IObservable<(string dlPath, bool dlBinaryExists)> backendPathObservable = this
             .WhenAnyValue(x => x.BackendPath, dlPath => (dlPath, File.Exists(dlPath)));
@@ -219,6 +227,8 @@ public partial class ObservableSettings : ReactiveObject
         AppSettings.DownloadPath = DownloadPath;
         AppSettings.UseCookiesFile = UseCookiesFile;
         AppSettings.CookiesFilePath = CookiesFilePath;
+        AppSettings.UseCookiesBrowser = UseCookiesBrowser;
+        AppSettings.CookiesBrowserArg = CookiesBrowserArg;
     }
 
     [ReactiveCommand]

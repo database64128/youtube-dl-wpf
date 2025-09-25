@@ -131,6 +131,18 @@ public class Settings
     /// </remarks>
     public List<string> CookiesFilePathHistory { get; set; } = [];
 
+    public bool UseCookiesBrowser { get; set; }
+
+    public string CookiesBrowserArg { get; set; } = "firefox";
+
+    /// <summary>
+    /// Gets or sets the list of previously used <c>--cookies-from-browser</c> arguments.
+    /// </summary>
+    /// <remarks>
+    /// New entries are appended to the list.
+    /// </remarks>
+    public List<string> CookiesBrowserArgHistory { get; set; } = [];
+
     private static readonly JsonSerializerOptions s_jsonSerializerOptions = new()
     {
         AllowTrailingCommas = true,

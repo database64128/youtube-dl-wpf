@@ -185,6 +185,12 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
             GenericArguments.Add("--cookies");
             GenericArguments.Add(_settings.CookiesFilePath);
         }
+
+        if (_settings.UseCookiesBrowser)
+        {
+            GenericArguments.Add("--cookies-from-browser");
+            GenericArguments.Add(_settings.CookiesBrowserArg);
+        }
     }
 
     public void GenerateDownloadArguments(string playlistItems)
