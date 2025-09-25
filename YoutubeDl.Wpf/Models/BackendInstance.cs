@@ -172,6 +172,12 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
             GeneratedDownloadArguments.Add(_settings.FfmpegPath);
         }
 
+        if (_settings.UseCookiesFile)
+        {
+            GeneratedDownloadArguments.Add("--cookies");
+            GeneratedDownloadArguments.Add(_settings.CookiesFilePath);
+        }
+
         if (_settings.SelectedPreset is not null)
         {
             GeneratedDownloadArguments.AddRange(_settings.SelectedPreset.ToArgs());

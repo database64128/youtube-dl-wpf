@@ -4,7 +4,6 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reactive.Linq;
@@ -127,6 +126,18 @@ public partial class ObservableSettings : ReactiveObject
     /// </summary>
     public List<string> DownloadPathHistory { get; }
 
+    [Reactive]
+    private bool _useCookiesFile;
+
+    [Reactive]
+    private string _cookiesFilePath;
+
+    /// <summary>
+    /// Gets the history of used cookies file paths.
+    /// New paths are appended to the list.
+    /// </summary>
+    public List<string> CookiesFilePathHistory { get; }
+
     [ObservableAsProperty]
     private bool _isDlBinaryValid;
 
@@ -171,6 +182,9 @@ public partial class ObservableSettings : ReactiveObject
         _useCustomPath = settings.UseCustomPath;
         _downloadPath = settings.DownloadPath;
         DownloadPathHistory = [.. settings.DownloadPathHistory];
+        _useCookiesFile = settings.UseCookiesFile;
+        _cookiesFilePath = settings.CookiesFilePath;
+        CookiesFilePathHistory = [.. settings.CookiesFilePathHistory];
 
         IObservable<(string dlPath, bool dlBinaryExists)> backendPathObservable = this
             .WhenAnyValue(x => x.BackendPath, dlPath => (dlPath, File.Exists(dlPath)));
@@ -242,12 +256,15 @@ public partial class ObservableSettings : ReactiveObject
         AppSettings.OutputTemplateHistory = [.. OutputTemplateHistory];
         AppSettings.DownloadPath = DownloadPath;
         AppSettings.DownloadPathHistory = [.. DownloadPathHistory];
+        AppSettings.UseCookiesFile = UseCookiesFile;
+        AppSettings.CookiesFilePath = CookiesFilePath;
+        AppSettings.CookiesFilePathHistory = [.. CookiesFilePathHistory];
     }
 
     [ReactiveCommand]
     private void BrowseDlBinary()
     {
-        if (BrowseBinary(BackendPath, Backend.ToExecutableName(), out string? newPath))
+        if (BrowseBinary(BackendPath, out string? newPath, Backend.ToExecutableName()))
         {
             BackendPath = newPath;
         }
@@ -256,58 +273,14 @@ public partial class ObservableSettings : ReactiveObject
     [ReactiveCommand]
     private void BrowseFfmpegBinary()
     {
-        if (BrowseBinary(FfmpegPath, "ffmpeg", out string? newPath))
+        if (BrowseBinary(FfmpegPath, out string? newPath, "ffmpeg"))
         {
             FfmpegPath = newPath;
         }
     }
 
-    private static bool BrowseBinary(string path, string defaultFileName, [NotNullWhen(true)] out string? newPath)
-    {
-        string? fileName = Path.GetFileName(path);
-        if (string.IsNullOrEmpty(fileName))
-        {
-            fileName = defaultFileName;
-        }
-
-        string? initialDirectory = Path.GetDirectoryName(path);
-        if (string.IsNullOrEmpty(initialDirectory))
-        {
-            // Without an explicit initial directory, the dialog starts in
-            // the last used directory, which may not work with relative paths.
-            initialDirectory = Directory.GetCurrentDirectory();
-        }
-
-        Microsoft.Win32.OpenFileDialog openFileDialog = new()
-        {
-            FileName = fileName,
-            DefaultExt = ".exe",
-            Filter = "Executables (.exe)|*.exe",
-            InitialDirectory = initialDirectory,
-        };
-
-        bool? result;
-        try
-        {
-            result = openFileDialog.ShowDialog();
-        }
-        catch (Win32Exception)
-        {
-            // ShowDialog silently ignores InitialDirectory when the path points to a non-existent directory on an existing volume.
-            // But it throws a System.ComponentModel.Win32Exception when the path points to a non-existent volume.
-            // So we catch the exception and try again with an empty InitialDirectory.
-            openFileDialog.InitialDirectory = "";
-            result = openFileDialog.ShowDialog();
-        }
-
-        if (result is not true)
-        {
-            newPath = null;
-            return false;
-        }
-        newPath = openFileDialog.FileName;
-        return true;
-    }
+    private static bool BrowseBinary(string path, [NotNullWhen(true)] out string? newPath, string defaultFileName) =>
+        WpfHelper.BrowseFile(path, out newPath, defaultFileName, ".exe", "Executables (.exe)|*.exe");
 
     [ReactiveCommand(CanExecute = nameof(_canShowDlBinaryInFolder))]
     private void ShowDlBinaryInFolder() => WpfHelper.ShowInFolder(BackendPath);

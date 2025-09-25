@@ -106,6 +106,12 @@ public class Settings
 
     public string[] DownloadPathHistory { get; set; } = [];
 
+    public bool UseCookiesFile { get; set; }
+
+    public string CookiesFilePath { get; set; } = "";
+
+    public string[] CookiesFilePathHistory { get; set; } = [];
+
     private static readonly JsonSerializerOptions s_jsonSerializerOptions = new()
     {
         AllowTrailingCommas = true,

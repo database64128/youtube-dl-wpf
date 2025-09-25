@@ -143,6 +143,27 @@ namespace YoutubeDl.Wpf.Views
                     backend => backend == BackendTypes.Ytdlp ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed)
                     .DisposeWith(disposables);
 
+                // Cookies file
+                this.Bind(ViewModel,
+                    viewModel => viewModel.SharedSettings.UseCookiesFile,
+                    view => view.cookiesFileToggle.IsChecked)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.SharedSettings.UseCookiesFile,
+                    view => view.cookiesFileComboBox.IsEnabled)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel,
+                    viewModel => viewModel.CookiesFilePathHistory,
+                    view => view.cookiesFileComboBox.ItemsSource)
+                    .DisposeWith(disposables);
+
+                this.Bind(ViewModel,
+                    viewModel => viewModel.SharedSettings.CookiesFilePath,
+                    view => view.cookiesFileComboBox.Text)
+                    .DisposeWith(disposables);
+
                 // Output template
                 this.Bind(ViewModel,
                     viewModel => viewModel.SharedSettings.UseCustomOutputTemplate,
@@ -219,6 +240,17 @@ namespace YoutubeDl.Wpf.Views
                 this.BindCommand(ViewModel,
                     viewModel => viewModel.BackendInstance.AbortCommand,
                     view => view.abortButton)
+                    .DisposeWith(disposables);
+
+                // Browse and show cookies file in folder button
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.BrowseCookiesFileCommand,
+                    view => view.cookiesFileBrowseButton)
+                    .DisposeWith(disposables);
+
+                this.BindCommand(ViewModel,
+                    viewModel => viewModel.ShowCookiesFileInFolderCommand,
+                    view => view.cookiesFileShowInFolderButton)
                     .DisposeWith(disposables);
 
                 // Browse and open folder button

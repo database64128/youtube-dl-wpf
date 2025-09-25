@@ -23,6 +23,8 @@ namespace YoutubeDl.Wpf.ViewModels
         private readonly IObservable<bool> _canResetCustomOutputTemplate;
         private readonly IObservable<bool> _canBrowseDownloadFolder;
         private readonly IObservable<bool> _canOpenDownloadFolder;
+        private readonly IObservable<bool> _canBrowseCookiesFile;
+        private readonly IObservable<bool> _canShowCookiesFileInFolder;
         private readonly IObservable<bool> _canRun;
         private readonly IObservable<bool> _canEditOrDeletePreset;
         private readonly IObservable<bool> _canDuplicatePreset;
@@ -53,6 +55,15 @@ namespace YoutubeDl.Wpf.ViewModels
         /// So the newest path is always the first element.
         /// </summary>
         public ObservableCollection<HistoryItemViewModel> DownloadPathHistory { get; }
+
+        /// <summary>
+        /// Gets the cookies file path history.
+        /// </summary>
+        /// <remarks>
+        /// This collection was first constructed from <see cref="ObservableSettings.CookiesFilePathHistory"/> in reverse order,
+        /// so the newest path is always the first element.
+        /// </remarks>
+        public ObservableCollection<HistoryItemViewModel> CookiesFilePathHistory { get; }
 
         /// <summary>
         /// Gets the collection of view models of the arguments area.
@@ -126,6 +137,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
             OutputTemplateHistory = [.. SharedSettings.OutputTemplateHistory.Select(x => new HistoryItemViewModel(x, DeleteOutputTemplateItem)).Reverse()];
             DownloadPathHistory = [.. SharedSettings.DownloadPathHistory.Select(x => new HistoryItemViewModel(x, DeleteDownloadPathItem)).Reverse()];
+            CookiesFilePathHistory = [.. SharedSettings.CookiesFilePathHistory.Select(x => new HistoryItemViewModel(x, DeleteCookiesFilePathItem)).Reverse()];
             DownloadArguments =
             [
                 .. SharedSettings.BackendDownloadArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)),
@@ -160,7 +172,9 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.SharedSettings.CustomOutputTemplate,
                 x => x.SharedSettings.UseCustomPath,
                 x => x.SharedSettings.DownloadPath,
-                (_, _, _, _) => Unit.Default);
+                x => x.SharedSettings.UseCookiesFile,
+                x => x.SharedSettings.CookiesFilePath,
+                (_, _, _, _, _, _) => Unit.Default);
 
             Observable.Merge(gdaA, gdaB, gdaC)
                       .Throttle(TimeSpan.FromSeconds(0.25))
@@ -182,6 +196,13 @@ namespace YoutubeDl.Wpf.ViewModels
                 x => x.SharedSettings.UseCustomPath,
                 x => x.SharedSettings.DownloadPath,
                 (useCustomPath, path) => useCustomPath && Directory.Exists(path));
+
+            _canBrowseCookiesFile = this.WhenAnyValue(x => x.SharedSettings.UseCookiesFile);
+
+            _canShowCookiesFileInFolder = this.WhenAnyValue(
+                x => x.SharedSettings.UseCookiesFile,
+                x => x.SharedSettings.CookiesFilePath,
+                (useCookiesFile, path) => useCookiesFile && File.Exists(path));
 
             _canRun = this.WhenAnyValue(
                 x => x.Link,
@@ -284,6 +305,12 @@ namespace YoutubeDl.Wpf.ViewModels
             DownloadPathHistory.Remove(item);
         }
 
+        private void DeleteCookiesFilePathItem(HistoryItemViewModel item)
+        {
+            SharedSettings.CookiesFilePathHistory.Remove(item.Text);
+            CookiesFilePathHistory.Remove(item);
+        }
+
         private void UpdateOutputTemplateHistory()
         {
             if (!SharedSettings.OutputTemplateHistory.Contains(SharedSettings.CustomOutputTemplate))
@@ -299,6 +326,15 @@ namespace YoutubeDl.Wpf.ViewModels
             {
                 SharedSettings.DownloadPathHistory.Add(SharedSettings.DownloadPath);
                 DownloadPathHistory.Insert(0, new(SharedSettings.DownloadPath, DeleteDownloadPathItem));
+            }
+        }
+
+        private void UpdateCookiesFilePathHistory()
+        {
+            if (!SharedSettings.CookiesFilePathHistory.Contains(SharedSettings.CookiesFilePath))
+            {
+                SharedSettings.CookiesFilePathHistory.Add(SharedSettings.CookiesFilePath);
+                CookiesFilePathHistory.Insert(0, new(SharedSettings.CookiesFilePath, DeleteCookiesFilePathItem));
             }
         }
 
@@ -352,6 +388,18 @@ namespace YoutubeDl.Wpf.ViewModels
             }
         }
 
+        [ReactiveCommand(CanExecute = nameof(_canBrowseCookiesFile))]
+        private void BrowseCookiesFile()
+        {
+            if (WpfHelper.BrowseFile(SharedSettings.CookiesFilePath, out string? newPath, "", ".txt", "Cookies Files|*.txt;*.cookies|All Files|*.*"))
+            {
+                SharedSettings.CookiesFilePath = newPath;
+            }
+        }
+
+        [ReactiveCommand(CanExecute = nameof(_canShowCookiesFileInFolder))]
+        private void ShowCookiesFileInFolder() => WpfHelper.ShowInFolder(SharedSettings.CookiesFilePath);
+
         private void GenerateGlobalArguments()
         {
             for (var i = 0; i < _globalArgCount; i++)
@@ -359,12 +407,12 @@ namespace YoutubeDl.Wpf.ViewModels
                 DownloadArguments.RemoveAt(0);
             }
 
-            _globalArgCount = 0;
+            ObservableCollection<BackendArgument> globalArgs = SharedSettings.BackendGlobalArguments;
+            _globalArgCount = globalArgs.Count;
 
             foreach (var globalArg in SharedSettings.BackendGlobalArguments)
             {
                 DownloadArguments.Insert(_globalArgCount, new ArgumentChipViewModel(globalArg, false, DeleteArgumentChip)); ;
-                _globalArgCount++;
             }
         }
 
@@ -398,6 +446,9 @@ namespace YoutubeDl.Wpf.ViewModels
 
             if (SharedSettings.UseCustomPath)
                 UpdateDownloadPathHistory();
+
+            if (SharedSettings.UseCookiesFile)
+                UpdateCookiesFilePathHistory();
 
             return BackendInstance.StartDownloadAsync(link, cancellationToken);
         }
