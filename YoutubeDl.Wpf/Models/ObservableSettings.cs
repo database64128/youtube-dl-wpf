@@ -2,7 +2,6 @@
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -42,15 +41,7 @@ public partial class ObservableSettings : ReactiveObject
     /// Gets or sets the list of arguments passed
     /// to the backend process for all types of operations.
     /// </summary>
-    [Reactive]
-    private ObservableCollection<BackendArgument> _backendGlobalArguments;
-
-    /// <summary>
-    /// Gets or sets the list of arguments passed
-    /// to the backend process for download operations.
-    /// </summary>
-    [Reactive]
-    private List<BackendArgument> _backendDownloadArguments;
+    public ObservableCollection<BackendArgument> BackendGlobalArguments { get; }
 
     [Reactive]
     private bool _backendAutoUpdate;
@@ -82,9 +73,6 @@ public partial class ObservableSettings : ReactiveObject
     private string _selectedPresetText;
 
     [Reactive]
-    private List<Preset> _customPresets;
-
-    [Reactive]
     private bool _addMetadata;
 
     [Reactive]
@@ -108,35 +96,17 @@ public partial class ObservableSettings : ReactiveObject
     [Reactive]
     private string _customOutputTemplate;
 
-    /// <summary>
-    /// Gets the list of used output templates.
-    /// New templates are appended to the list.
-    /// </summary>
-    public List<string> OutputTemplateHistory { get; }
-
     [Reactive]
     private bool _useCustomPath;
 
     [Reactive]
     private string _downloadPath;
 
-    /// <summary>
-    /// Gets the list of used download paths.
-    /// New paths are appended to the list.
-    /// </summary>
-    public List<string> DownloadPathHistory { get; }
-
     [Reactive]
     private bool _useCookiesFile;
 
     [Reactive]
     private string _cookiesFilePath;
-
-    /// <summary>
-    /// Gets the history of used cookies file paths.
-    /// New paths are appended to the list.
-    /// </summary>
-    public List<string> CookiesFilePathHistory { get; }
 
     [ObservableAsProperty]
     private bool _isDlBinaryValid;
@@ -159,8 +129,7 @@ public partial class ObservableSettings : ReactiveObject
         _configureDownloadRowDefinitionHeight = settings.ConfigureDownloadRowDefinitionHeight;
         _backend = settings.Backend;
         _backendPath = settings.BackendPath;
-        _backendGlobalArguments = [.. settings.BackendGlobalArguments];
-        _backendDownloadArguments = [.. settings.BackendDownloadArguments];
+        BackendGlobalArguments = [.. settings.BackendGlobalArguments];
         _backendAutoUpdate = settings.BackendAutoUpdate;
         _backendLastUpdateCheck = settings.BackendLastUpdateCheck;
         _ffmpegPath = settings.FfmpegPath;
@@ -169,7 +138,6 @@ public partial class ObservableSettings : ReactiveObject
         _logToFiles = settings.LogToFiles;
         _selectedPreset = settings.SelectedPreset;
         _selectedPresetText = settings.SelectedPreset.Name;
-        _customPresets = [.. settings.CustomPresets];
         _addMetadata = settings.AddMetadata;
         _downloadThumbnail = settings.DownloadThumbnail;
         _downloadSubtitles = settings.DownloadSubtitles;
@@ -178,13 +146,10 @@ public partial class ObservableSettings : ReactiveObject
         _downloadPlaylist = settings.DownloadPlaylist;
         _useCustomOutputTemplate = settings.UseCustomOutputTemplate;
         _customOutputTemplate = settings.CustomOutputTemplate;
-        OutputTemplateHistory = [.. settings.OutputTemplateHistory];
         _useCustomPath = settings.UseCustomPath;
         _downloadPath = settings.DownloadPath;
-        DownloadPathHistory = [.. settings.DownloadPathHistory];
         _useCookiesFile = settings.UseCookiesFile;
         _cookiesFilePath = settings.CookiesFilePath;
-        CookiesFilePathHistory = [.. settings.CookiesFilePathHistory];
 
         IObservable<(string dlPath, bool dlBinaryExists)> backendPathObservable = this
             .WhenAnyValue(x => x.BackendPath, dlPath => (dlPath, File.Exists(dlPath)));
@@ -235,7 +200,6 @@ public partial class ObservableSettings : ReactiveObject
         AppSettings.Backend = Backend;
         AppSettings.BackendPath = BackendPath;
         AppSettings.BackendGlobalArguments = [.. BackendGlobalArguments];
-        AppSettings.BackendDownloadArguments = [.. BackendDownloadArguments];
         AppSettings.BackendAutoUpdate = BackendAutoUpdate;
         AppSettings.BackendLastUpdateCheck = BackendLastUpdateCheck;
         AppSettings.FfmpegPath = FfmpegPath;
@@ -243,7 +207,6 @@ public partial class ObservableSettings : ReactiveObject
         // AppSettings.LoggingMaxEntries is managed by the validation handler.
         AppSettings.LogToFiles = LogToFiles;
         AppSettings.SelectedPreset = SelectedPreset ?? Preset.Auto;
-        AppSettings.CustomPresets = [.. CustomPresets];
         AppSettings.AddMetadata = AddMetadata;
         AppSettings.DownloadThumbnail = DownloadThumbnail;
         AppSettings.DownloadSubtitles = DownloadSubtitles;
@@ -253,12 +216,9 @@ public partial class ObservableSettings : ReactiveObject
         AppSettings.UseCustomOutputTemplate = UseCustomOutputTemplate;
         AppSettings.CustomOutputTemplate = CustomOutputTemplate;
         AppSettings.UseCustomPath = UseCustomPath;
-        AppSettings.OutputTemplateHistory = [.. OutputTemplateHistory];
         AppSettings.DownloadPath = DownloadPath;
-        AppSettings.DownloadPathHistory = [.. DownloadPathHistory];
         AppSettings.UseCookiesFile = UseCookiesFile;
         AppSettings.CookiesFilePath = CookiesFilePath;
-        AppSettings.CookiesFilePathHistory = [.. CookiesFilePathHistory];
     }
 
     [ReactiveCommand]

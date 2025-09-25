@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -64,7 +65,7 @@ public class Settings
 
     public BackendArgument[] BackendGlobalArguments { get; set; } = [];
 
-    public BackendArgument[] BackendDownloadArguments { get; set; } = [];
+    public List<BackendArgument> BackendDownloadArguments { get; set; } = [];
 
     public bool BackendAutoUpdate { get; set; } = true;
 
@@ -80,7 +81,7 @@ public class Settings
 
     public Preset SelectedPreset { get; set; } = Preset.Auto;
 
-    public Preset[] CustomPresets { get; set; } = [];
+    public List<Preset> CustomPresets { get; set; } = [];
 
     public bool AddMetadata { get; set; } = true;
 
@@ -98,19 +99,37 @@ public class Settings
 
     public string CustomOutputTemplate { get; set; } = DefaultCustomOutputTemplate;
 
-    public string[] OutputTemplateHistory { get; set; } = [];
+    /// <summary>
+    /// Gets or sets the list of previously used output filename templates.
+    /// </summary>
+    /// <remarks>
+    /// New templates are appended to the list.
+    /// </remarks>
+    public List<string> OutputTemplateHistory { get; set; } = [];
 
     public bool UseCustomPath { get; set; }
 
     public string DownloadPath { get; set; } = "";
 
-    public string[] DownloadPathHistory { get; set; } = [];
+    /// <summary>
+    /// Gets or sets the list of previously used download paths.
+    /// </summary>
+    /// <remarks>
+    /// New paths are appended to the list.
+    /// </remarks>
+    public List<string> DownloadPathHistory { get; set; } = [];
 
     public bool UseCookiesFile { get; set; }
 
     public string CookiesFilePath { get; set; } = "";
 
-    public string[] CookiesFilePathHistory { get; set; } = [];
+    /// <summary>
+    /// Gets or sets the list of previously used cookies file paths.
+    /// </summary>
+    /// <remarks>
+    /// New paths are appended to the list.
+    /// </remarks>
+    public List<string> CookiesFilePathHistory { get; set; } = [];
 
     private static readonly JsonSerializerOptions s_jsonSerializerOptions = new()
     {

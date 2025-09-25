@@ -44,14 +44,14 @@ namespace YoutubeDl.Wpf.ViewModels
 
         /// <summary>
         /// Gets the output template history.
-        /// This collection was first constructed from <see cref="ObservableSettings.OutputTemplateHistory"/> in reverse order.
+        /// This collection was first constructed from <see cref="Settings.OutputTemplateHistory"/> in reverse order.
         /// So the newest template is always the first element.
         /// </summary>
         public ObservableCollection<HistoryItemViewModel> OutputTemplateHistory { get; }
 
         /// <summary>
         /// Gets the download path history.
-        /// This collection was first constructed from <see cref="ObservableSettings.DownloadPathHistory"/> in reverse order.
+        /// This collection was first constructed from <see cref="Settings.DownloadPathHistory"/> in reverse order.
         /// So the newest path is always the first element.
         /// </summary>
         public ObservableCollection<HistoryItemViewModel> DownloadPathHistory { get; }
@@ -60,7 +60,7 @@ namespace YoutubeDl.Wpf.ViewModels
         /// Gets the cookies file path history.
         /// </summary>
         /// <remarks>
-        /// This collection was first constructed from <see cref="ObservableSettings.CookiesFilePathHistory"/> in reverse order,
+        /// This collection was first constructed from <see cref="Settings.CookiesFilePathHistory"/> in reverse order,
         /// so the newest path is always the first element.
         /// </remarks>
         public ObservableCollection<HistoryItemViewModel> CookiesFilePathHistory { get; }
@@ -131,16 +131,16 @@ namespace YoutubeDl.Wpf.ViewModels
                 .Subscribe(_ =>
                 {
                     Presets.Clear();
-                    Presets.AddRange(SharedSettings.CustomPresets.AsEnumerable().Reverse().Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
+                    Presets.AddRange(SharedSettings.AppSettings.CustomPresets.AsEnumerable().Reverse().Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
                     Presets.AddRange(Preset.PredefinedPresets.Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
                 });
 
-            OutputTemplateHistory = [.. SharedSettings.OutputTemplateHistory.Select(x => new HistoryItemViewModel(x, DeleteOutputTemplateItem)).Reverse()];
-            DownloadPathHistory = [.. SharedSettings.DownloadPathHistory.Select(x => new HistoryItemViewModel(x, DeleteDownloadPathItem)).Reverse()];
-            CookiesFilePathHistory = [.. SharedSettings.CookiesFilePathHistory.Select(x => new HistoryItemViewModel(x, DeleteCookiesFilePathItem)).Reverse()];
+            OutputTemplateHistory = [.. SharedSettings.AppSettings.OutputTemplateHistory.Select(x => new HistoryItemViewModel(x, DeleteOutputTemplateItem)).Reverse()];
+            DownloadPathHistory = [.. SharedSettings.AppSettings.DownloadPathHistory.Select(x => new HistoryItemViewModel(x, DeleteDownloadPathItem)).Reverse()];
+            CookiesFilePathHistory = [.. SharedSettings.AppSettings.CookiesFilePathHistory.Select(x => new HistoryItemViewModel(x, DeleteCookiesFilePathItem)).Reverse()];
             DownloadArguments =
             [
-                .. SharedSettings.BackendDownloadArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)),
+                .. SharedSettings.AppSettings.BackendDownloadArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)),
                 new AddArgumentViewModel(AddArgument),
             ];
 
@@ -246,7 +246,7 @@ namespace YoutubeDl.Wpf.ViewModels
 
         private void AddCustomPreset(Preset preset)
         {
-            SharedSettings.CustomPresets.Add(preset);
+            SharedSettings.AppSettings.CustomPresets.Add(preset);
 
             if ((preset.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend)
             {
@@ -288,52 +288,52 @@ namespace YoutubeDl.Wpf.ViewModels
         private void DeleteCustomPreset()
         {
             var preset = SharedSettings.SelectedPreset!;
-            SharedSettings.CustomPresets.Remove(preset);
+            SharedSettings.AppSettings.CustomPresets.Remove(preset);
             Presets.Remove(preset);
             SharedSettings.SelectedPreset = Presets.First();
         }
 
         private void DeleteOutputTemplateItem(HistoryItemViewModel item)
         {
-            SharedSettings.OutputTemplateHistory.Remove(item.Text);
+            SharedSettings.AppSettings.OutputTemplateHistory.Remove(item.Text);
             OutputTemplateHistory.Remove(item);
         }
 
         private void DeleteDownloadPathItem(HistoryItemViewModel item)
         {
-            SharedSettings.DownloadPathHistory.Remove(item.Text);
+            SharedSettings.AppSettings.DownloadPathHistory.Remove(item.Text);
             DownloadPathHistory.Remove(item);
         }
 
         private void DeleteCookiesFilePathItem(HistoryItemViewModel item)
         {
-            SharedSettings.CookiesFilePathHistory.Remove(item.Text);
+            SharedSettings.AppSettings.CookiesFilePathHistory.Remove(item.Text);
             CookiesFilePathHistory.Remove(item);
         }
 
         private void UpdateOutputTemplateHistory()
         {
-            if (!SharedSettings.OutputTemplateHistory.Contains(SharedSettings.CustomOutputTemplate))
+            if (!SharedSettings.AppSettings.OutputTemplateHistory.Contains(SharedSettings.CustomOutputTemplate))
             {
-                SharedSettings.OutputTemplateHistory.Add(SharedSettings.CustomOutputTemplate);
+                SharedSettings.AppSettings.OutputTemplateHistory.Add(SharedSettings.CustomOutputTemplate);
                 OutputTemplateHistory.Insert(0, new(SharedSettings.CustomOutputTemplate, DeleteOutputTemplateItem));
             }
         }
 
         private void UpdateDownloadPathHistory()
         {
-            if (!SharedSettings.DownloadPathHistory.Contains(SharedSettings.DownloadPath))
+            if (!SharedSettings.AppSettings.DownloadPathHistory.Contains(SharedSettings.DownloadPath))
             {
-                SharedSettings.DownloadPathHistory.Add(SharedSettings.DownloadPath);
+                SharedSettings.AppSettings.DownloadPathHistory.Add(SharedSettings.DownloadPath);
                 DownloadPathHistory.Insert(0, new(SharedSettings.DownloadPath, DeleteDownloadPathItem));
             }
         }
 
         private void UpdateCookiesFilePathHistory()
         {
-            if (!SharedSettings.CookiesFilePathHistory.Contains(SharedSettings.CookiesFilePath))
+            if (!SharedSettings.AppSettings.CookiesFilePathHistory.Contains(SharedSettings.CookiesFilePath))
             {
-                SharedSettings.CookiesFilePathHistory.Add(SharedSettings.CookiesFilePath);
+                SharedSettings.AppSettings.CookiesFilePathHistory.Add(SharedSettings.CookiesFilePath);
                 CookiesFilePathHistory.Insert(0, new(SharedSettings.CookiesFilePath, DeleteCookiesFilePathItem));
             }
         }
@@ -342,7 +342,7 @@ namespace YoutubeDl.Wpf.ViewModels
         {
             if (item.IsRemovable)
             {
-                SharedSettings.BackendDownloadArguments.Remove(item.Argument);
+                SharedSettings.AppSettings.BackendDownloadArguments.Remove(item.Argument);
                 DownloadArguments.Remove(item);
             }
         }
@@ -350,7 +350,7 @@ namespace YoutubeDl.Wpf.ViewModels
         private void AddArgument(string argument)
         {
             var backendArgument = new BackendArgument(argument);
-            SharedSettings.BackendDownloadArguments.Add(backendArgument);
+            SharedSettings.AppSettings.BackendDownloadArguments.Add(backendArgument);
 
             // Insert right before AddArgumentViewModel.
             DownloadArguments.Insert(DownloadArguments.Count - 1, new ArgumentChipViewModel(backendArgument, true, DeleteArgumentChip));

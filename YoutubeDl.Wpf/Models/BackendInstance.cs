@@ -287,7 +287,7 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         _process.StartInfo.ArgumentList.Clear();
         _process.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
         _process.StartInfo.ArgumentList.AddRange(GeneratedDownloadArguments);
-        _process.StartInfo.ArgumentList.AddRange(_settings.BackendDownloadArguments.Select(x => x.Argument));
+        _process.StartInfo.ArgumentList.AddRange(_settings.AppSettings.BackendDownloadArguments.Select(x => x.Argument));
         _process.StartInfo.ArgumentList.Add(link);
 
         try

@@ -34,8 +34,7 @@ public partial class PresetDialogViewModel : ReactiveObject
     [Reactive]
     private bool _isYtdlpSupported = true;
 
-    [Reactive]
-    private ObservableCollection<object> _argumentChips;
+    public ObservableCollection<object> ArgumentChips { get; }
 
     public PresetDialogViewModel(Action<object?> openDialog, Action closeDialog, ReactiveCommand<Unit, Unit> closeDialogCommand)
     {
