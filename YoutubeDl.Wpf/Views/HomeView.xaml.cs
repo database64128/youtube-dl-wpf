@@ -9,326 +9,325 @@ using System.Windows.Shell;
 using YoutubeDl.Wpf.Models;
 using YoutubeDl.Wpf.Utils;
 
-namespace YoutubeDl.Wpf.Views
+namespace YoutubeDl.Wpf.Views;
+
+/// <summary>
+/// Interaction logic for Home.xaml
+/// </summary>
+public partial class HomeView
 {
-    /// <summary>
-    /// Interaction logic for Home.xaml
-    /// </summary>
-    public partial class HomeView
+    public HomeView()
     {
-        public HomeView()
+        InitializeComponent();
+
+        this.WhenActivated(disposables =>
         {
-            InitializeComponent();
+            // configureDownloadRowDefinition: Set MaxHeight to prevent GridSplitter
+            // from being dragged beyond window bounds. The inner ScrollViewer's
+            // MaxHeight is then bound to that in XAML to keep them in sync.
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SharedSettings.WindowHeight,
+                view => view.configureDownloadRowDefinition.MaxHeight,
+                // WindowHeight becomes something like 26 when minimized.
+                windowHeight => Math.Max(windowHeight - 258.0, MainWindow.MinWindowHeight - 258.0))
+                .DisposeWith(disposables);
 
-            this.WhenActivated(disposables =>
-            {
-                // configureDownloadRowDefinition: Set MaxHeight to prevent GridSplitter
-                // from being dragged beyond window bounds. The inner ScrollViewer's
-                // MaxHeight is then bound to that in XAML to keep them in sync.
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.SharedSettings.WindowHeight,
-                    view => view.configureDownloadRowDefinition.MaxHeight,
-                    // WindowHeight becomes something like 26 when minimized.
-                    windowHeight => Math.Max(windowHeight - 258.0, MainWindow.MinWindowHeight - 258.0))
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.ConfigureDownloadRowDefinitionHeight,
+                view => view.configureDownloadRowDefinition.Height,
+                heightPixels => new(heightPixels),
+                height => height.Value)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.ConfigureDownloadRowDefinitionHeight,
-                    view => view.configureDownloadRowDefinition.Height,
-                    heightPixels => new(heightPixels),
-                    height => height.Value)
-                    .DisposeWith(disposables);
+            // Link and Start
+            this.Bind(ViewModel,
+                viewModel => viewModel.Link,
+                view => view.linkTextBox.Text)
+                .DisposeWith(disposables);
 
-                // Link and Start
-                this.Bind(ViewModel,
-                    viewModel => viewModel.Link,
-                    view => view.linkTextBox.Text)
-                    .DisposeWith(disposables);
+            linkTextBox.Events().KeyDown
+                       .Where(x => x.Key == Key.Enter)
+                       .Select(_ => ViewModel!.Link)
+                       .InvokeCommand(ViewModel!.StartDownloadCommand) // Null forgiving reason: upstream limitation.
+                       .DisposeWith(disposables);
 
-                linkTextBox.Events().KeyDown
-                           .Where(x => x.Key == Key.Enter)
-                           .Select(_ => ViewModel!.Link)
-                           .InvokeCommand(ViewModel!.StartDownloadCommand) // Null forgiving reason: upstream limitation.
-                           .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.BackendService.GlobalDownloadProgressPercentage,
+                view => view.downloadButton.Content,
+                percentage => percentage > 0.0 ? percentage.ToString("P1") : "_Download")
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.BackendService.GlobalDownloadProgressPercentage,
-                    view => view.downloadButton.Content,
-                    percentage => percentage > 0.0 ? percentage.ToString("P1") : "_Download")
-                    .DisposeWith(disposables);
+            // ButtonProgressAssist bindings
+            ViewModel.WhenAnyValue(x => x.BackendInstance.IsRunning)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x =>
+                {
+                    ButtonProgressAssist.SetIsIndicatorVisible(downloadButton, x);
+                    ButtonProgressAssist.SetIsIndicatorVisible(listFormatsButton, x);
+                })
+                .DisposeWith(disposables);
 
-                // ButtonProgressAssist bindings
-                ViewModel.WhenAnyValue(x => x.BackendInstance.IsRunning)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(x =>
-                    {
-                        ButtonProgressAssist.SetIsIndicatorVisible(downloadButton, x);
-                        ButtonProgressAssist.SetIsIndicatorVisible(listFormatsButton, x);
-                    })
-                    .DisposeWith(disposables);
+            ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
+                .Select(x => x == TaskbarItemProgressState.Indeterminate)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(downloadButton, x))
+                .DisposeWith(disposables);
 
-                ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
-                    .Select(x => x == TaskbarItemProgressState.Indeterminate)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(downloadButton, x))
-                    .DisposeWith(disposables);
+            ViewModel.WhenAnyValue(x => x.BackendService.GlobalDownloadProgressPercentage)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => ButtonProgressAssist.SetValue(downloadButton, x * 100))
+                .DisposeWith(disposables);
 
-                ViewModel.WhenAnyValue(x => x.BackendService.GlobalDownloadProgressPercentage)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(x => ButtonProgressAssist.SetValue(downloadButton, x * 100))
-                    .DisposeWith(disposables);
+            ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
+                .Select(x => x == TaskbarItemProgressState.Indeterminate)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(listFormatsButton, x))
+                .DisposeWith(disposables);
 
-                ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
-                    .Select(x => x == TaskbarItemProgressState.Indeterminate)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(listFormatsButton, x))
-                    .DisposeWith(disposables);
+            // presetComboBox
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.Presets,
+                view => view.presetComboBox.ItemsSource)
+                .DisposeWith(disposables);
 
-                // presetComboBox
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.Presets,
-                    view => view.presetComboBox.ItemsSource)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.SelectedPreset,
+                view => view.presetComboBox.SelectedItem)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.SelectedPreset,
-                    view => view.presetComboBox.SelectedItem)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.SelectedPresetText,
+                view => view.presetComboBox.Text)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.SelectedPresetText,
-                    view => view.presetComboBox.Text)
-                    .DisposeWith(disposables);
+            // Subtitles
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.DownloadSubtitles,
+                view => view.subtitlesDefaultCheckBox.IsChecked)
+                .DisposeWith(disposables);
 
-                // Subtitles
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.DownloadSubtitles,
-                    view => view.subtitlesDefaultCheckBox.IsChecked)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.DownloadAutoGeneratedSubtitles,
+                view => view.subtitlesAutoGeneratedCheckBox.IsChecked)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.DownloadAutoGeneratedSubtitles,
-                    view => view.subtitlesAutoGeneratedCheckBox.IsChecked)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SharedSettings.IsAnySubtitleDownloadEnabled,
+                view => view.subLangsComboBox.IsEnabled)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.SharedSettings.IsAnySubtitleDownloadEnabled,
-                    view => view.subLangsComboBox.IsEnabled)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SubtitleLanguagesHistory,
+                view => view.subLangsComboBox.ItemsSource)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.SubtitleLanguagesHistory,
-                    view => view.subLangsComboBox.ItemsSource)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.SubtitleLanguages,
+                view => view.subLangsComboBox.Text)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.SubtitleLanguages,
-                    view => view.subLangsComboBox.Text)
-                    .DisposeWith(disposables);
+            // Add metadata
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.AddMetadata,
+                view => view.metadataToggle.IsChecked)
+                .DisposeWith(disposables);
 
-                // Add metadata
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.AddMetadata,
-                    view => view.metadataToggle.IsChecked)
-                    .DisposeWith(disposables);
+            // Download thumbnail
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.DownloadThumbnail,
+                view => view.thumbnailToggle.IsChecked)
+                .DisposeWith(disposables);
 
-                // Download thumbnail
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.DownloadThumbnail,
-                    view => view.thumbnailToggle.IsChecked)
-                    .DisposeWith(disposables);
+            // Download playlist
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.DownloadPlaylist,
+                view => view.playlistToggle.IsChecked)
+                .DisposeWith(disposables);
 
-                // Download playlist
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.DownloadPlaylist,
-                    view => view.playlistToggle.IsChecked)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SharedSettings.DownloadPlaylist,
+                view => view.playlistItemsTextBox.IsEnabled)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.SharedSettings.DownloadPlaylist,
-                    view => view.playlistItemsTextBox.IsEnabled)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.PlaylistItems,
+                view => view.playlistItemsTextBox.Text)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.PlaylistItems,
-                    view => view.playlistItemsTextBox.Text)
-                    .DisposeWith(disposables);
+            // Cookies from browser
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SharedSettings.Backend,
+                view => view.cookiesBrowserStackPanel.Visibility,
+                backend => backend == BackendTypes.Ytdlp ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed)
+                .DisposeWith(disposables);
 
-                // Cookies from browser
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.SharedSettings.Backend,
-                    view => view.cookiesBrowserStackPanel.Visibility,
-                    backend => backend == BackendTypes.Ytdlp ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.UseCookiesBrowser,
+                view => view.cookiesBrowserToggle.IsChecked)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.UseCookiesBrowser,
-                    view => view.cookiesBrowserToggle.IsChecked)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SharedSettings.UseCookiesBrowser,
+                view => view.cookiesBrowserComboBox.IsEnabled)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.SharedSettings.UseCookiesBrowser,
-                    view => view.cookiesBrowserComboBox.IsEnabled)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.CookiesBrowserArgHistory,
+                view => view.cookiesBrowserComboBox.ItemsSource)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.CookiesBrowserArgHistory,
-                    view => view.cookiesBrowserComboBox.ItemsSource)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.CookiesBrowserArg,
+                view => view.cookiesBrowserComboBox.Text)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.CookiesBrowserArg,
-                    view => view.cookiesBrowserComboBox.Text)
-                    .DisposeWith(disposables);
+            // Cookies file
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.UseCookiesFile,
+                view => view.cookiesFileToggle.IsChecked)
+                .DisposeWith(disposables);
 
-                // Cookies file
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.UseCookiesFile,
-                    view => view.cookiesFileToggle.IsChecked)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SharedSettings.UseCookiesFile,
+                view => view.cookiesFileComboBox.IsEnabled)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.SharedSettings.UseCookiesFile,
-                    view => view.cookiesFileComboBox.IsEnabled)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.CookiesFilePathHistory,
+                view => view.cookiesFileComboBox.ItemsSource)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.CookiesFilePathHistory,
-                    view => view.cookiesFileComboBox.ItemsSource)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.CookiesFilePath,
+                view => view.cookiesFileComboBox.Text)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.CookiesFilePath,
-                    view => view.cookiesFileComboBox.Text)
-                    .DisposeWith(disposables);
+            // Output template
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.UseCustomOutputTemplate,
+                view => view.outputTemplateToggle.IsChecked)
+                .DisposeWith(disposables);
 
-                // Output template
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.UseCustomOutputTemplate,
-                    view => view.outputTemplateToggle.IsChecked)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SharedSettings.UseCustomOutputTemplate,
+                view => view.outputTemplateComboBox.IsEnabled)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.SharedSettings.UseCustomOutputTemplate,
-                    view => view.outputTemplateComboBox.IsEnabled)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.OutputTemplateHistory,
+                view => view.outputTemplateComboBox.ItemsSource)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.OutputTemplateHistory,
-                    view => view.outputTemplateComboBox.ItemsSource)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.CustomOutputTemplate,
+                view => view.outputTemplateComboBox.Text)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.CustomOutputTemplate,
-                    view => view.outputTemplateComboBox.Text)
-                    .DisposeWith(disposables);
+            // Download path
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.UseCustomPath,
+                view => view.pathToggle.IsChecked)
+                .DisposeWith(disposables);
 
-                // Download path
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.UseCustomPath,
-                    view => view.pathToggle.IsChecked)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SharedSettings.UseCustomPath,
+                view => view.pathComboBox.IsEnabled)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.SharedSettings.UseCustomPath,
-                    view => view.pathComboBox.IsEnabled)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.DownloadPathHistory,
+                view => view.pathComboBox.ItemsSource)
+                .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.DownloadPathHistory,
-                    view => view.pathComboBox.ItemsSource)
-                    .DisposeWith(disposables);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.DownloadPath,
+                view => view.pathComboBox.Text)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.DownloadPath,
-                    view => view.pathComboBox.Text)
-                    .DisposeWith(disposables);
+            // Arguments
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.DownloadArguments,
+                view => view.argumentsItemsControl.ItemsSource)
+                .DisposeWith(disposables);
 
-                // Arguments
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.DownloadArguments,
-                    view => view.argumentsItemsControl.ItemsSource)
-                    .DisposeWith(disposables);
+            // Output
+            this.Bind(ViewModel,
+                viewModel => viewModel.QueuedTextBoxSink.Content,
+                view => view.resultTextBox.Text)
+                .DisposeWith(disposables);
 
-                // Output
-                this.Bind(ViewModel,
-                    viewModel => viewModel.QueuedTextBoxSink.Content,
-                    view => view.resultTextBox.Text)
-                    .DisposeWith(disposables);
+            ViewModel.WhenAnyValue(x => x.QueuedTextBoxSink.Content)
+                .Where(_ => WpfHelper.IsScrolledToEnd(resultTextBox))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(_ => resultTextBox.ScrollToEnd())
+                .DisposeWith(disposables);
 
-                ViewModel.WhenAnyValue(x => x.QueuedTextBoxSink.Content)
-                    .Where(_ => WpfHelper.IsScrolledToEnd(resultTextBox))
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(_ => resultTextBox.ScrollToEnd())
-                    .DisposeWith(disposables);
+            // Download, list, abort button
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.StartDownloadCommand,
+                view => view.downloadButton,
+                viewModel => viewModel.Link)
+                .DisposeWith(disposables);
 
-                // Download, list, abort button
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.StartDownloadCommand,
-                    view => view.downloadButton,
-                    viewModel => viewModel.Link)
-                    .DisposeWith(disposables);
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.ListFormatsCommand,
+                view => view.listFormatsButton,
+                viewModel => viewModel.Link)
+                .DisposeWith(disposables);
 
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.ListFormatsCommand,
-                    view => view.listFormatsButton,
-                    viewModel => viewModel.Link)
-                    .DisposeWith(disposables);
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.BackendInstance.AbortCommand,
+                view => view.abortButton)
+                .DisposeWith(disposables);
 
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.BackendInstance.AbortCommand,
-                    view => view.abortButton)
-                    .DisposeWith(disposables);
+            // Browse and show cookies file in folder button
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.BrowseCookiesFileCommand,
+                view => view.cookiesFileBrowseButton)
+                .DisposeWith(disposables);
 
-                // Browse and show cookies file in folder button
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.BrowseCookiesFileCommand,
-                    view => view.cookiesFileBrowseButton)
-                    .DisposeWith(disposables);
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.ShowCookiesFileInFolderCommand,
+                view => view.cookiesFileShowInFolderButton)
+                .DisposeWith(disposables);
 
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.ShowCookiesFileInFolderCommand,
-                    view => view.cookiesFileShowInFolderButton)
-                    .DisposeWith(disposables);
+            // Browse and open folder button
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.BrowseDownloadFolderCommand,
+                view => view.browseButton)
+                .DisposeWith(disposables);
 
-                // Browse and open folder button
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.BrowseDownloadFolderCommand,
-                    view => view.browseButton)
-                    .DisposeWith(disposables);
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.OpenDownloadFolderCommand,
+                view => view.openFolderButton)
+                .DisposeWith(disposables);
 
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.OpenDownloadFolderCommand,
-                    view => view.openFolderButton)
-                    .DisposeWith(disposables);
+            // Reset custom filename template button
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.ResetCustomOutputTemplateCommand,
+                view => view.resetOutputTemplateButton)
+                .DisposeWith(disposables);
 
-                // Reset custom filename template button
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.ResetCustomOutputTemplateCommand,
-                    view => view.resetOutputTemplateButton)
-                    .DisposeWith(disposables);
+            // Custom preset buttons
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.OpenAddCustomPresetDialogCommand,
+                view => view.addPresetButton)
+                .DisposeWith(disposables);
 
-                // Custom preset buttons
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.OpenAddCustomPresetDialogCommand,
-                    view => view.addPresetButton)
-                    .DisposeWith(disposables);
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.OpenEditCustomPresetDialogCommand,
+                view => view.editPresetButton)
+                .DisposeWith(disposables);
 
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.OpenEditCustomPresetDialogCommand,
-                    view => view.editPresetButton)
-                    .DisposeWith(disposables);
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.DuplicatePresetCommand,
+                view => view.duplicatePresetButton)
+                .DisposeWith(disposables);
 
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.DuplicatePresetCommand,
-                    view => view.duplicatePresetButton)
-                    .DisposeWith(disposables);
-
-                this.BindCommand(ViewModel,
-                    viewModel => viewModel.DeleteCustomPresetCommand,
-                    view => view.deletePresetButton)
-                    .DisposeWith(disposables);
-            });
-        }
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.DeleteCustomPresetCommand,
+                view => view.deletePresetButton)
+                .DisposeWith(disposables);
+        });
     }
 }

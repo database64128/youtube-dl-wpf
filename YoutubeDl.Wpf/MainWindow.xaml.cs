@@ -2,76 +2,75 @@
 using ReactiveUI;
 using System.Reactive.Disposables;
 
-namespace YoutubeDl.Wpf
+namespace YoutubeDl.Wpf;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow
+    public const double MinWindowWidth = 672.0;
+
+    public const double MinWindowHeight = 600.0;
+
+    public MainWindow()
     {
-        public const double MinWindowWidth = 672.0;
+        InitializeComponent();
 
-        public const double MinWindowHeight = 600.0;
+        MainSnackbar.MessageQueue!.DiscardDuplicates = true;
+        ViewModel = new(MainSnackbar.MessageQueue);
 
-        public MainWindow()
+        // Set window size here to avoid flickering.
+        Width = ViewModel.SharedSettings.WindowWidth;
+        Height = ViewModel.SharedSettings.WindowHeight;
+
+        TaskbarItemInfo = new();
+
+        this.WhenActivated(disposables =>
         {
-            InitializeComponent();
+            // Window size
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.WindowWidth,
+                view => view.Width)
+                .DisposeWith(disposables);
 
-            MainSnackbar.MessageQueue!.DiscardDuplicates = true;
-            ViewModel = new(MainSnackbar.MessageQueue);
+            this.Bind(ViewModel,
+                viewModel => viewModel.SharedSettings.WindowHeight,
+                view => view.Height)
+                .DisposeWith(disposables);
 
-            // Set window size here to avoid flickering.
-            Width = ViewModel.SharedSettings.WindowWidth;
-            Height = ViewModel.SharedSettings.WindowHeight;
+            // Window closing
+            this.Events().Closing
+                .InvokeCommand(ViewModel.SaveSettingsCommand)
+                .DisposeWith(disposables);
 
-            TaskbarItemInfo = new();
+            // DialogHost
+            this.Bind(ViewModel,
+                viewModel => viewModel.IsDialogOpen,
+                view => view.rootDialogHost.IsOpen)
+                .DisposeWith(disposables);
 
-            this.WhenActivated(disposables =>
-            {
-                // Window size
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.WindowWidth,
-                    view => view.Width)
-                    .DisposeWith(disposables);
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.DialogVM,
+                view => view.rootDialogHost.DialogContent)
+                .DisposeWith(disposables);
 
-                this.Bind(ViewModel,
-                    viewModel => viewModel.SharedSettings.WindowHeight,
-                    view => view.Height)
-                    .DisposeWith(disposables);
+            // Tabs
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.Tabs,
+                view => view.mainTabControl.ItemsSource)
+                .DisposeWith(disposables);
 
-                // Window closing
-                this.Events().Closing
-                    .InvokeCommand(ViewModel.SaveSettingsCommand)
-                    .DisposeWith(disposables);
+            // Taskbar progress
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.BackendService.GlobalDownloadProgressPercentage,
+                view => view.TaskbarItemInfo.ProgressValue)
+                .DisposeWith(disposables);
 
-                // DialogHost
-                this.Bind(ViewModel,
-                    viewModel => viewModel.IsDialogOpen,
-                    view => view.rootDialogHost.IsOpen)
-                    .DisposeWith(disposables);
-
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.DialogVM,
-                    view => view.rootDialogHost.DialogContent)
-                    .DisposeWith(disposables);
-
-                // Tabs
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.Tabs,
-                    view => view.mainTabControl.ItemsSource)
-                    .DisposeWith(disposables);
-
-                // Taskbar progress
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.BackendService.GlobalDownloadProgressPercentage,
-                    view => view.TaskbarItemInfo.ProgressValue)
-                    .DisposeWith(disposables);
-
-                this.OneWayBind(ViewModel,
-                    viewModel => viewModel.BackendService.ProgressState,
-                    view => view.TaskbarItemInfo.ProgressState)
-                    .DisposeWith(disposables);
-            });
-        }
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.BackendService.ProgressState,
+                view => view.TaskbarItemInfo.ProgressState)
+                .DisposeWith(disposables);
+        });
     }
 }
