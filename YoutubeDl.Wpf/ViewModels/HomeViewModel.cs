@@ -560,7 +560,22 @@ public partial class HomeViewModel : ReactiveObject
 
         if (SharedSettings.UseCustomPath && !Directory.Exists(SharedSettings.DownloadPath))
         {
-            _snackbarMessageQueue.Enqueue("The specified download path does not exist.");
+            _snackbarMessageQueue.Enqueue(
+                "The specified download folder does not exist.", "Create",
+                path =>
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(path!);
+                        _snackbarMessageQueue.Enqueue("The download folder has been created.");
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Log().Error(ex, "Failed to create the download folder.");
+                        _snackbarMessageQueue.Enqueue($"Failed to create the download folder: {ex.Message}");
+                    }
+                },
+                SharedSettings.DownloadPath, false, false, TimeSpan.FromSeconds(10));
             return false;
         }
 
