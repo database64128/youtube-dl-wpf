@@ -20,6 +20,11 @@ public partial class HistoryItemView
                 view => view.textBlock.Text)
                 .DisposeWith(disposables);
 
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.IsDeleteButtonVisible,
+                view => view.deleteButton.Visibility)
+                .DisposeWith(disposables);
+
             this.BindCommand(ViewModel,
                 viewModel => viewModel.DeleteItemCommand,
                 view => view.deleteButton,
