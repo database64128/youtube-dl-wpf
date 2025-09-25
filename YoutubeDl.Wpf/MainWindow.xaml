@@ -21,7 +21,7 @@
     MinWidth="{x:Static local:MainWindow.MinWindowWidth}"
     MinHeight="{x:Static local:MainWindow.MinWindowHeight}"
     Title="Cube YouTube Downloader">
-    <materialDesign:DialogHost x:Name="rootDialogHost" Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
+    <materialDesign:DialogHost x:Name="rootDialogHost" Identifier="RootDialog" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
         <materialDesign:DialogHost.DialogContentTemplate>
             <DataTemplate>
                 <reactiveui:ViewModelViewHost ViewModel="{Binding}"
@@ -52,7 +52,7 @@
                     </DataTemplate>
                 </TabControl.ContentTemplate>
             </TabControl>
-            <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="MainSnackbar" />
+            <materialDesign:Snackbar x:Name="mainSnackbar" />
         </Grid>
     </materialDesign:DialogHost>
 </reactiveui:ReactiveWindow>

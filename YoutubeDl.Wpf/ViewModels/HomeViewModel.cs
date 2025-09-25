@@ -26,7 +26,7 @@ public partial class HomeViewModel : ReactiveObject
 
     private static readonly string[] s_predefinedSubtitleLanguages = ["all", "all,-live_chat"];
 
-    private readonly ISnackbarMessageQueue _snackbarMessageQueue;
+    private readonly SnackbarMessageQueue _snackbarMessageQueue;
     private readonly PresetDialogViewModel _presetDialogVM;
     private readonly HashSet<string> _cookiesBrowserArgHistorySet;
     private readonly IObservable<bool> _canResetCustomOutputTemplate;
@@ -111,7 +111,7 @@ public partial class HomeViewModel : ReactiveObject
         ObservableSettings settings,
         BackendService backendService,
         QueuedTextBoxSink queuedTextBoxSink,
-        ISnackbarMessageQueue snackbarMessageQueue,
+        SnackbarMessageQueue snackbarMessageQueue,
         Action<object?> openDialog,
         Action closeDialog,
         ReactiveCommand<Unit, Unit> closeDialogCommand)

@@ -13,7 +13,7 @@ namespace YoutubeDl.Wpf.ViewModels;
 
 public partial class SettingsViewModel : ReactiveObject
 {
-    private readonly ISnackbarMessageQueue _snackbarMessageQueue;
+    private readonly SnackbarMessageQueue _snackbarMessageQueue;
     private readonly PaletteHelper _paletteHelper;
 
     public static PackIconKind TabItemHeaderIconKind { get; } = PackIconKind.Settings;
@@ -37,7 +37,7 @@ public partial class SettingsViewModel : ReactiveObject
     /// </summary>
     public ObservableCollection<object> GlobalArguments { get; } = [];
 
-    public SettingsViewModel(ObservableSettings settings, BackendService backendService, ISnackbarMessageQueue snackbarMessageQueue)
+    public SettingsViewModel(ObservableSettings settings, BackendService backendService, SnackbarMessageQueue snackbarMessageQueue)
     {
         _snackbarMessageQueue = snackbarMessageQueue;
         _paletteHelper = new();

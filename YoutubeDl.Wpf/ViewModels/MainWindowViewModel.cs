@@ -14,8 +14,9 @@ namespace YoutubeDl.Wpf.ViewModels;
 
 public partial class MainWindowViewModel : ReactiveObject
 {
-    private readonly ISnackbarMessageQueue _snackbarMessageQueue;
     private readonly Settings _settings;
+
+    public SnackbarMessageQueue SnackbarMessageQueue { get; } = new() { DiscardDuplicates = true, };
 
     public ObservableSettings SharedSettings { get; }
     public BackendService BackendService { get; }
@@ -27,17 +28,15 @@ public partial class MainWindowViewModel : ReactiveObject
     [Reactive]
     private bool _isDialogOpen;
 
-    public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue)
+    public MainWindowViewModel()
     {
-        _snackbarMessageQueue = snackbarMessageQueue;
-
         try
         {
             _settings = Settings.LoadAsync().GetAwaiter().GetResult();
         }
         catch (Exception ex)
         {
-            snackbarMessageQueue.Enqueue(ex.Message);
+            SnackbarMessageQueue.Enqueue(ex.Message);
             _settings = new();
         }
 
@@ -56,8 +55,8 @@ public partial class MainWindowViewModel : ReactiveObject
         BackendService = new(SharedSettings);
         Tabs =
         [
-            new HomeViewModel(SharedSettings, BackendService, queuedTextBoxsink, snackbarMessageQueue, OpenDialog, CloseDialog, CloseDialogCommand),
-            new SettingsViewModel(SharedSettings, BackendService, snackbarMessageQueue),
+            new HomeViewModel(SharedSettings, BackendService, queuedTextBoxsink, SnackbarMessageQueue, OpenDialog, CloseDialog, CloseDialogCommand),
+            new SettingsViewModel(SharedSettings, BackendService, SnackbarMessageQueue),
         ];
     }
 
@@ -81,7 +80,7 @@ public partial class MainWindowViewModel : ReactiveObject
         }
         catch (Exception ex)
         {
-            _snackbarMessageQueue.Enqueue(ex.Message);
+            SnackbarMessageQueue.Enqueue(ex.Message);
 
             // Cancel window closing
             if (cancelEventArgs is not null)

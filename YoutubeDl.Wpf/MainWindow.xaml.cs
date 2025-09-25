@@ -17,8 +17,7 @@ public partial class MainWindow
     {
         InitializeComponent();
 
-        MainSnackbar.MessageQueue!.DiscardDuplicates = true;
-        ViewModel = new(MainSnackbar.MessageQueue);
+        ViewModel = new();
 
         // Set window size here to avoid flickering.
         Width = ViewModel.SharedSettings.WindowWidth;
@@ -53,6 +52,17 @@ public partial class MainWindow
             this.OneWayBind(ViewModel,
                 viewModel => viewModel.DialogVM,
                 view => view.rootDialogHost.DialogContent)
+                .DisposeWith(disposables);
+
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SnackbarMessageQueue,
+                view => view.rootDialogHost.SnackbarMessageQueue)
+                .DisposeWith(disposables);
+
+            // Snackbar
+            this.OneWayBind(ViewModel,
+                viewModel => viewModel.SnackbarMessageQueue,
+                view => view.mainSnackbar.MessageQueue)
                 .DisposeWith(disposables);
 
             // Tabs
