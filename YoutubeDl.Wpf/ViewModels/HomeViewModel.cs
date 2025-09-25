@@ -3,6 +3,7 @@ using DynamicData.Binding;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -459,7 +460,8 @@ public partial class HomeViewModel : ReactiveObject
         }
         catch (Exception ex)
         {
-            _snackbarMessageQueue.Enqueue(ex.Message);
+            this.Log().Error(ex, "Failed to open the download folder.");
+            _snackbarMessageQueue.Enqueue($"Failed to open the download folder: {ex.Message}");
         }
     }
 

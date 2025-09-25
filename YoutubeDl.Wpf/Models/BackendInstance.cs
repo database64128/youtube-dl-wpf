@@ -332,7 +332,7 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         }
         catch (Exception ex)
         {
-            this.Log().Error(ex);
+            this.Log().Error(ex, "Failed to start download.");
         }
     }
 
@@ -348,7 +348,7 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         }
         catch (Exception ex)
         {
-            this.Log().Error(ex);
+            this.Log().Error(ex, "Failed to list formats.");
         }
     }
 
@@ -365,7 +365,7 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         }
         catch (Exception ex)
         {
-            this.Log().Error(ex);
+            this.Log().Error(ex, "Failed to update backend.");
         }
     }
 
@@ -384,7 +384,7 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
             }
             catch (Exception ex)
             {
-                this.Log().Error(ex);
+                this.Log().Error(ex, "Failed to abort process.");
             }
             finally
             {

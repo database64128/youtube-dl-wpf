@@ -36,7 +36,8 @@ public partial class MainWindowViewModel : ReactiveObject
         }
         catch (Exception ex)
         {
-            SnackbarMessageQueue.Enqueue(ex.Message);
+            this.Log().Error(ex, "Failed to load settings, using defaults.");
+            SnackbarMessageQueue.Enqueue($"Failed to load settings, using defaults: {ex.Message}");
             _settings = new();
         }
 
@@ -80,7 +81,8 @@ public partial class MainWindowViewModel : ReactiveObject
         }
         catch (Exception ex)
         {
-            SnackbarMessageQueue.Enqueue(ex.Message);
+            this.Log().Error(ex, "Failed to save settings.");
+            SnackbarMessageQueue.Enqueue($"Failed to save settings: {ex.Message}");
 
             // Cancel window closing
             if (cancelEventArgs is not null)
