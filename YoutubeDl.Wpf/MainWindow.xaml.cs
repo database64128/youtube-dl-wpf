@@ -9,7 +9,7 @@ namespace YoutubeDl.Wpf
     /// </summary>
     public partial class MainWindow
     {
-        public const double MinWindowWidth = 600.0;
+        public const double MinWindowWidth = 672.0;
 
         public const double MinWindowHeight = 600.0;
 

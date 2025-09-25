@@ -87,9 +87,16 @@ namespace YoutubeDl.Wpf.Views
                     {
                         if (lastCheck == DateTimeOffset.MinValue)
                         {
-                            return "Last check: Never";
+                            return "Last check: never";
                         }
-                        return $"Last check: {lastCheck}";
+                        TimeSpan interval = DateTimeOffset.Now - lastCheck;
+                        return interval.TotalSeconds switch
+                        {
+                            < 60 => "Last check: just now",
+                            < 3600 => $"Last check: {interval.Minutes} minute(s) ago",
+                            < 86400 => $"Last check: {interval.Hours} hour(s) ago",
+                            _ => $"Last check: {interval.Days} day(s) ago",
+                        };
                     })
                     .DisposeWith(disposables);
 

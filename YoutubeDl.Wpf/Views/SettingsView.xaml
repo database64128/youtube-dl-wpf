@@ -12,7 +12,6 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
     d:DesignHeight="960" d:DesignWidth="1024">
     <ScrollViewer materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
-                  HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
         <Grid Margin="16">
             <Grid.RowDefinitions>
@@ -25,7 +24,8 @@
                 <RowDefinition Height="40" />
                 <RowDefinition Height="40" MaxHeight="40" />
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="40" />
+                <RowDefinition Height="40" MaxHeight="40" />
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="40" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="40" />
@@ -38,7 +38,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="500" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -177,6 +177,7 @@
             <ItemsControl Grid.Row="7"
                           Grid.RowSpan="2"
                           Grid.Column="1"
+                          Grid.ColumnSpan="2"
                           x:Name="argumentsItemsControl">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -190,25 +191,34 @@
                        Style="{StaticResource MaterialDesignBody2TextBlock}"
                        VerticalAlignment="Center"
                        Margin="8">
-                Update backend on startup
+                Updates
             </TextBlock>
-            <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal">
+            <WrapPanel Grid.Row="9" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2">
                 <ToggleButton x:Name="autoUpdateDlToggle"
                               Margin="4"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Center"/>
+                <TextBlock Margin="4"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}">
+                    Update on app startup
+                </TextBlock>
+
                 <Button x:Name="updateBackendButton"
                         Margin="4"
                         Style="{StaticResource MaterialDesignFlatButton}">
                     Update now
                 </Button>
-                <TextBlock x:Name="lastUpdateCheckTextBlock"
-                           Margin="4"
-                           VerticalAlignment="Center"
-                           Style="{StaticResource MaterialDesignBody2TextBlock}" />
-            </StackPanel>
 
-            <TextBlock Grid.Row="10"
+                <StackPanel Orientation="Horizontal" Height="40">
+                    <TextBlock x:Name="lastUpdateCheckTextBlock"
+                               Margin="4"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody2TextBlock}" />
+                </StackPanel>
+            </WrapPanel>
+
+            <TextBlock Grid.Row="11"
                        Grid.Column="0"
                        Margin="8"
                        VerticalAlignment="Center"
@@ -216,12 +226,12 @@
                 FFmpeg path
             </TextBlock>
             <TextBox x:Name="ffmpegPathTextBox"
-                     Grid.Row="10"
+                     Grid.Row="11"
                      Grid.Column="1"
                      Margin="4"
                      VerticalAlignment="Center"
                      materialDesign:HintAssist.Hint="Optional but recommended. Path to ffmpeg.exe"/>
-            <StackPanel Grid.Row="10" Grid.Column="2" Orientation="Horizontal">
+            <StackPanel Grid.Row="11" Grid.Column="2" Orientation="Horizontal">
                 <Button x:Name="ffmpegPathBrowseButton"
                         Margin="4"
                         Style="{StaticResource MaterialDesignFlatButton}">
@@ -241,14 +251,14 @@
                 </TextBlock>
             </StackPanel>
 
-            <TextBlock Grid.Row="11"
+            <TextBlock Grid.Row="12"
                        Grid.Column="0"
                        Margin="8"
                        Style="{StaticResource MaterialDesignHeadline6TextBlock}">
                 Network
             </TextBlock>
 
-            <TextBlock Grid.Row="12"
+            <TextBlock Grid.Row="13"
                        Grid.Column="0"
                        Margin="8"
                        VerticalAlignment="Center"
@@ -256,13 +266,13 @@
                 Proxy
             </TextBlock>
             <TextBox x:Name="proxyTextBox"
-                     Grid.Row="12"
+                     Grid.Row="13"
                      Grid.Column="1"
                      Margin="4"
                      VerticalAlignment="Center"
                      materialDesign:HintAssist.Hint="Optional. Override system proxy settings. Example: socks5://localhost:1080/"/>
             <TextBlock x:Name="proxyHintTextBlock"
-                       Grid.Row="12"
+                       Grid.Row="13"
                        Grid.Column="2"
                        Margin="4"
                        VerticalAlignment="Center"
@@ -271,14 +281,14 @@
                 ⚠️ Invalid proxy URL
             </TextBlock>
 
-            <TextBlock Grid.Row="13"
+            <TextBlock Grid.Row="14"
                        Grid.Column="0"
                        Margin="8"
                        Style="{StaticResource MaterialDesignHeadline6TextBlock}">
                 Logging
             </TextBlock>
 
-            <TextBlock Grid.Row="14"
+            <TextBlock Grid.Row="15"
                        Grid.Column="0"
                        Margin="8"
                        VerticalAlignment="Center"
@@ -286,7 +296,7 @@
                 Max log entries
             </TextBlock>
             <TextBox x:Name="maxLogEntriesTextBox"
-                     Grid.Row="14"
+                     Grid.Row="15"
                      Grid.Column="1"
                      Margin="4"
                      VerticalAlignment="Center"
@@ -294,14 +304,14 @@
                      HorizontalContentAlignment="Right"
                      Width="48"/>
 
-            <TextBlock Grid.Row="15"
+            <TextBlock Grid.Row="16"
                        Grid.Column="0"
                        Margin="8"
                        VerticalAlignment="Center"
                        Style="{StaticResource MaterialDesignBody2TextBlock}">
                 Log to files
             </TextBlock>
-            <StackPanel Grid.Row="15" Grid.Column="1" Orientation="Horizontal">
+            <StackPanel Grid.Row="16" Grid.Column="1" Orientation="Horizontal">
                 <ToggleButton x:Name="logToFilesToggle"
                               Margin="4"
                               HorizontalAlignment="Left"
@@ -314,14 +324,14 @@
                 </TextBlock>
             </StackPanel>
 
-            <TextBlock Grid.Row="16"
+            <TextBlock Grid.Row="17"
                        Grid.Column="0"
                        Margin="8 32 8 8"
                        Style="{StaticResource MaterialDesignHeadline5TextBlock}">
                 About
             </TextBlock>
 
-            <TextBlock Grid.Row="17"
+            <TextBlock Grid.Row="18"
                        Grid.Column="0"
                        Grid.ColumnSpan="3"
                        Margin="8 4 8 4"
@@ -331,7 +341,7 @@
                 and <Span FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono">yt-dlp</Span>.
             </TextBlock>
 
-            <Grid Grid.Row="18"
+            <Grid Grid.Row="19"
                   Grid.Column="0"
                   Grid.ColumnSpan="3"
                   Margin="4">
