@@ -289,25 +289,10 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
             GeneratedDownloadArguments.Add("--no-playlist");
         }
 
-        var outputTemplate = _settings.UseCustomOutputTemplate switch
-        {
-            true => _settings.CustomOutputTemplate,
-            false => _settings.Backend switch
-            {
-                BackendTypes.Ytdl => "%(title)s-%(id)s.%(ext)s",
-                _ => Settings.DefaultCustomOutputTemplate,
-            },
-        };
-
-        if (_settings.UseCustomPath)
-        {
-            outputTemplate = $@"{_settings.DownloadPath}{Path.DirectorySeparatorChar}{outputTemplate}";
-        }
-
-        if (_settings.UseCustomOutputTemplate || _settings.UseCustomPath)
+        if (_settings.UseCustomOutputTemplate)
         {
             GeneratedDownloadArguments.Add("-o");
-            GeneratedDownloadArguments.Add(outputTemplate);
+            GeneratedDownloadArguments.Add(_settings.CustomOutputTemplate);
         }
     }
 
@@ -317,6 +302,11 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         _process.StartInfo.ArgumentList.Clear();
         _process.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
         _process.StartInfo.ArgumentList.AddRange(GenericArguments);
+
+        if (_settings.UseCustomPath)
+        {
+            _process.StartInfo.WorkingDirectory = _settings.DownloadPath;
+        }
     }
 
     public async Task StartDownloadAsync(string link, CancellationToken cancellationToken = default)
