@@ -38,9 +38,9 @@ public partial class HomeViewModel : ReactiveObject
     private readonly IObservable<bool> _canRun;
     private readonly IObservable<bool> _canEditOrDeletePreset;
     private readonly IObservable<bool> _canDuplicatePreset;
-    private int _genericArgsStartIndex;
-    private int _downloadArgsStartIndex;
-    private int _customArgsStartIndex;
+    private int _globalArgCount;
+    private int _genericArgCount;
+    private int _downloadArgCount;
 
     public PackIconKind TabItemHeaderIconKind { get; }
 
@@ -472,17 +472,17 @@ public partial class HomeViewModel : ReactiveObject
 
     private void GenerateGlobalArguments()
     {
-        for (int i = 0; i < _genericArgsStartIndex; i++)
+        for (int i = 0; i < _globalArgCount; i++)
         {
             DownloadArguments.RemoveAt(0);
         }
 
-        _genericArgsStartIndex = 0;
+        ObservableCollection<BackendArgument> globalArgs = SharedSettings.BackendGlobalArguments;
+        _globalArgCount = globalArgs.Count;
 
-        foreach (BackendArgument globalArg in SharedSettings.BackendGlobalArguments)
+        for (int i = 0; i < globalArgs.Count; i++)
         {
-            DownloadArguments.Insert(_genericArgsStartIndex, new ArgumentChipViewModel(globalArg, false, DeleteArgumentChip)); ;
-            _genericArgsStartIndex++;
+            DownloadArguments.Insert(i, new ArgumentChipViewModel(globalArgs[i], false, DeleteArgumentChip)); ;
         }
     }
 
@@ -490,17 +490,19 @@ public partial class HomeViewModel : ReactiveObject
     {
         BackendInstance.GenerateGenericArguments();
 
-        for (int i = _genericArgsStartIndex; i < _downloadArgsStartIndex; i++)
+        int index = _globalArgCount;
+
+        for (int i = 0; i < _genericArgCount; i++)
         {
-            DownloadArguments.RemoveAt(_genericArgsStartIndex);
+            DownloadArguments.RemoveAt(index);
         }
 
-        _downloadArgsStartIndex = _genericArgsStartIndex;
+        List<string> genericArgs = BackendInstance.GenericArguments;
+        _genericArgCount = genericArgs.Count;
 
-        foreach (string arg in BackendInstance.GenericArguments)
+        for (int i = 0; i < genericArgs.Count; i++)
         {
-            DownloadArguments.Insert(_downloadArgsStartIndex, new ArgumentChipViewModel(new(arg), false, DeleteArgumentChip));
-            _downloadArgsStartIndex++;
+            DownloadArguments.Insert(index + i, new ArgumentChipViewModel(new(genericArgs[i]), false, DeleteArgumentChip));
         }
     }
 
@@ -512,17 +514,19 @@ public partial class HomeViewModel : ReactiveObject
     {
         BackendInstance.GenerateDownloadArguments(PlaylistItems);
 
-        for (int i = _downloadArgsStartIndex; i < _customArgsStartIndex; i++)
+        int index = _globalArgCount + _genericArgCount;
+
+        for (int i = 0; i < _downloadArgCount; i++)
         {
-            DownloadArguments.RemoveAt(_downloadArgsStartIndex);
+            DownloadArguments.RemoveAt(index);
         }
 
-        _customArgsStartIndex = _downloadArgsStartIndex;
+        List<string> downloadArgs = BackendInstance.GeneratedDownloadArguments;
+        _downloadArgCount = downloadArgs.Count;
 
-        foreach (string arg in BackendInstance.GeneratedDownloadArguments)
+        for (int i = 0; i < downloadArgs.Count; i++)
         {
-            DownloadArguments.Insert(_customArgsStartIndex, new ArgumentChipViewModel(new(arg), false, DeleteArgumentChip));
-            _customArgsStartIndex++;
+            DownloadArguments.Insert(index + i, new ArgumentChipViewModel(new(downloadArgs[i]), false, DeleteArgumentChip));
         }
     }
 
