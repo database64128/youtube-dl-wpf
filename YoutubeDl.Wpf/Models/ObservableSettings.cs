@@ -162,8 +162,20 @@ public partial class ObservableSettings : ReactiveObject
         _useCookiesBrowser = settings.UseCookiesBrowser;
         _cookiesBrowserArg = settings.CookiesBrowserArg;
 
+        if (string.IsNullOrEmpty(BackendPath))
+        {
+            if (PathHelper.FileExistsSearchPath("yt-dlp.exe"))
+            {
+                BackendPath = "yt-dlp.exe";
+            }
+            else if (PathHelper.FileExistsSearchPath("youtube-dl.exe"))
+            {
+                BackendPath = "youtube-dl.exe";
+            }
+        }
+
         IObservable<(string dlPath, bool dlBinaryExists)> backendPathObservable = this
-            .WhenAnyValue(x => x.BackendPath, dlPath => (dlPath, File.Exists(dlPath)));
+            .WhenAnyValue(x => x.BackendPath, dlPath => (dlPath, PathHelper.FileExistsSearchPath(dlPath)));
         _canShowDlBinaryInFolder = backendPathObservable
             .Select(x => x.dlBinaryExists);
         _isDlBinaryValidHelper = _canShowDlBinaryInFolder
@@ -190,7 +202,7 @@ public partial class ObservableSettings : ReactiveObject
         });
 
         IObservable<(string ffmpegPath, bool ffmpegBinaryExists)> ffmpegPathObservable = this
-            .WhenAnyValue(x => x.FfmpegPath, ffmpegPath => (ffmpegPath, File.Exists(ffmpegPath)));
+            .WhenAnyValue(x => x.FfmpegPath, ffmpegPath => (ffmpegPath, PathHelper.FileExistsSearchPath(ffmpegPath)));
         _canShowFfmpegBinaryInFolder = ffmpegPathObservable
             .Select(x => x.ffmpegBinaryExists);
         _isFfmpegBinaryValidHelper = ffmpegPathObservable
@@ -241,7 +253,11 @@ public partial class ObservableSettings : ReactiveObject
     [ReactiveCommand]
     private void BrowseDlBinary()
     {
-        if (BrowseBinary(BackendPath, out string? newPath, Backend.ToExecutableName()))
+        if (!PathHelper.SearchPath(BackendPath, out string? browsePath))
+        {
+            browsePath = BackendPath;
+        }
+        if (BrowseBinary(browsePath, out string? newPath, Backend.ToExecutableName()))
         {
             BackendPath = newPath;
         }
@@ -250,7 +266,11 @@ public partial class ObservableSettings : ReactiveObject
     [ReactiveCommand]
     private void BrowseFfmpegBinary()
     {
-        if (BrowseBinary(FfmpegPath, out string? newPath, "ffmpeg"))
+        if (!PathHelper.SearchPath(FfmpegPath, out string? browsePath))
+        {
+            browsePath = FfmpegPath;
+        }
+        if (BrowseBinary(browsePath, out string? newPath, "ffmpeg"))
         {
             FfmpegPath = newPath;
         }
@@ -260,8 +280,20 @@ public partial class ObservableSettings : ReactiveObject
         WpfHelper.BrowseFile(path, out newPath, defaultFileName, ".exe", "Executables (.exe)|*.exe");
 
     [ReactiveCommand(CanExecute = nameof(_canShowDlBinaryInFolder))]
-    private void ShowDlBinaryInFolder() => WpfHelper.ShowInFolder(BackendPath);
+    private void ShowDlBinaryInFolder()
+    {
+        if (PathHelper.SearchPath(BackendPath, out string? fullBackendPath))
+        {
+            WpfHelper.ShowInFolder(fullBackendPath);
+        }
+    }
 
     [ReactiveCommand(CanExecute = nameof(_canShowFfmpegBinaryInFolder))]
-    private void ShowFfmpegBinaryInFolder() => WpfHelper.ShowInFolder(FfmpegPath);
+    private void ShowFfmpegBinaryInFolder()
+    {
+        if (PathHelper.SearchPath(FfmpegPath, out string? fullFfmpegPath))
+        {
+            WpfHelper.ShowInFolder(fullFfmpegPath);
+        }
+    }
 }
