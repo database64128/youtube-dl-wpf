@@ -5,11 +5,15 @@ on:
     branches:
       - '**'
     paths-ignore:
-      - 'README.md'
+      - '**.md'
+      - '**.png'
+      - '**.webp'
       - 'LICENSE'
   pull_request:
     paths-ignore:
-      - 'README.md'
+      - '**.md'
+      - '**.png'
+      - '**.webp'
       - 'LICENSE'
 
 jobs:
