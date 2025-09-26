@@ -4,6 +4,7 @@ using Serilog.Core;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Threading;
 
@@ -26,16 +27,22 @@ public partial class QueuedTextBoxSink(Settings settings, IFormatProvider? forma
             return;
         }
 
-        var renderedMessage = logEvent.RenderMessage(formatProvider);
+        string renderedMessage = logEvent.RenderMessage(formatProvider);
+        string exceptionString = logEvent.Exception?.ToString() ?? "";
 
         // 2023-04-24T10:24:00.000+00:00 [I] Hi!
-        var length = 29 + 1 + 3 + 1 + renderedMessage.Length + Environment.NewLine.Length;
-        var message = string.Create(length, logEvent, (buf, logEvent) =>
+        int length = 29 + 1 + 3 + 1 + renderedMessage.Length + Environment.NewLine.Length;
+        if (exceptionString.Length > 0)
         {
-            if (!logEvent.Timestamp.TryFormat(buf, out var charsWritten, "yyyy-MM-ddTHH:mm:ss.fffzzz"))
+            length += exceptionString.Length + Environment.NewLine.Length;
+        }
+
+        string message = string.Create(length, logEvent, (buf, logEvent) =>
+        {
+            if (!logEvent.Timestamp.TryFormat(buf, out int charsWritten, "yyyy-MM-ddTHH:mm:ss.fffzzz"))
                 throw new Exception("Failed to format timestamp for log message.");
-            if (charsWritten != 29)
-                throw new Exception($"Unexpected formatted timestamp length {charsWritten}.");
+
+            Debug.Assert(charsWritten == 29, $"Expected timestamp to be 29 characters, but got {charsWritten}.");
 
             buf[29] = ' ';
             buf[30] = '[';
@@ -51,24 +58,37 @@ public partial class QueuedTextBoxSink(Settings settings, IFormatProvider? forma
             };
             buf[32] = ']';
             buf[33] = ' ';
-            renderedMessage.CopyTo(buf[34..]);
-            Environment.NewLine.CopyTo(buf[(34 + renderedMessage.Length)..]);
+            buf = buf[34..];
+
+            renderedMessage.CopyTo(buf);
+            buf = buf[renderedMessage.Length..];
+
+            if (exceptionString.Length > 0)
+            {
+                Environment.NewLine.CopyTo(buf);
+                buf = buf[Environment.NewLine.Length..];
+
+                exceptionString.CopyTo(buf);
+                buf = buf[exceptionString.Length..];
+            }
+
+            Environment.NewLine.CopyTo(buf);
         });
 
         lock (_lock)
         {
             while (_queuedLogMessages.Count >= settings.LoggingMaxEntries)
             {
-                var dequeuedMessage = _queuedLogMessages.Dequeue();
+                string dequeuedMessage = _queuedLogMessages.Dequeue();
                 _contentLength -= dequeuedMessage.Length;
             }
 
             _queuedLogMessages.Enqueue(message);
             _contentLength += message.Length;
 
-            var content = string.Create(_contentLength, _queuedLogMessages, (buf, msgs) =>
+            string content = string.Create(_contentLength, _queuedLogMessages, (buf, msgs) =>
             {
-                foreach (var msg in msgs)
+                foreach (string msg in msgs)
                 {
                     msg.CopyTo(buf);
                     buf = buf[msg.Length..];
