@@ -555,20 +555,23 @@ public partial class HomeViewModel : ReactiveObject
         {
             _snackbarMessageQueue.Enqueue(
                 "The specified download folder does not exist.", "Create",
-                path =>
+                static (object? arg) =>
                 {
-                    try
+                    if (arg is HomeViewModel vm)
                     {
-                        Directory.CreateDirectory(path!);
-                        _snackbarMessageQueue.Enqueue("The download folder has been created.");
-                    }
-                    catch (Exception ex)
-                    {
-                        this.Log().Error(ex, "Failed to create the download folder.");
-                        _snackbarMessageQueue.Enqueue($"Failed to create the download folder: {ex.Message}");
+                        try
+                        {
+                            _ = Directory.CreateDirectory(vm.SharedSettings.DownloadPath);
+                            vm._snackbarMessageQueue.Enqueue("The download folder has been created.");
+                        }
+                        catch (Exception ex)
+                        {
+                            vm.Log().Error(ex, "Failed to create the download folder.");
+                            vm._snackbarMessageQueue.Enqueue($"Failed to create the download folder: {ex.Message}");
+                        }
                     }
                 },
-                SharedSettings.DownloadPath, false, false, TimeSpan.FromSeconds(10));
+                this, false, false, TimeSpan.FromSeconds(10));
             return false;
         }
 
