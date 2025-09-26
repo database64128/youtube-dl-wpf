@@ -302,11 +302,6 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         _process.StartInfo.ArgumentList.Clear();
         _process.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
         _process.StartInfo.ArgumentList.AddRange(GenericArguments);
-
-        if (_settings.UseCustomPath)
-        {
-            _process.StartInfo.WorkingDirectory = _settings.DownloadPath;
-        }
     }
 
     public async Task StartDownloadAsync(string link, CancellationToken cancellationToken = default)
@@ -315,6 +310,11 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         _process.StartInfo.ArgumentList.AddRange(GeneratedDownloadArguments);
         _process.StartInfo.ArgumentList.AddRange(_settings.AppSettings.BackendDownloadArguments.Select(x => x.Argument));
         _process.StartInfo.ArgumentList.Add(link);
+
+        if (_settings.UseCustomPath)
+        {
+            _process.StartInfo.WorkingDirectory = _settings.DownloadPath;
+        }
 
         try
         {
