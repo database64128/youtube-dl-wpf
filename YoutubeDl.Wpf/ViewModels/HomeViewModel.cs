@@ -258,13 +258,7 @@ public partial class HomeViewModel : ReactiveObject
         _canRun = this.WhenAnyValue(
             x => x.Link,
             x => x.BackendInstance.IsRunning,
-            x => x.SharedSettings.IsDlBinaryValid,
-            x => x.SharedSettings.IsFfmpegBinaryValid,
-            (link, isRunning, isDlBinaryValid, isFfmpegBinaryValid) =>
-                !string.IsNullOrEmpty(link) &&
-                !isRunning &&
-                isDlBinaryValid &&
-                isFfmpegBinaryValid);
+            (link, isRunning) => !string.IsNullOrEmpty(link) && !isRunning);
 
         _canEditOrDeletePreset = this.WhenAnyValue(
             x => x.SharedSettings.SelectedPreset,
@@ -532,6 +526,20 @@ public partial class HomeViewModel : ReactiveObject
 
     private bool ValidateGenericOptions()
     {
+        if (!SharedSettings.IsDlBinaryValid)
+        {
+            _snackbarMessageQueue.Enqueue("Backend path is invalid. Go to Settings to fix it.");
+            return false;
+        }
+
+        if (!SharedSettings.IsFfmpegBinaryValid)
+        {
+            _snackbarMessageQueue.Enqueue("FFmpeg path is invalid. Go to Settings to fix it.");
+            return false;
+        }
+
+        // Our proxy URL validity check is rather strict, so we want to be lenient here.
+
         if (SharedSettings.UseCookiesFile && !File.Exists(SharedSettings.CookiesFilePath))
         {
             _snackbarMessageQueue.Enqueue("The specified cookies file does not exist.");

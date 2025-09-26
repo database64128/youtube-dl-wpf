@@ -29,7 +29,10 @@ public partial class BackendService : ReactiveObject, IEnableLogger
     public BackendService(ObservableSettings settings)
     {
         _settings = settings;
-        _canUpdateBackend = this.WhenAnyValue(x => x.CanUpdate);
+        _canUpdateBackend = this.WhenAnyValue(
+            x => x.CanUpdate,
+            x => x._settings.IsDlBinaryValid,
+            (canUpdate, isDlBinaryValid) => canUpdate && isDlBinaryValid);
     }
 
     public BackendInstance CreateInstance()
