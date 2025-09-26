@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.Win32;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -44,15 +45,19 @@ public static class WpfHelper
             fileName = defaultFileName;
         }
 
-        string? initialDirectory = Path.GetDirectoryName(path);
-        if (string.IsNullOrEmpty(initialDirectory))
+        string? initialDirectory = null;
+        if (!string.IsNullOrEmpty(path))
         {
-            // Without an explicit initial directory, the dialog starts in
-            // the last used directory, which may not work with relative paths.
-            initialDirectory = Directory.GetCurrentDirectory();
+            initialDirectory = Path.GetDirectoryName(path);
+            if (string.IsNullOrEmpty(initialDirectory))
+            {
+                // Without an explicit initial directory, the dialog starts in
+                // the last used directory, which may not work with relative paths.
+                initialDirectory = Directory.GetCurrentDirectory();
+            }
         }
 
-        Microsoft.Win32.OpenFileDialog openFileDialog = new()
+        OpenFileDialog openFileDialog = new()
         {
             FileName = fileName,
             DefaultExt = defaultExt,
@@ -80,6 +85,47 @@ public static class WpfHelper
             return false;
         }
         newPath = openFileDialog.FileName;
+        return true;
+    }
+
+    /// <summary>
+    /// Displays a folder browser dialog to allow the user to select a folder.
+    /// </summary>
+    /// <remarks>If the specified <paramref name="path"/> points to a non-existent volume, the method will
+    /// handle the error and retry with an empty initial directory. This ensures the dialog can still be displayed in
+    /// such cases.</remarks>
+    /// <param name="path">The initial directory to display in the folder browser dialog. If the directory does not exist, the dialog will
+    /// default to an empty initial directory.</param>
+    /// <param name="newPath">When the method returns <see langword="true"/>, contains the full path of the folder selected by the user. If
+    /// the user cancels the dialog or no folder is selected, this parameter is set to <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if the user selects a folder; otherwise, <see langword="false"/>.</returns>
+    public static bool BrowseFolder(string path, [NotNullWhen(true)] out string? newPath)
+    {
+        OpenFolderDialog openFolderDialog = new()
+        {
+            InitialDirectory = path,
+        };
+
+        bool? result;
+        try
+        {
+            result = openFolderDialog.ShowDialog();
+        }
+        catch (Win32Exception)
+        {
+            // ShowDialog silently ignores InitialDirectory when the path points to a non-existent directory on an existing volume.
+            // But it throws a System.ComponentModel.Win32Exception when the path points to a non-existent volume.
+            // So we catch the exception and try again with an empty InitialDirectory.
+            openFolderDialog.InitialDirectory = "";
+            result = openFolderDialog.ShowDialog();
+        }
+
+        if (result is not true)
+        {
+            newPath = null;
+            return false;
+        }
+        newPath = openFolderDialog.FolderName;
         return true;
     }
 

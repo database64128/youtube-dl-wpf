@@ -438,16 +438,9 @@ public partial class HomeViewModel : ReactiveObject
     [ReactiveCommand(CanExecute = nameof(_canBrowseDownloadFolder))]
     private void BrowseDownloadFolder()
     {
-        Microsoft.Win32.OpenFolderDialog folderDialog = new()
+        if (WpfHelper.BrowseFolder(SharedSettings.DownloadPath, out string? newPath))
         {
-            ValidateNames = false,
-            InitialDirectory = SharedSettings.DownloadPath,
-        };
-
-        var result = folderDialog.ShowDialog();
-        if (result == true)
-        {
-            SharedSettings.DownloadPath = folderDialog.FolderName;
+            SharedSettings.DownloadPath = newPath;
         }
     }
 
