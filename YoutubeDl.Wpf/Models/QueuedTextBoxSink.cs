@@ -101,4 +101,19 @@ public partial class QueuedTextBoxSink(Settings settings, IFormatProvider? forma
             });
         }
     }
+
+    [ReactiveCommand]
+    public void Clear()
+    {
+        lock (_lock)
+        {
+            _queuedLogMessages.Clear();
+            _contentLength = 0;
+
+            RxApp.MainThreadScheduler.Schedule(() =>
+            {
+                Content = "";
+            });
+        }
+    }
 }

@@ -376,15 +376,41 @@
                       Height="5"
                       HorizontalAlignment="Stretch" />
 
-        <TextBlock Grid.Row="3"
-                   Margin="8"
-                   Style="{StaticResource MaterialDesignHeadline5TextBlock}">
-            Logs
-        </TextBlock>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Margin="8"
+                       Style="{StaticResource MaterialDesignHeadline5TextBlock}">
+                Logs
+            </TextBlock>
+
+            <Button x:Name="copyLogsButton"
+                    Grid.Column="1"
+                    Margin="4 4 4 0"
+                    Width="40" Height="40"
+                    Style="{StaticResource MaterialDesignIconForegroundButton}"
+                    ToolTip="Copy logs">
+                <materialDesign:PackIcon Kind="ContentCopy" />
+            </Button>
+
+            <Button x:Name="clearLogsButton"
+                    Grid.Column="2"
+                    Margin="4 4 8 0"
+                    Width="40" Height="40"
+                    Style="{StaticResource MaterialDesignIconForegroundButton}"
+                    ToolTip="Clear logs">
+                <materialDesign:PackIcon Kind="DeleteOutline" />
+            </Button>
+        </Grid>
 
         <TextBox x:Name="resultTextBox"
                  Grid.Row="4"
-                 Margin="8"
+                 Margin="8 4 8 8"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                  TextWrapping="NoWrap"
                  IsReadOnly="True"

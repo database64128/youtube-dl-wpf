@@ -13,6 +13,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using YoutubeDl.Wpf.Models;
 using YoutubeDl.Wpf.Utils;
 
@@ -647,5 +648,12 @@ public partial class HomeViewModel : ReactiveObject
         UpdateGenericOptionsHistory();
 
         return BackendInstance.ListFormatsAsync(link, cancellationToken);
+    }
+
+    [ReactiveCommand]
+    private void CopyLogsToClipboard()
+    {
+        Clipboard.SetText(QueuedTextBoxSink.Content);
+        _snackbarMessageQueue.Enqueue("Logs copied");
     }
 }

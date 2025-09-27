@@ -250,7 +250,7 @@ public partial class HomeView
                 view => view.argumentsItemsControl.ItemsSource)
                 .DisposeWith(disposables);
 
-            // Output
+            // Logs
             this.Bind(ViewModel,
                 viewModel => viewModel.QueuedTextBoxSink.Content,
                 view => view.resultTextBox.Text)
@@ -327,6 +327,17 @@ public partial class HomeView
             this.BindCommand(ViewModel,
                 viewModel => viewModel.DeleteCustomPresetCommand,
                 view => view.deletePresetButton)
+                .DisposeWith(disposables);
+
+            // Logs
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.CopyLogsToClipboardCommand,
+                view => view.copyLogsButton)
+                .DisposeWith(disposables);
+
+            this.BindCommand(ViewModel,
+                viewModel => viewModel.QueuedTextBoxSink.ClearCommand,
+                view => view.clearLogsButton)
                 .DisposeWith(disposables);
         });
     }
