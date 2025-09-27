@@ -162,15 +162,17 @@ public partial class ObservableSettings : ReactiveObject
         _useCookiesBrowser = settings.UseCookiesBrowser;
         _cookiesBrowserArg = settings.CookiesBrowserArg;
 
-        if (string.IsNullOrEmpty(BackendPath))
+        if (string.IsNullOrEmpty(_backendPath))
         {
             if (PathHelper.FileExistsSearchPath("yt-dlp.exe"))
             {
-                BackendPath = "yt-dlp.exe";
+                _backendPath = "yt-dlp.exe";
+                _backendAutoUpdate = false;
             }
             else if (PathHelper.FileExistsSearchPath("youtube-dl.exe"))
             {
-                BackendPath = "youtube-dl.exe";
+                _backendPath = "youtube-dl.exe";
+                _backendAutoUpdate = false;
             }
         }
 
