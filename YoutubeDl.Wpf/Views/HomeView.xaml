@@ -408,16 +408,14 @@
             </Button>
         </Grid>
 
-        <TextBox x:Name="resultTextBox"
+        <TextBox x:Name="logsTextBox"
                  Grid.Row="4"
                  Margin="8 4 8 8"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                 TextWrapping="NoWrap"
                  IsReadOnly="True"
-                 VerticalContentAlignment="Top"
+                 AcceptsReturn="True"
                  VerticalScrollBarVisibility="Auto"
                  HorizontalScrollBarVisibility="Auto"
-                 materialDesign:HintAssist.Hint="Output from backend"
                  FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"/>
     </Grid>
 </reactiveui:ReactiveUserControl>

@@ -253,13 +253,13 @@ public partial class HomeView
             // Logs
             this.Bind(ViewModel,
                 viewModel => viewModel.QueuedTextBoxSink.Content,
-                view => view.resultTextBox.Text)
+                view => view.logsTextBox.Text)
                 .DisposeWith(disposables);
 
             ViewModel.WhenAnyValue(x => x.QueuedTextBoxSink.Content)
-                .Where(_ => WpfHelper.IsScrolledToEnd(resultTextBox))
+                .Where(_ => WpfHelper.IsScrolledToEnd(logsTextBox))
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(_ => resultTextBox.ScrollToEnd())
+                .Subscribe(_ => logsTextBox.ScrollToEnd())
                 .DisposeWith(disposables);
 
             // Download, list, abort button
