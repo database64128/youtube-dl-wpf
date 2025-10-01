@@ -20,6 +20,9 @@ jobs:
   build:
     name: Build
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v5
@@ -34,6 +37,9 @@ jobs:
         run: dotnet test --no-build --verbosity normal
 
       # Publish
+      - name: Define MSBuild properties
+        run: echo "MSBUILD_PROPS=-p:PublishSingleFile=true -p:PublishTrimmed=true -p:DebuggerSupport=false -p:EnableUnsafeBinaryFormatterSerialization=false -p:EnableUnsafeUTF7Encoding=false -p:InvariantGlobalization=true" >> $GITHUB_ENV
+
       - name: Publish framework-dependent
         run: |
           dotnet publish YoutubeDl.Wpf -c Release --no-restore
@@ -42,17 +48,17 @@ jobs:
       - name: Publish self-contained for Windows ARM64
         run: |
           dotnet publish YoutubeDl.Wpf -c Release -r win-arm64 --self-contained
-          dotnet publish YoutubeDl.LogReplay -c Release -r win-arm64 --self-contained
+          dotnet publish YoutubeDl.LogReplay -c Release $MSBUILD_PROPS -r win-arm64 --self-contained
 
       - name: Publish self-contained for Windows x64
         run: |
           dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
-          dotnet publish YoutubeDl.LogReplay -c Release -r win-x64 --self-contained
+          dotnet publish YoutubeDl.LogReplay -c Release $MSBUILD_PROPS -r win-x64 --self-contained
 
       - name: Publish self-contained for Windows x86
         run: |
           dotnet publish YoutubeDl.Wpf -c Release -r win-x86 --self-contained
-          dotnet publish YoutubeDl.LogReplay -c Release -r win-x86 --self-contained
+          dotnet publish YoutubeDl.LogReplay -c Release $MSBUILD_PROPS -r win-x86 --self-contained
 
       # Upload YoutubeDl.Wpf
       - name: Upload YoutubeDl.Wpf artifacts for Windows framework-dependent
