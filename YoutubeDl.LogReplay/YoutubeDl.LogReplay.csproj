@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
+    <AssemblyName>youtube-dl-log-replay</AssemblyName>
   </PropertyGroup>
 
 </Project>
