@@ -35,38 +35,71 @@ jobs:
 
       # Publish
       - name: Publish framework-dependent
-        run: dotnet publish YoutubeDl.Wpf -c Release --no-restore
+        run: |
+          dotnet publish YoutubeDl.Wpf -c Release --no-restore
+          dotnet publish YoutubeDl.LogReplay -c Release --no-restore
 
       - name: Publish self-contained for Windows ARM64
-        run: dotnet publish YoutubeDl.Wpf -c Release -r win-arm64 --self-contained
+        run: |
+          dotnet publish YoutubeDl.Wpf -c Release -r win-arm64 --self-contained
+          dotnet publish YoutubeDl.LogReplay -c Release -r win-arm64 --self-contained
 
       - name: Publish self-contained for Windows x64
-        run: dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
+        run: |
+          dotnet publish YoutubeDl.Wpf -c Release -r win-x64 --self-contained
+          dotnet publish YoutubeDl.LogReplay -c Release -r win-x64 --self-contained
 
       - name: Publish self-contained for Windows x86
-        run: dotnet publish YoutubeDl.Wpf -c Release -r win-x86 --self-contained
+        run: |
+          dotnet publish YoutubeDl.Wpf -c Release -r win-x86 --self-contained
+          dotnet publish YoutubeDl.LogReplay -c Release -r win-x86 --self-contained
 
-      # Upload
-      - name: Upload artifacts for Windows framework-dependent
+      # Upload YoutubeDl.Wpf
+      - name: Upload YoutubeDl.Wpf artifacts for Windows framework-dependent
         uses: actions/upload-artifact@v4
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows
           path: YoutubeDl.Wpf/bin/Release/net9.0-windows10.0.26100.0/publish/
 
-      - name: Upload artifacts for Windows ARM64
+      - name: Upload YoutubeDl.Wpf artifacts for Windows ARM64
         uses: actions/upload-artifact@v4
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows-arm64
           path: YoutubeDl.Wpf/bin/Release/net9.0-windows10.0.26100.0/win-arm64/publish/
 
-      - name: Upload artifacts for Windows x64
+      - name: Upload YoutubeDl.Wpf artifacts for Windows x64
         uses: actions/upload-artifact@v4
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows-x64
           path: YoutubeDl.Wpf/bin/Release/net9.0-windows10.0.26100.0/win-x64/publish/
 
-      - name: Upload artifacts for Windows x86
+      - name: Upload YoutubeDl.Wpf artifacts for Windows x86
         uses: actions/upload-artifact@v4
         with:
           name: youtube-dl-wpf-${{ github.sha }}-windows-x86
           path: YoutubeDl.Wpf/bin/Release/net9.0-windows10.0.26100.0/win-x86/publish/
+
+      # Upload YoutubeDl.LogReplay
+      - name: Upload YoutubeDl.LogReplay artifacts for Windows framework-dependent
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-dl-log-replay-${{ github.sha }}-windows
+          path: YoutubeDl.LogReplay/bin/Release/net9.0/publish/
+
+      - name: Upload YoutubeDl.LogReplay artifacts for Windows ARM64
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-dl-log-replay-${{ github.sha }}-windows-arm64
+          path: YoutubeDl.LogReplay/bin/Release/net9.0/win-arm64/publish/
+
+      - name: Upload YoutubeDl.LogReplay artifacts for Windows x64
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-dl-log-replay-${{ github.sha }}-windows-x64
+          path: YoutubeDl.LogReplay/bin/Release/net9.0/win-x64/publish/
+
+      - name: Upload YoutubeDl.LogReplay artifacts for Windows x86
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-dl-log-replay-${{ github.sha }}-windows-x86
+          path: YoutubeDl.LogReplay/bin/Release/net9.0/win-x86/publish/
