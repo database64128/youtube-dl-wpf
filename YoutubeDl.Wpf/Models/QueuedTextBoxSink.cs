@@ -5,19 +5,42 @@ using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reactive.Concurrency;
 using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 
 namespace YoutubeDl.Wpf.Models;
 
-public partial class QueuedTextBoxSink(Settings settings, IFormatProvider? formatProvider = null) : ReactiveObject, ILogEventSink
+public partial class QueuedTextBoxSink : ReactiveObject, ILogEventSink
 {
+    private readonly Settings _settings;
+    private readonly IFormatProvider? _formatProvider;
+
     private readonly Lock _lock = new();
-    private readonly Queue<string> _queuedLogMessages = new(settings.LoggingMaxEntries);
+    private readonly Queue<string> _queuedLogMessages;
     private int _contentLength;
+
+    private readonly struct Signal { }
+    private readonly ChannelWriter<Signal> _contentUpdateSignalWriter;
 
     [Reactive]
     private string _content = "";
+
+    public QueuedTextBoxSink(Settings settings, IFormatProvider? formatProvider = null)
+    {
+        _settings = settings;
+        _formatProvider = formatProvider;
+        _queuedLogMessages = new(settings.LoggingMaxEntries);
+
+        Channel<Signal> channel = Channel.CreateBounded<Signal>(new BoundedChannelOptions(1)
+        {
+            SingleReader = true,
+            AllowSynchronousContinuations = true,
+            FullMode = BoundedChannelFullMode.DropWrite, // This assumes that Signal carries no data.
+        });
+        _contentUpdateSignalWriter = channel.Writer;
+        _ = UpdateContentAsync(channel.Reader);
+    }
 
     public void Emit(LogEvent logEvent)
     {
@@ -27,7 +50,7 @@ public partial class QueuedTextBoxSink(Settings settings, IFormatProvider? forma
             return;
         }
 
-        string renderedMessage = logEvent.RenderMessage(formatProvider);
+        string renderedMessage = logEvent.RenderMessage(_formatProvider);
         string exceptionString = logEvent.Exception?.ToString() ?? "";
 
         // 2023-04-24T10:24:00.000+00:00 [I] Hi!
@@ -77,7 +100,7 @@ public partial class QueuedTextBoxSink(Settings settings, IFormatProvider? forma
 
         lock (_lock)
         {
-            while (_queuedLogMessages.Count >= settings.LoggingMaxEntries)
+            while (_queuedLogMessages.Count >= _settings.LoggingMaxEntries)
             {
                 string dequeuedMessage = _queuedLogMessages.Dequeue();
                 _contentLength -= dequeuedMessage.Length;
@@ -85,20 +108,33 @@ public partial class QueuedTextBoxSink(Settings settings, IFormatProvider? forma
 
             _queuedLogMessages.Enqueue(message);
             _contentLength += message.Length;
+        }
 
-            string content = string.Create(_contentLength, _queuedLogMessages, (buf, msgs) =>
+        _ = _contentUpdateSignalWriter.TryWrite(default);
+    }
+
+    private async Task UpdateContentAsync(ChannelReader<Signal> reader, CancellationToken cancellationToken = default)
+    {
+        await foreach (Signal _ in reader.ReadAllAsync(cancellationToken))
+        {
+            string content;
+
+            lock (_lock)
             {
-                foreach (string msg in msgs)
+                content = string.Create(_contentLength, _queuedLogMessages, (buf, msgs) =>
                 {
-                    msg.CopyTo(buf);
-                    buf = buf[msg.Length..];
-                }
-            });
+                    foreach (string msg in msgs)
+                    {
+                        msg.CopyTo(buf);
+                        buf = buf[msg.Length..];
+                    }
+                });
+            }
 
-            RxApp.MainThreadScheduler.Schedule(() =>
-            {
-                Content = content;
-            });
+            Content = content;
+
+            const int updateIntervalMs = 100;
+            await Task.Delay(updateIntervalMs, cancellationToken);
         }
     }
 
@@ -109,11 +145,8 @@ public partial class QueuedTextBoxSink(Settings settings, IFormatProvider? forma
         {
             _queuedLogMessages.Clear();
             _contentLength = 0;
-
-            RxApp.MainThreadScheduler.Schedule(() =>
-            {
-                Content = "";
-            });
         }
+
+        Content = "";
     }
 }
