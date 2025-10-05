@@ -96,6 +96,8 @@ public record Preset(
         CreatePredefined("YouTube 720p AVC + AAC (136+140)", "136+140"),
         CreatePredefined("YouTube Opus Audio (251)", "251", "", BackendTypes.Ytdlp, "--remux-video", "opus"),
         CreatePredefined("YouTube AAC Audio (140)", "140"),
+        CreatePredefined("YouTube Music High 256kbps AAC (141)", "141"),
+        CreatePredefined("YouTube Music High 256kbps Opus (774)", "774"),
         CreatePredefined("1080p", formatArg : "1080p"),
         CreatePredefined("720p", formatArg : "720p"),
         CreatePredefined("webm", formatArg: "webm"),
