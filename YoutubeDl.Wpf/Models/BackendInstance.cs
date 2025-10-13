@@ -276,8 +276,6 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
 
         if (_settings.DownloadPlaylist)
         {
-            GeneratedDownloadArguments.Add("--yes-playlist");
-
             if (!string.IsNullOrEmpty(playlistItems))
             {
                 GeneratedDownloadArguments.Add("--playlist-items");
