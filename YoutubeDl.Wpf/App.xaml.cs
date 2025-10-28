@@ -1,7 +1,7 @@
-﻿using ReactiveUI;
-using Splat;
-using System.Reflection;
+﻿using ReactiveUI.Builder;
 using System.Windows;
+using YoutubeDl.Wpf.ViewModels;
+using YoutubeDl.Wpf.Views;
 
 namespace YoutubeDl.Wpf;
 
@@ -12,6 +12,15 @@ public partial class App : Application
 {
     public App()
     {
-        Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetCallingAssembly());
+        RxAppBuilder.CreateReactiveUIBuilder()
+            .WithWpf()
+            .RegisterView<AddArgumentView, AddArgumentViewModel>()
+            .RegisterView<ArgumentChipView, ArgumentChipViewModel>()
+            .RegisterView<GetStartedDialogView, GetStartedDialogViewModel>()
+            .RegisterView<HistoryItemView, HistoryItemViewModel>()
+            .RegisterView<HomeView, HomeViewModel>()
+            .RegisterView<PresetDialogView, PresetDialogViewModel>()
+            .RegisterView<SettingsView, SettingsViewModel>()
+            .Build();
     }
 }
