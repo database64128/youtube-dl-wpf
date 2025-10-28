@@ -35,7 +35,7 @@ public partial class SettingsViewModel : ReactiveObject
     /// A view model in this collection must be of either
     /// <see cref="ArgumentChipViewModel"/> or <see cref="AddArgumentViewModel"/> type.
     /// </summary>
-    public ObservableCollection<object> GlobalArguments { get; } = [];
+    public ObservableCollection<ReactiveObject> GlobalArguments { get; } = [];
 
     public SettingsViewModel(ObservableSettings settings, BackendService backendService, SnackbarMessageQueue snackbarMessageQueue)
     {

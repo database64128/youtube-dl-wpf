@@ -20,10 +20,10 @@ public partial class MainWindowViewModel : ReactiveObject
 
     public ObservableSettings SharedSettings { get; }
     public BackendService BackendService { get; }
-    public object[] Tabs { get; }
+    public ReactiveObject[] Tabs { get; }
 
     [Reactive]
-    private object? _dialogVM;
+    private ReactiveObject? _dialogVM;
 
     [Reactive]
     private bool _isDialogOpen;
@@ -61,7 +61,7 @@ public partial class MainWindowViewModel : ReactiveObject
         ];
     }
 
-    private void OpenDialog(object? vm)
+    private void OpenDialog(ReactiveObject vm)
     {
         DialogVM = vm;
         IsDialogOpen = true;

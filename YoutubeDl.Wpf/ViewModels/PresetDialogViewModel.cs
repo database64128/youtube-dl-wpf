@@ -13,7 +13,7 @@ namespace YoutubeDl.Wpf.ViewModels;
 public partial class PresetDialogViewModel : ReactiveObject
 {
     private readonly List<BackendArgument> _backendArguments = [];
-    private readonly Action<object?> _openDialog;
+    private readonly Action<ReactiveObject> _openDialog;
     private readonly Action _closeDialog;
     private readonly IObservable<bool> _canSave;
     private Preset? _preset;
@@ -34,9 +34,9 @@ public partial class PresetDialogViewModel : ReactiveObject
     [Reactive]
     private bool _isYtdlpSupported = true;
 
-    public ObservableCollection<object> ArgumentChips { get; }
+    public ObservableCollection<ReactiveObject> ArgumentChips { get; }
 
-    public PresetDialogViewModel(Action<object?> openDialog, Action closeDialog, ReactiveCommand<Unit, Unit> closeDialogCommand)
+    public PresetDialogViewModel(Action<ReactiveObject> openDialog, Action closeDialog, ReactiveCommand<Unit, Unit> closeDialogCommand)
     {
         _openDialog = openDialog;
         _closeDialog = closeDialog;

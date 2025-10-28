@@ -101,7 +101,7 @@ public partial class HomeViewModel : ReactiveObject
     /// A view model in this collection must be of either
     /// <see cref="ArgumentChipViewModel"/> or <see cref="AddArgumentViewModel"/> type.
     /// </summary>
-    public ObservableCollection<object> DownloadArguments { get; }
+    public ObservableCollection<ReactiveObject> DownloadArguments { get; }
 
     [Reactive]
     private string _link = "";
@@ -114,7 +114,7 @@ public partial class HomeViewModel : ReactiveObject
         BackendService backendService,
         QueuedTextBoxSink queuedTextBoxSink,
         SnackbarMessageQueue snackbarMessageQueue,
-        Action<object?> openDialog,
+        Action<ReactiveObject> openDialog,
         Action closeDialog,
         ReactiveCommand<Unit, Unit> closeDialogCommand)
     {
