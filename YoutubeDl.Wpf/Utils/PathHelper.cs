@@ -20,7 +20,7 @@ public static class PathHelper
     /// otherwise, <see langword="false"/>.</returns>
     public static unsafe bool FileExistsSearchPath(string path) => Path.IsPathFullyQualified(path) ?
         File.Exists(path) :
-        PInvoke.SearchPath(default, path, default, default, default) > 0;
+        PInvoke.SearchPath(default, path, default, default) > 0;
 
     /// <summary>
     /// Searches for the specified file in the system's search path and determines its fully qualified path.
@@ -51,7 +51,7 @@ public static class PathHelper
         }
 
         Span<char> lpBuffer = stackalloc char[32767];
-        uint length = PInvoke.SearchPath(default, path, default, lpBuffer, default);
+        uint length = PInvoke.SearchPath(default, path, default, lpBuffer);
         if (length == 0 || length > lpBuffer.Length)
         {
             fullPath = null;
