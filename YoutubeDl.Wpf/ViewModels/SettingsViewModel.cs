@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using System.Reflection;
 using System.Windows.Media;
 using YoutubeDl.Wpf.Models;
+using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
@@ -17,6 +18,7 @@ public partial class SettingsViewModel : ReactiveObject
 {
     private readonly SnackbarMessageQueue _snackbarMessageQueue;
     private readonly PaletteHelper _paletteHelper;
+    private readonly Theme _theme;
 
     public static PackIconKind TabItemHeaderIconKind { get; } = PackIconKind.Settings;
 
@@ -47,6 +49,7 @@ public partial class SettingsViewModel : ReactiveObject
     {
         _snackbarMessageQueue = snackbarMessageQueue;
         _paletteHelper = new();
+        _theme = _paletteHelper.GetTheme();
 
         Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
         SharedSettings = settings;
@@ -99,19 +102,12 @@ public partial class SettingsViewModel : ReactiveObject
     }
 
     [ReactiveCommand]
-    private void ChangeColorMode(BaseTheme colorMode)
+    private void ChangeColorMode(BaseTheme baseTheme)
     {
-        // Get current theme.
-        var theme = _paletteHelper.GetTheme();
+        _theme.SetCustomizedBaseTheme(baseTheme);
+        _paletteHelper.SetTheme(_theme);
 
-        // Apply base theme
-        theme.SetBaseTheme(colorMode);
-
-        // Apply theme
-        _paletteHelper.SetTheme(theme);
-
-        // Save setting
-        SharedSettings.AppColorMode = colorMode;
+        SharedSettings.AppColorMode = baseTheme;
     }
 
     [ReactiveCommand]
@@ -119,22 +115,13 @@ public partial class SettingsViewModel : ReactiveObject
 
     private void InitializeTheme(BaseTheme baseTheme, (Color primary, Color secondary)? color)
     {
-        if (baseTheme is BaseTheme.Inherit && color is null)
-        {
-            return;
-        }
-
-        Theme theme = _paletteHelper.GetTheme();
-        if (baseTheme != BaseTheme.Inherit)
-        {
-            theme.SetBaseTheme(baseTheme);
-        }
+        _theme.SetCustomizedBaseTheme(baseTheme);
         if (color is not null)
         {
-            theme.SetPrimaryColor(color.Value.primary);
-            theme.SetSecondaryColor(color.Value.secondary);
+            _theme.SetPrimaryColor(color.Value.primary);
+            _theme.SetSecondaryColor(color.Value.secondary);
         }
-        _paletteHelper.SetTheme(theme);
+        _paletteHelper.SetTheme(_theme);
     }
 
     private void DeleteArgumentChip(ArgumentChipViewModel item)

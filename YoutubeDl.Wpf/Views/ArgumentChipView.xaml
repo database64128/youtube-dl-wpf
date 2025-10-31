@@ -13,6 +13,5 @@
     d:DesignHeight="38" d:DesignWidth="160">
     <materialDesign:Chip x:Name="argumentChip"
                          Margin="4"
-                         Background="#16FFFFFF"
                          FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono" />
 </reactiveui:ReactiveUserControl>
