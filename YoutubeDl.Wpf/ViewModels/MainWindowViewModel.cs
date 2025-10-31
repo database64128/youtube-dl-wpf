@@ -54,10 +54,11 @@ public partial class MainWindowViewModel : ReactiveObject
 
         SharedSettings = new(_settings);
         BackendService = new(SharedSettings);
+        DateTime today = DateTime.Today;
         Tabs =
         [
-            new HomeViewModel(SharedSettings, BackendService, queuedTextBoxsink, SnackbarMessageQueue, OpenDialog, CloseDialog, CloseDialogCommand),
-            new SettingsViewModel(SharedSettings, BackendService, SnackbarMessageQueue),
+            new HomeViewModel(SharedSettings, BackendService, queuedTextBoxsink, SnackbarMessageQueue, OpenDialog, CloseDialog, CloseDialogCommand, today),
+            new SettingsViewModel(SharedSettings, BackendService, SnackbarMessageQueue, today),
         ];
     }
 

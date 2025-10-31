@@ -116,7 +116,8 @@ public partial class HomeViewModel : ReactiveObject
         SnackbarMessageQueue snackbarMessageQueue,
         Action<ReactiveObject> openDialog,
         Action closeDialog,
-        ReactiveCommand<Unit, Unit> closeDialogCommand)
+        ReactiveCommand<Unit, Unit> closeDialogCommand,
+        DateTime today)
     {
         SharedSettings = settings;
         BackendService = backendService;
@@ -127,7 +128,6 @@ public partial class HomeViewModel : ReactiveObject
 
         // Tab icon Easter egg.
         const PackIconKind defaultIcon = PackIconKind.Download;
-        var today = DateTime.Today;
         TabItemHeaderIconKind = today.Month switch
         {
             2 => today.Day switch

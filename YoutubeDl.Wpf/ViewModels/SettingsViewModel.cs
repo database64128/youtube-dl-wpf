@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using MaterialDesignColors.Recommended;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
@@ -7,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
+using System.Windows.Media;
 using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels;
@@ -37,7 +39,11 @@ public partial class SettingsViewModel : ReactiveObject
     /// </summary>
     public ObservableCollection<ReactiveObject> GlobalArguments { get; } = [];
 
-    public SettingsViewModel(ObservableSettings settings, BackendService backendService, SnackbarMessageQueue snackbarMessageQueue)
+    public SettingsViewModel(
+        ObservableSettings settings,
+        BackendService backendService,
+        SnackbarMessageQueue snackbarMessageQueue,
+        DateTime today)
     {
         _snackbarMessageQueue = snackbarMessageQueue;
         _paletteHelper = new();
@@ -49,7 +55,18 @@ public partial class SettingsViewModel : ReactiveObject
         GlobalArguments.AddRange(SharedSettings.BackendGlobalArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
         GlobalArguments.Add(new AddArgumentViewModel(AddArgument));
 
-        ChangeColorMode(SharedSettings.AppColorMode);
+        // Theme colors easter egg
+        (Color primary, Color secondary)? color = today.Month switch
+        {
+            10 => today.Day switch
+            {
+                31 => (OrangeSwatch.OrangeA700, OrangeSwatch.Orange500), // Halloween
+                _ => null,
+            },
+            _ => null,
+        };
+
+        InitializeTheme(settings.AppColorMode, color);
 
         this.WhenAnyValue(x => x.SharedSettings.LoggingMaxEntries)
             .Subscribe(loggingMaxEntries =>
@@ -99,6 +116,26 @@ public partial class SettingsViewModel : ReactiveObject
 
     [ReactiveCommand]
     private void ToggleLogToFilesHint() => IsLogToFilesHintVisible = !IsLogToFilesHintVisible;
+
+    private void InitializeTheme(BaseTheme baseTheme, (Color primary, Color secondary)? color)
+    {
+        if (baseTheme is BaseTheme.Inherit && color is null)
+        {
+            return;
+        }
+
+        Theme theme = _paletteHelper.GetTheme();
+        if (baseTheme != BaseTheme.Inherit)
+        {
+            theme.SetBaseTheme(baseTheme);
+        }
+        if (color is not null)
+        {
+            theme.SetPrimaryColor(color.Value.primary);
+            theme.SetSecondaryColor(color.Value.secondary);
+        }
+        _paletteHelper.SetTheme(theme);
+    }
 
     private void DeleteArgumentChip(ArgumentChipViewModel item)
     {
