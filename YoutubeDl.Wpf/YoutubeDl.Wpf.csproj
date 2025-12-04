@@ -43,7 +43,7 @@
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="5.3.1-ci1190" />
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.257">
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.259">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
