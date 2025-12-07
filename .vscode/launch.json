@@ -6,9 +6,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "Build Solution (Debug)",
-            "program": "${workspaceFolder}/YoutubeDl.Wpf/bin/Debug/net9.0-windows10.0.26100.0/youtube-dl-wpf.dll",
+            "program": "${workspaceFolder}/YoutubeDl.Wpf/bin/Debug/net10.0-windows10.0.26100.0/youtube-dl-wpf.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/YoutubeDl.Wpf/bin/Debug/net9.0-windows10.0.26100.0",
+            "cwd": "${workspaceFolder}/YoutubeDl.Wpf/bin/Debug/net10.0-windows10.0.26100.0",
             "stopAtEntry": false,
             "console": "integratedTerminal"
         },

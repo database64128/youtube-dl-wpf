@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="Backends.md" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="renovate.json" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/" />
+  <Folder Name="/Solution Items/.github/workflows/">
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/release.yml" />
+  </Folder>
+  <Project Path="YoutubeDl.LogReplay/YoutubeDl.LogReplay.csproj" />
+  <Project Path="YoutubeDl.Wpf.Tests/YoutubeDl.Wpf.Tests.csproj" />
+  <Project Path="YoutubeDl.Wpf/YoutubeDl.Wpf.csproj" />
+</Solution>

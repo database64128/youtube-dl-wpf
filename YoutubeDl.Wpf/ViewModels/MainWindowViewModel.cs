@@ -86,8 +86,7 @@ public partial class MainWindowViewModel : ReactiveObject
             SnackbarMessageQueue.Enqueue($"Failed to save settings: {ex.Message}");
 
             // Cancel window closing
-            if (cancelEventArgs is not null)
-                cancelEventArgs.Cancel = true;
+            cancelEventArgs?.Cancel = true;
 
             return false;
         }
