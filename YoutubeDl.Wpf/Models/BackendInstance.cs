@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Win32;
+using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Models;
 
@@ -176,8 +177,18 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
 
         if (!string.IsNullOrEmpty(_settings.FfmpegPath))
         {
+            string ffmpegPath = _settings.FfmpegPath;
+
+            // If ffmpegPath is a relative (to the current working directory) path,
+            // but we run the backend from a different directory (custom download path),
+            // try to resolve ffmpegPath to its fully qualified path.
+            if (_settings.UseCustomPath && PathHelper.SearchPath(ffmpegPath, out string? fullFfmpegPath))
+            {
+                ffmpegPath = fullFfmpegPath;
+            }
+
             GenericArguments.Add("--ffmpeg-location");
-            GenericArguments.Add(_settings.FfmpegPath);
+            GenericArguments.Add(ffmpegPath);
         }
 
         if (_settings.UseCookiesFile)
