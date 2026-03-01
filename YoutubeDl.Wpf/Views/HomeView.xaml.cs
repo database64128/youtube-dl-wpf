@@ -59,7 +59,7 @@ public partial class HomeView
 
             // ButtonProgressAssist bindings
             ViewModel.WhenAnyValue(x => x.BackendInstance.IsRunning)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(x =>
                 {
                     ButtonProgressAssist.SetIsIndicatorVisible(downloadButton, x);
@@ -69,18 +69,18 @@ public partial class HomeView
 
             ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
                 .Select(x => x == TaskbarItemProgressState.Indeterminate)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(downloadButton, x))
                 .DisposeWith(disposables);
 
             ViewModel.WhenAnyValue(x => x.BackendService.GlobalDownloadProgressPercentage)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(x => ButtonProgressAssist.SetValue(downloadButton, x * 100))
                 .DisposeWith(disposables);
 
             ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
                 .Select(x => x == TaskbarItemProgressState.Indeterminate)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(listFormatsButton, x))
                 .DisposeWith(disposables);
 
@@ -258,7 +258,7 @@ public partial class HomeView
 
             ViewModel.WhenAnyValue(x => x.QueuedTextBoxSink.Content)
                 .Where(_ => WpfHelper.IsScrolledToEnd(logsTextBox))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => logsTextBox.ScrollToEnd())
                 .DisposeWith(disposables);
 
