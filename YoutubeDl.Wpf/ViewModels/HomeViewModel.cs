@@ -198,7 +198,7 @@ public partial class HomeViewModel : ReactiveObject
 
         SharedSettings.BackendGlobalArguments
             .ToObservableChangeSet()
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ => GenerateGlobalArguments());
 
         this.WhenAnyValue(
@@ -210,7 +210,7 @@ public partial class HomeViewModel : ReactiveObject
             x => x.SharedSettings.CookiesBrowserArg,
             (_, _, _, _, _, _) => Unit.Default)
             .Throttle(TimeSpan.FromMilliseconds(250))
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ => GenerateGenericArguments());
 
         var genDownloadArgsObservable0 = this.WhenAnyValue(
@@ -234,7 +234,7 @@ public partial class HomeViewModel : ReactiveObject
 
         Observable.Merge(genDownloadArgsObservable0, genDownloadArgsObservable1)
                   .Throttle(TimeSpan.FromMilliseconds(250))
-                  .ObserveOn(RxApp.MainThreadScheduler)
+                  .ObserveOn(RxSchedulers.MainThreadScheduler)
                   .Subscribe(_ => GenerateDownloadArguments());
 
         _canResetCustomOutputTemplate = this.WhenAnyValue(

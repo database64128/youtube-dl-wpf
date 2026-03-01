@@ -21,6 +21,6 @@ public partial class App : Application
             .RegisterView<HomeView, HomeViewModel>()
             .RegisterView<PresetDialogView, PresetDialogViewModel>()
             .RegisterView<SettingsView, SettingsViewModel>()
-            .Build();
+            .BuildApp();
     }
 }

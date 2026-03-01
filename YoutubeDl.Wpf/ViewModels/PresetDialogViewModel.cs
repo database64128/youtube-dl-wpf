@@ -59,7 +59,7 @@ public partial class PresetDialogViewModel : ReactiveObject
             x => x.IsYtdlSupported,
             x => x.IsYtdlpSupported)
             .Throttle(TimeSpan.FromMilliseconds(250))
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(((string formatArg, string containerArg, bool isYtdlSupported, bool isYtdlpSupported) x) => UpdatePreset(x.formatArg, x.containerArg, x.isYtdlSupported, x.isYtdlpSupported));
     }
 
