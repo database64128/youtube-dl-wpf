@@ -52,7 +52,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="ReactiveUI.WPF" Version="23.2.19" />
+    <PackageReference Include="ReactiveUI.WPF" Version="23.2.27" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Splat.Serilog" Version="19.3.1" />
   </ItemGroup>
