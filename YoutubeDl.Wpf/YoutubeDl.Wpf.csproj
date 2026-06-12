@@ -54,7 +54,7 @@
     </PackageReference>
     <PackageReference Include="ReactiveUI.WPF" Version="23.2.27" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-    <PackageReference Include="Splat.Serilog" Version="19.4.0" />
+    <PackageReference Include="Splat.Serilog" Version="19.4.1" />
   </ItemGroup>
 
   <ItemGroup>
