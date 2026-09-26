@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Primitives.Disposables;
 using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Disposables;
 using ReactiveUI.Primitives.Signals;
 
 namespace YoutubeDl.Wpf.Views;

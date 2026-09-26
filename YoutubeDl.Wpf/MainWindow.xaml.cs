@@ -1,7 +1,7 @@
-﻿using ReactiveUI.Primitives.ObservableEvents;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.Primitives;
 using ReactiveUI.Primitives.Disposables;
+using ReactiveUI.Primitives.ObservableEvents;
 
 namespace YoutubeDl.Wpf;
 

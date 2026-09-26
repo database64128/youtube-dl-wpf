@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -308,11 +307,10 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
     {
         _process.StartInfo.FileName = _settings.BackendPath;
         _process.StartInfo.ArgumentList.Clear();
-        foreach (string argument in _settings.BackendGlobalArguments.Select(x => x.Argument))
+        foreach (BackendArgument argument in _settings.BackendGlobalArguments)
         {
-            _process.StartInfo.ArgumentList.Add(argument);
+            _process.StartInfo.ArgumentList.Add(argument.Argument);
         }
-
         foreach (string argument in GenericArguments)
         {
             _process.StartInfo.ArgumentList.Add(argument);
@@ -326,10 +324,9 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
         {
             _process.StartInfo.ArgumentList.Add(argument);
         }
-
-        foreach (string argument in _settings.AppSettings.BackendDownloadArguments.Select(x => x.Argument))
+        foreach (BackendArgument argument in _settings.AppSettings.BackendDownloadArguments)
         {
-            _process.StartInfo.ArgumentList.Add(argument);
+            _process.StartInfo.ArgumentList.Add(argument.Argument);
         }
 
         _process.StartInfo.ArgumentList.Add(link);

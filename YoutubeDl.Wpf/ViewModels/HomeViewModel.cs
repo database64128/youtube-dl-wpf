@@ -1,5 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 using ReactiveUI.SourceGenerators;
 using Splat;
 using System;
@@ -7,9 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using ReactiveUI.Primitives;
-using ReactiveUI.Primitives.ObservableEvents;
-using ReactiveUI.Primitives.Signals;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -161,14 +160,20 @@ public partial class HomeViewModel : ReactiveObject
             .Subscribe(_ =>
             {
                 Presets.Clear();
-                foreach (Preset preset in SharedSettings.AppSettings.CustomPresets.AsEnumerable().Reverse().Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend))
+                foreach (Preset preset in SharedSettings.AppSettings.CustomPresets.AsEnumerable().Reverse())
                 {
-                    Presets.Add(preset);
+                    if ((preset.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend)
+                    {
+                        Presets.Add(preset);
+                    }
                 }
 
-                foreach (Preset preset in Preset.PredefinedPresets.Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend))
+                foreach (Preset preset in Preset.PredefinedPresets)
                 {
-                    Presets.Add(preset);
+                    if ((preset.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend)
+                    {
+                        Presets.Add(preset);
+                    }
                 }
             });
 
@@ -202,8 +207,7 @@ public partial class HomeViewModel : ReactiveObject
             _link = args[1];
         }
 
-        SharedSettings.BackendGlobalArguments.Events()
-            .CollectionChanged
+        SharedSettings.BackendGlobalArguments.ObserveCollectionChanges()
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ => GenerateGlobalArguments());
 

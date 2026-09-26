@@ -1,10 +1,10 @@
 ﻿using MaterialDesignThemes.Wpf;
-using ReactiveUI.Primitives.ObservableEvents;
 using ReactiveUI;
-using System;
-using ReactiveUI.Primitives.Disposables;
 using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Disposables;
+using ReactiveUI.Primitives.ObservableEvents;
 using ReactiveUI.Primitives.Signals;
+using System;
 using YoutubeDl.Wpf.Models;
 using YoutubeDl.Wpf.Utils;
 
@@ -147,17 +147,17 @@ public partial class SettingsView
                 .DisposeWith(disposables);
 
             projectRepoHyperlink.Events().RequestNavigate
-                                .Map(args => args.Uri.AbsoluteUri)
+                                .Select(args => args.Uri.AbsoluteUri)
                                 .Subscribe(WpfHelper.OpenUri)
                                 .DisposeWith(disposables);
 
             ytdlRepoHyperlink.Events().RequestNavigate
-                             .Map(args => args.Uri.AbsoluteUri)
+                             .Select(args => args.Uri.AbsoluteUri)
                              .Subscribe(WpfHelper.OpenUri)
                              .DisposeWith(disposables);
 
             ytdlpRepoHyperlink.Events().RequestNavigate
-                              .Map(args => args.Uri.AbsoluteUri)
+                              .Select(args => args.Uri.AbsoluteUri)
                               .Subscribe(WpfHelper.OpenUri)
                               .DisposeWith(disposables);
 

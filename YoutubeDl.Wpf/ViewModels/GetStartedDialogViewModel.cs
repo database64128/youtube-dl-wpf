@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Primitives;
 using ReactiveUI.SourceGenerators;
 using System;
-using ReactiveUI.Primitives;
 using System.Windows;
 using YoutubeDl.Wpf.Models;
 
