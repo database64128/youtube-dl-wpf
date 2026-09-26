@@ -308,15 +308,30 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
     {
         _process.StartInfo.FileName = _settings.BackendPath;
         _process.StartInfo.ArgumentList.Clear();
-        _process.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
-        _process.StartInfo.ArgumentList.AddRange(GenericArguments);
+        foreach (string argument in _settings.BackendGlobalArguments.Select(x => x.Argument))
+        {
+            _process.StartInfo.ArgumentList.Add(argument);
+        }
+
+        foreach (string argument in GenericArguments)
+        {
+            _process.StartInfo.ArgumentList.Add(argument);
+        }
     }
 
     public async Task StartDownloadAsync(string link, CancellationToken cancellationToken = default)
     {
         PrepareProcessStartInfo();
-        _process.StartInfo.ArgumentList.AddRange(GeneratedDownloadArguments);
-        _process.StartInfo.ArgumentList.AddRange(_settings.AppSettings.BackendDownloadArguments.Select(x => x.Argument));
+        foreach (string argument in GeneratedDownloadArguments)
+        {
+            _process.StartInfo.ArgumentList.Add(argument);
+        }
+
+        foreach (string argument in _settings.AppSettings.BackendDownloadArguments.Select(x => x.Argument))
+        {
+            _process.StartInfo.ArgumentList.Add(argument);
+        }
+
         _process.StartInfo.ArgumentList.Add(link);
 
         if (_settings.UseCustomPath)

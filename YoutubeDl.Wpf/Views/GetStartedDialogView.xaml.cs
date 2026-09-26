@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Primitives;
 using ReactiveUI.Primitives.Disposables;
 using YoutubeDl.Wpf.Models;
 
