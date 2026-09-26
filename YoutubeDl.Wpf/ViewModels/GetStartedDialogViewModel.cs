@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
-using System.Reactive;
+using ReactiveUI.Primitives;
 using System.Windows;
 using YoutubeDl.Wpf.Models;
 
@@ -11,7 +11,7 @@ public partial class GetStartedDialogViewModel(ObservableSettings settings, Acti
 {
     public ObservableSettings SharedSettings { get; } = settings;
 
-    public ReactiveCommand<Unit, Unit> CloseDialogCommand { get; } = ReactiveCommand.Create(closeDialog, settings.IsDlBinaryValidObservable);
+    public ReactiveCommand<RxVoid, RxVoid> CloseDialogCommand { get; } = ReactiveCommand.Create(closeDialog, settings.IsDlBinaryValidObservable);
 
     [ReactiveCommand]
     private static void CopyWingetInstall() => Clipboard.SetText(WingetInstallCommandText);

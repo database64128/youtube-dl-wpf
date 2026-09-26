@@ -1,9 +1,9 @@
 ﻿using MaterialDesignThemes.Wpf;
-using ReactiveMarbles.ObservableEvents;
+using ReactiveUI.Primitives.ObservableEvents;
 using ReactiveUI;
 using System;
-using System.Reactive.Disposables.Fluent;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives.Disposables;
+using ReactiveUI.Primitives;
 using System.Windows.Input;
 using System.Windows.Shell;
 using YoutubeDl.Wpf.Models;
@@ -46,8 +46,8 @@ public partial class HomeView
                 .DisposeWith(disposables);
 
             linkTextBox.Events().KeyDown
-                       .Where(x => x.Key == Key.Enter)
-                       .Select(_ => ViewModel!.Link)
+                       .Keep(x => x.Key == Key.Enter)
+                       .Map(_ => ViewModel!.Link)
                        .InvokeCommand(ViewModel!.StartDownloadCommand) // Null forgiving reason: upstream limitation.
                        .DisposeWith(disposables);
 
@@ -68,7 +68,7 @@ public partial class HomeView
                 .DisposeWith(disposables);
 
             ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
-                .Select(x => x == TaskbarItemProgressState.Indeterminate)
+                .Map(x => x == TaskbarItemProgressState.Indeterminate)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(downloadButton, x))
                 .DisposeWith(disposables);
@@ -79,7 +79,7 @@ public partial class HomeView
                 .DisposeWith(disposables);
 
             ViewModel.WhenAnyValue(x => x.BackendService.ProgressState)
-                .Select(x => x == TaskbarItemProgressState.Indeterminate)
+                .Map(x => x == TaskbarItemProgressState.Indeterminate)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(x => ButtonProgressAssist.SetIsIndeterminate(listFormatsButton, x))
                 .DisposeWith(disposables);
@@ -257,7 +257,7 @@ public partial class HomeView
                 .DisposeWith(disposables);
 
             ViewModel.WhenAnyValue(x => x.QueuedTextBoxSink.Content)
-                .Where(_ => WpfHelper.IsScrolledToEnd(logsTextBox))
+                .Keep(_ => WpfHelper.IsScrolledToEnd(logsTextBox))
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => logsTextBox.ScrollToEnd())
                 .DisposeWith(disposables);

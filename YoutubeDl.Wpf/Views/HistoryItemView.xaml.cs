@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
-using System.Reactive.Disposables.Fluent;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives.Disposables;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 
 namespace YoutubeDl.Wpf.Views;
 
@@ -28,7 +29,7 @@ public partial class HistoryItemView
             this.BindCommand(ViewModel,
                 viewModel => viewModel.DeleteItemCommand,
                 view => view.deleteButton,
-                Observable.Return(ViewModel))
+                Signal.Return(ViewModel))
                 .DisposeWith(disposables);
         });
     }

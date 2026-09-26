@@ -1,6 +1,4 @@
-﻿using DynamicData;
-using DynamicData.Binding;
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using Splat;
@@ -9,8 +7,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.ObservableEvents;
+using ReactiveUI.Primitives.Signals;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -116,7 +115,7 @@ public partial class HomeViewModel : ReactiveObject
         SnackbarMessageQueue snackbarMessageQueue,
         Action<ReactiveObject> openDialog,
         Action closeDialog,
-        ReactiveCommand<Unit, Unit> closeDialogCommand,
+        ReactiveCommand<RxVoid, RxVoid> closeDialogCommand,
         DateTime today)
     {
         SharedSettings = settings;
@@ -162,8 +161,15 @@ public partial class HomeViewModel : ReactiveObject
             .Subscribe(_ =>
             {
                 Presets.Clear();
-                Presets.AddRange(SharedSettings.AppSettings.CustomPresets.AsEnumerable().Reverse().Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
-                Presets.AddRange(Preset.PredefinedPresets.Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend));
+                foreach (Preset preset in SharedSettings.AppSettings.CustomPresets.AsEnumerable().Reverse().Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend))
+                {
+                    Presets.Add(preset);
+                }
+
+                foreach (Preset preset in Preset.PredefinedPresets.Where(x => (x.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend))
+                {
+                    Presets.Add(preset);
+                }
             });
 
         SubtitleLanguagesHistory =
@@ -196,8 +202,8 @@ public partial class HomeViewModel : ReactiveObject
             _link = args[1];
         }
 
-        SharedSettings.BackendGlobalArguments
-            .ToObservableChangeSet()
+        SharedSettings.BackendGlobalArguments.Events()
+            .CollectionChanged
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ => GenerateGlobalArguments());
 
@@ -208,8 +214,8 @@ public partial class HomeViewModel : ReactiveObject
             x => x.SharedSettings.CookiesFilePath,
             x => x.SharedSettings.UseCookiesBrowser,
             x => x.SharedSettings.CookiesBrowserArg,
-            (_, _, _, _, _, _) => Unit.Default)
-            .Throttle(TimeSpan.FromMilliseconds(250))
+            (_, _, _, _, _, _) => RxVoid.Default)
+            .Calm(TimeSpan.FromMilliseconds(250))
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ => GenerateGenericArguments());
 
@@ -221,7 +227,7 @@ public partial class HomeViewModel : ReactiveObject
             x => x.SharedSettings.DownloadThumbnail,
             x => x.SharedSettings.DownloadPlaylist,
             x => x.PlaylistItems,
-            (_, _, _, _, _, _, _) => Unit.Default);
+            (_, _, _, _, _, _, _) => RxVoid.Default);
 
         var genDownloadArgsObservable1 = this.WhenAnyValue(
             x => x.SharedSettings.UseCustomOutputTemplate,
@@ -230,10 +236,10 @@ public partial class HomeViewModel : ReactiveObject
             x => x.SharedSettings.DownloadPath,
             x => x.SharedSettings.Backend,
             x => x.SharedSettings.SelectedPreset,
-            (_, _, _, _, _, _) => Unit.Default);
+            (_, _, _, _, _, _) => RxVoid.Default);
 
-        Observable.Merge(genDownloadArgsObservable0, genDownloadArgsObservable1)
-                  .Throttle(TimeSpan.FromMilliseconds(250))
+        Signal.Merge(genDownloadArgsObservable0, genDownloadArgsObservable1)
+                  .Calm(TimeSpan.FromMilliseconds(250))
                   .ObserveOn(RxSchedulers.MainThreadScheduler)
                   .Subscribe(_ => GenerateDownloadArguments());
 

@@ -1,12 +1,10 @@
-﻿using DynamicData;
-using MaterialDesignColors.Recommended;
+﻿using MaterialDesignColors.Recommended;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives;
 using System.Reflection;
 using System.Windows.Media;
 using YoutubeDl.Wpf.Models;
@@ -26,8 +24,9 @@ public partial class SettingsViewModel : ReactiveObject
 
     public BackendService BackendService { get; }
 
-    [ObservableAsProperty]
-    private string _windowSizeText = "";
+    private readonly ObservableAsPropertyHelper<string> _windowSizeTextHelper;
+
+    public string WindowSizeText => _windowSizeTextHelper.Value;
 
     [Reactive]
     private bool _isLogToFilesHintVisible;
@@ -52,7 +51,10 @@ public partial class SettingsViewModel : ReactiveObject
         SharedSettings = settings;
         BackendService = backendService;
 
-        GlobalArguments.AddRange(SharedSettings.BackendGlobalArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
+        foreach (BackendArgument argument in SharedSettings.BackendGlobalArguments)
+        {
+            GlobalArguments.Add(new ArgumentChipViewModel(argument, true, DeleteArgumentChip));
+        }
         GlobalArguments.Add(new AddArgumentViewModel(AddArgument));
 
         // Theme colors easter egg

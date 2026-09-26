@@ -1,7 +1,7 @@
-﻿using ReactiveMarbles.ObservableEvents;
+﻿using ReactiveUI.Primitives.ObservableEvents;
 using ReactiveUI;
-using System.Reactive.Disposables.Fluent;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives.Disposables;
+using ReactiveUI.Primitives;
 using System.Windows.Input;
 
 namespace YoutubeDl.Wpf.Views;
@@ -29,8 +29,8 @@ public partial class AddArgumentView
                 .DisposeWith(disposables);
 
             argumentTextBox.Events().KeyDown
-                           .Where(x => x.Key == Key.Enter)
-                           .Select(_ => ViewModel!.Argument)
+                           .Keep(x => x.Key == Key.Enter)
+                           .Map(_ => ViewModel!.Argument)
                            .InvokeCommand(ViewModel!.AddArgumentCommand) // Null forgiving reason: upstream limitation.
                            .DisposeWith(disposables);
         });

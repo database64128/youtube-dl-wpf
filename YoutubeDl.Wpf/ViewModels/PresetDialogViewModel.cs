@@ -4,8 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives;
 using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels;
@@ -36,7 +35,7 @@ public partial class PresetDialogViewModel : ReactiveObject
 
     public ObservableCollection<ReactiveObject> ArgumentChips { get; }
 
-    public PresetDialogViewModel(Action<ReactiveObject> openDialog, Action closeDialog, ReactiveCommand<Unit, Unit> closeDialogCommand)
+    public PresetDialogViewModel(Action<ReactiveObject> openDialog, Action closeDialog, ReactiveCommand<RxVoid, RxVoid> closeDialogCommand)
     {
         _openDialog = openDialog;
         _closeDialog = closeDialog;
@@ -58,7 +57,7 @@ public partial class PresetDialogViewModel : ReactiveObject
             x => x.ContainerArg,
             x => x.IsYtdlSupported,
             x => x.IsYtdlpSupported)
-            .Throttle(TimeSpan.FromMilliseconds(250))
+            .Calm(TimeSpan.FromMilliseconds(250))
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(((string formatArg, string containerArg, bool isYtdlSupported, bool isYtdlpSupported) x) => UpdatePreset(x.formatArg, x.containerArg, x.isYtdlSupported, x.isYtdlpSupported));
     }
@@ -71,7 +70,7 @@ public partial class PresetDialogViewModel : ReactiveObject
         _openDialog(this);
     }
 
-    public ReactiveCommand<Unit, Unit> CloseDialogCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> CloseDialogCommand { get; }
 
     [ReactiveCommand(CanExecute = nameof(_canSave))]
     private void Save()

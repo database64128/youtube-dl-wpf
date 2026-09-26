@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
-using System.Reactive.Disposables.Fluent;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives.Disposables;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 
 namespace YoutubeDl.Wpf.Views;
 
@@ -30,7 +31,7 @@ public partial class ArgumentChipView
             this.BindCommand(ViewModel,
                 viewModel => viewModel.RemoveArgumentCommand,
                 view => view.argumentChip,
-                Observable.Return(ViewModel),
+                Signal.Return(ViewModel),
                 nameof(argumentChip.DeleteClick))
                 .DisposeWith(disposables);
         });

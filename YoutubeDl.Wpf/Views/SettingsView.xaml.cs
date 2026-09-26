@@ -1,9 +1,10 @@
 ﻿using MaterialDesignThemes.Wpf;
-using ReactiveMarbles.ObservableEvents;
+using ReactiveUI.Primitives.ObservableEvents;
 using ReactiveUI;
 using System;
-using System.Reactive.Disposables.Fluent;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives.Disposables;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 using YoutubeDl.Wpf.Models;
 using YoutubeDl.Wpf.Utils;
 
@@ -146,17 +147,17 @@ public partial class SettingsView
                 .DisposeWith(disposables);
 
             projectRepoHyperlink.Events().RequestNavigate
-                                .Select(args => args.Uri.AbsoluteUri)
+                                .Map(args => args.Uri.AbsoluteUri)
                                 .Subscribe(WpfHelper.OpenUri)
                                 .DisposeWith(disposables);
 
             ytdlRepoHyperlink.Events().RequestNavigate
-                             .Select(args => args.Uri.AbsoluteUri)
+                             .Map(args => args.Uri.AbsoluteUri)
                              .Subscribe(WpfHelper.OpenUri)
                              .DisposeWith(disposables);
 
             ytdlpRepoHyperlink.Events().RequestNavigate
-                              .Select(args => args.Uri.AbsoluteUri)
+                              .Map(args => args.Uri.AbsoluteUri)
                               .Subscribe(WpfHelper.OpenUri)
                               .DisposeWith(disposables);
 
@@ -164,19 +165,19 @@ public partial class SettingsView
             this.BindCommand(ViewModel,
                 viewModel => viewModel.ChangeColorModeCommand,
                 view => view.systemColorModeRadioButton,
-                Observable.Return(BaseTheme.Inherit))
+                Signal.Return(BaseTheme.Inherit))
                 .DisposeWith(disposables);
 
             this.BindCommand(ViewModel,
                 viewModel => viewModel.ChangeColorModeCommand,
                 view => view.lightColorModeRadioButton,
-                Observable.Return(BaseTheme.Light))
+                Signal.Return(BaseTheme.Light))
                 .DisposeWith(disposables);
 
             this.BindCommand(ViewModel,
                 viewModel => viewModel.ChangeColorModeCommand,
                 view => view.darkColorModeRadioButton,
-                Observable.Return(BaseTheme.Dark))
+                Signal.Return(BaseTheme.Dark))
                 .DisposeWith(disposables);
 
             // Window size

@@ -5,7 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives;
 using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Models;
@@ -114,20 +114,21 @@ public partial class ObservableSettings : ReactiveObject
     [Reactive]
     private string _cookiesBrowserArg;
 
-    [ObservableAsProperty]
-    private bool _isDlBinaryValid;
+    private readonly ObservableAsPropertyHelper<bool> _isDlBinaryValidHelper;
+    private readonly ObservableAsPropertyHelper<bool> _isDlBinaryHintVisibleHelper;
+    private readonly ObservableAsPropertyHelper<bool> _isFfmpegBinaryValidHelper;
+    private readonly ObservableAsPropertyHelper<bool> _isProxyUrlValidHelper;
+    private readonly ObservableAsPropertyHelper<bool> _isAnySubtitleDownloadEnabledHelper;
 
-    [ObservableAsProperty]
-    private bool _isDlBinaryHintVisible;
+    public bool IsDlBinaryValid => _isDlBinaryValidHelper.Value;
 
-    [ObservableAsProperty]
-    private bool _isFfmpegBinaryValid;
+    public bool IsDlBinaryHintVisible => _isDlBinaryHintVisibleHelper.Value;
 
-    [ObservableAsProperty]
-    private bool _isProxyUrlValid;
+    public bool IsFfmpegBinaryValid => _isFfmpegBinaryValidHelper.Value;
 
-    [ObservableAsProperty]
-    private bool _isAnySubtitleDownloadEnabled;
+    public bool IsProxyUrlValid => _isProxyUrlValidHelper.Value;
+
+    public bool IsAnySubtitleDownloadEnabled => _isAnySubtitleDownloadEnabledHelper.Value;
 
     public ObservableSettings(Settings settings)
     {
@@ -179,11 +180,11 @@ public partial class ObservableSettings : ReactiveObject
         IObservable<(string dlPath, bool dlBinaryExists)> backendPathObservable = this
             .WhenAnyValue(x => x.BackendPath, dlPath => (dlPath, PathHelper.FileExistsSearchPath(dlPath)));
         _canShowDlBinaryInFolder = backendPathObservable
-            .Select(x => x.dlBinaryExists);
+            .Map(x => x.dlBinaryExists);
         _isDlBinaryValidHelper = _canShowDlBinaryInFolder
             .ToProperty(this, x => x.IsDlBinaryValid);
         _isDlBinaryHintVisibleHelper = backendPathObservable
-            .Select(x => !x.dlBinaryExists && !string.IsNullOrEmpty(x.dlPath))
+            .Map(x => !x.dlBinaryExists && !string.IsNullOrEmpty(x.dlPath))
             .ToProperty(this, x => x.IsDlBinaryHintVisible);
 
         // Guess the backend type from binary name.
@@ -206,9 +207,9 @@ public partial class ObservableSettings : ReactiveObject
         IObservable<(string ffmpegPath, bool ffmpegBinaryExists)> ffmpegPathObservable = this
             .WhenAnyValue(x => x.FfmpegPath, ffmpegPath => (ffmpegPath, PathHelper.FileExistsSearchPath(ffmpegPath)));
         _canShowFfmpegBinaryInFolder = ffmpegPathObservable
-            .Select(x => x.ffmpegBinaryExists);
+            .Map(x => x.ffmpegBinaryExists);
         _isFfmpegBinaryValidHelper = ffmpegPathObservable
-            .Select(x => x.ffmpegBinaryExists || string.IsNullOrEmpty(x.ffmpegPath))
+            .Map(x => x.ffmpegBinaryExists || string.IsNullOrEmpty(x.ffmpegPath))
             .ToProperty(this, x => x.IsFfmpegBinaryValid);
 
         _isProxyUrlValidHelper = this
