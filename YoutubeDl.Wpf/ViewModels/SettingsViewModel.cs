@@ -1,6 +1,7 @@
 ﻿using MaterialDesignColors.Recommended;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
+using ReactiveUI.Binding;
 using ReactiveUI.Primitives;
 using ReactiveUI.SourceGenerators;
 using System;
@@ -26,9 +27,8 @@ public partial class SettingsViewModel : ReactiveObject
 
     public BackendService BackendService { get; }
 
-    private readonly ObservableAsPropertyHelper<string> _windowSizeTextHelper;
-
-    public string WindowSizeText => _windowSizeTextHelper.Value;
+    [ObservableAsProperty]
+    public partial string WindowSizeText { get; }
 
     [Reactive]
     private bool _isLogToFilesHintVisible;
@@ -88,9 +88,8 @@ public partial class SettingsViewModel : ReactiveObject
             });
 
         // Update window size text on size change.
-        _windowSizeTextHelper = this
-            .WhenAnyValue(x => x.SharedSettings.WindowWidth, x => x.SharedSettings.WindowHeight, GenerateWindowSizeText)
-            .ToProperty(this, x => x.WindowSizeText);
+        this.WhenAnyValue(x => x.SharedSettings.WindowWidth, x => x.SharedSettings.WindowHeight, GenerateWindowSizeText)
+            .ToProperty(this, x => x.WindowSizeText, out _windowSizeTextHelper);
     }
 
     private static string GenerateWindowSizeText(double width, double height) => $"{width:F} × {height:F}";

@@ -160,6 +160,7 @@ public partial class HomeViewModel : ReactiveObject
             .Subscribe(_ =>
             {
                 Presets.Clear();
+
                 foreach (Preset preset in SharedSettings.AppSettings.CustomPresets.AsEnumerable().Reverse())
                 {
                     if ((preset.SupportedBackends & SharedSettings.Backend) == SharedSettings.Backend)

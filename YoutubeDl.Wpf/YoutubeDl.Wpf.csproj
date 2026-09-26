@@ -22,6 +22,8 @@
     <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- ReactiveUI 24.3 keeps runtime binding APIs; Binding is used here for ObservableAsProperty only. -->
+    <NoWarn>$(NoWarn);RXUIBIND011</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -47,13 +49,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="ReactiveUI.Binding" Version="8.2.0" />
     <PackageReference Include="ReactiveUI.Primitives" Version="8.2.0" />
     <PackageReference Include="ReactiveUI.Primitives.ObservableEvents" Version="8.2.0" PrivateAssets="all" />
     <PackageReference Include="ReactiveUI.SourceGenerators" Version="4.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile; runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="ReactiveUI.Binding" Version="8.2.0" />
     <PackageReference Include="ReactiveUI.WPF" Version="24.3.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Splat.Serilog" Version="21.0.0" />
