@@ -1,6 +1,6 @@
 ﻿using MaterialDesignColors.Recommended;
 using MaterialDesignThemes.Wpf;
-using ReactiveObject = ReactiveUI.ReactiveObject;
+using ReactiveUI;
 using ReactiveUI.Binding;
 using ReactiveUI.Primitives;
 using ReactiveUI.SourceGenerators;
@@ -88,9 +88,10 @@ public partial class SettingsViewModel : ReactiveObject
             });
 
         // Update window size text on size change.
-        _windowSizeTextHelper = this
-            .WhenAnyValue(x => x.SharedSettings.WindowWidth, x => x.SharedSettings.WindowHeight, GenerateWindowSizeText)
-            .ToProperty(this, x => x.WindowSizeText);
+        _windowSizeTextHelper = ReactiveUI.Binding.ReactiveUIBindingExtensions.ToProperty(
+            this.WhenAnyValue(x => x.SharedSettings.WindowWidth, x => x.SharedSettings.WindowHeight, GenerateWindowSizeText),
+            this,
+            x => x.WindowSizeText);
     }
 
     private static string GenerateWindowSizeText(double width, double height) => $"{width:F} × {height:F}";

@@ -244,9 +244,9 @@ public partial class HomeViewModel : ReactiveObject
             (_, _, _, _, _, _) => RxVoid.Default);
 
         Signal.Merge(genDownloadArgsObservable0, genDownloadArgsObservable1)
-                  .Calm(TimeSpan.FromMilliseconds(250))
-                  .ObserveOn(RxSchedulers.MainThreadScheduler)
-                  .Subscribe(_ => GenerateDownloadArguments());
+            .Calm(TimeSpan.FromMilliseconds(250))
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => GenerateDownloadArguments());
 
         _canResetCustomOutputTemplate = this.WhenAnyValue(
             x => x.SharedSettings.UseCustomOutputTemplate,
