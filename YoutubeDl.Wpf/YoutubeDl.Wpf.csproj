@@ -22,8 +22,6 @@
     <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <!-- ReactiveUI 24.3 keeps runtime binding APIs; Binding is used here for ObservableAsProperty only. -->
-    <NoWarn>$(NoWarn);RXUIBIND011</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
