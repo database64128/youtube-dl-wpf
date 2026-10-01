@@ -2,12 +2,8 @@
 using ReactiveUI.SourceGenerators;
 using Serilog.Core;
 using Serilog.Events;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace YoutubeDl.Wpf.Models;
 

@@ -1,6 +1,6 @@
-﻿using ReactiveMarbles.ObservableEvents;
-using ReactiveUI;
-using System.Reactive.Disposables.Fluent;
+﻿using ReactiveUI;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.ObservableEvents;
 
 namespace YoutubeDl.Wpf;
 

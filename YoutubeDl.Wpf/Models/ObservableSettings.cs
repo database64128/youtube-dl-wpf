@@ -1,11 +1,10 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
+using ReactiveUI.Primitives;
 using ReactiveUI.SourceGenerators;
-using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Reactive.Linq;
 using YoutubeDl.Wpf.Utils;
 
 namespace YoutubeDl.Wpf.Models;
@@ -115,19 +114,19 @@ public partial class ObservableSettings : ReactiveObject
     private string _cookiesBrowserArg;
 
     [ObservableAsProperty]
-    private bool _isDlBinaryValid;
+    public partial bool IsDlBinaryValid { get; }
 
     [ObservableAsProperty]
-    private bool _isDlBinaryHintVisible;
+    public partial bool IsDlBinaryHintVisible { get; }
 
     [ObservableAsProperty]
-    private bool _isFfmpegBinaryValid;
+    public partial bool IsFfmpegBinaryValid { get; }
 
     [ObservableAsProperty]
-    private bool _isProxyUrlValid;
+    public partial bool IsProxyUrlValid { get; }
 
     [ObservableAsProperty]
-    private bool _isAnySubtitleDownloadEnabled;
+    public partial bool IsAnySubtitleDownloadEnabled { get; }
 
     public ObservableSettings(Settings settings)
     {

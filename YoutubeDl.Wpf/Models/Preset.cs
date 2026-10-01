@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace YoutubeDl.Wpf.Models;
+﻿namespace YoutubeDl.Wpf.Models;
 
 public record Preset(
     string Name,

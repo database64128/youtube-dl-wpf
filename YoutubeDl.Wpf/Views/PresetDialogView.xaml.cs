@@ -1,5 +1,5 @@
 ﻿using ReactiveUI;
-using System.Reactive.Disposables.Fluent;
+using ReactiveUI.Primitives;
 
 namespace YoutubeDl.Wpf.Views;
 

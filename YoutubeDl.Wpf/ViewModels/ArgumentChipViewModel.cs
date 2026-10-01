@@ -1,7 +1,6 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Primitives;
 using ReactiveUI.SourceGenerators;
-using System;
-using System.Reactive;
 using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.ViewModels;
@@ -14,5 +13,5 @@ public partial class ArgumentChipViewModel(BackendArgument argument, bool isRemo
     [Reactive]
     private bool _isRemovable = isRemovable;
 
-    public ReactiveCommand<ArgumentChipViewModel, Unit> RemoveArgumentCommand { get; } = ReactiveCommand.Create(action);
+    public ReactiveCommand<ArgumentChipViewModel, RxVoid> RemoveArgumentCommand { get; } = ReactiveCommand.Create(action);
 }

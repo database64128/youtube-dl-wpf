@@ -1,12 +1,16 @@
-﻿namespace YoutubeDl.Wpf.Models;
+﻿using ReactiveUI;
+using ReactiveUI.SourceGenerators;
+
+namespace YoutubeDl.Wpf.Models;
 
 /// <summary>
 /// BackendArgument wraps an argument string into a POCO
 /// so it can be easily removed from a collection.
 /// </summary>
-public class BackendArgument
+public partial class BackendArgument : ReactiveObject
 {
-    public string Argument { get; set; }
+    [Reactive]
+    public partial string Argument { get; set; }
 
     public BackendArgument() => Argument = "";
 

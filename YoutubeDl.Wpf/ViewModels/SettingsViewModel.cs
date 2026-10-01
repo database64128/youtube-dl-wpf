@@ -1,12 +1,9 @@
-﻿using DynamicData;
-using MaterialDesignColors.Recommended;
+﻿using MaterialDesignColors.Recommended;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
+using ReactiveUI.Primitives;
 using ReactiveUI.SourceGenerators;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reactive.Linq;
 using System.Reflection;
 using System.Windows.Media;
 using YoutubeDl.Wpf.Models;
@@ -27,7 +24,7 @@ public partial class SettingsViewModel : ReactiveObject
     public BackendService BackendService { get; }
 
     [ObservableAsProperty]
-    private string _windowSizeText = "";
+    public partial string WindowSizeText { get; }
 
     [Reactive]
     private bool _isLogToFilesHintVisible;
@@ -37,7 +34,7 @@ public partial class SettingsViewModel : ReactiveObject
     /// A view model in this collection must be of either
     /// <see cref="ArgumentChipViewModel"/> or <see cref="AddArgumentViewModel"/> type.
     /// </summary>
-    public ObservableCollection<ReactiveObject> GlobalArguments { get; } = [];
+    public ObservableCollection<ReactiveObject> GlobalArguments { get; }
 
     public SettingsViewModel(
         ObservableSettings settings,
@@ -52,8 +49,11 @@ public partial class SettingsViewModel : ReactiveObject
         SharedSettings = settings;
         BackendService = backendService;
 
-        GlobalArguments.AddRange(SharedSettings.BackendGlobalArguments.Select(x => new ArgumentChipViewModel(x, true, DeleteArgumentChip)));
-        GlobalArguments.Add(new AddArgumentViewModel(AddArgument));
+        GlobalArguments =
+        [
+            .. SharedSettings.BackendGlobalArguments.Select(argument => new ArgumentChipViewModel(argument, true, DeleteArgumentChip)),
+            new AddArgumentViewModel(AddArgument),
+        ];
 
         // Theme colors easter egg
         (Color primary, Color secondary)? color = today.Month switch

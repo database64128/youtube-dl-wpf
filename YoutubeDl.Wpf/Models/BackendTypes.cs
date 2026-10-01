@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace YoutubeDl.Wpf.Models;
+﻿namespace YoutubeDl.Wpf.Models;
 
 [Flags]
 public enum BackendTypes

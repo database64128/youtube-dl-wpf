@@ -1,5 +1,5 @@
 ﻿using ReactiveUI;
-using System.Reactive.Disposables.Fluent;
+using ReactiveUI.Primitives;
 using YoutubeDl.Wpf.Models;
 
 namespace YoutubeDl.Wpf.Views;
@@ -15,6 +15,8 @@ public partial class GetStartedDialogView
 
         this.WhenActivated(disposables =>
         {
+            BooleanToVisibilityTypeConverter booleanToVisibility = new();
+
             this.Bind(ViewModel,
                 viewModel => viewModel.SharedSettings.Backend,
                 view => view.ytdlBackendTypeRadioButton.IsChecked,
@@ -51,7 +53,8 @@ public partial class GetStartedDialogView
             this.OneWayBind(ViewModel,
                 viewModel => viewModel.SharedSettings.IsFfmpegBinaryValid,
                 view => view.ffmpegPathHintTextBlock.Visibility,
-                conversionHint: BooleanToVisibilityHint.Inverse)
+                booleanToVisibility,
+                conversionHint: BooleanToVisibilityHints.Inverse)
                 .DisposeWith(disposables);
 
             this.BindCommand(ViewModel,

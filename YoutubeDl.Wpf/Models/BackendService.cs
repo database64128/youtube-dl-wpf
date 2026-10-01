@@ -1,19 +1,15 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using Splat;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Shell;
 
 namespace YoutubeDl.Wpf.Models;
 
 public partial class BackendService : ReactiveObject, IEnableLogger
 {
-    private readonly ObservableSettings _settings;
     private readonly IObservable<bool> _canUpdateBackend;
+
+    public ObservableSettings SharedSettings { get; }
 
     public List<BackendInstance> Instances { get; } = [];
 
@@ -28,16 +24,16 @@ public partial class BackendService : ReactiveObject, IEnableLogger
 
     public BackendService(ObservableSettings settings)
     {
-        _settings = settings;
+        SharedSettings = settings;
         _canUpdateBackend = this.WhenAnyValue(
             x => x.CanUpdate,
-            x => x._settings.IsDlBinaryValid,
+            x => x.SharedSettings.IsDlBinaryValid,
             (canUpdate, isDlBinaryValid) => canUpdate && isDlBinaryValid);
     }
 
     public BackendInstance CreateInstance()
     {
-        var instance = new BackendInstance(_settings, this);
+        var instance = new BackendInstance(SharedSettings, this);
         Instances.Add(instance);
         return instance;
     }

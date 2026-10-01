@@ -1,7 +1,6 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Primitives;
 using ReactiveUI.SourceGenerators;
-using System;
-using System.Reactive;
 
 namespace YoutubeDl.Wpf.ViewModels;
 
@@ -10,7 +9,7 @@ public partial class AddArgumentViewModel : ReactiveObject
     [Reactive]
     private string _argument = "";
 
-    public ReactiveCommand<string, Unit> AddArgumentCommand { get; }
+    public ReactiveCommand<string, RxVoid> AddArgumentCommand { get; }
 
     public AddArgumentViewModel(Action<string> action)
     {

@@ -1,16 +1,10 @@
-﻿using DynamicData;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using Splat;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Win32;
 using YoutubeDl.Wpf.Utils;
 
@@ -309,15 +303,32 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
     {
         _process.StartInfo.FileName = _settings.BackendPath;
         _process.StartInfo.ArgumentList.Clear();
-        _process.StartInfo.ArgumentList.AddRange(_settings.BackendGlobalArguments.Select(x => x.Argument));
-        _process.StartInfo.ArgumentList.AddRange(GenericArguments);
+
+        foreach (BackendArgument argument in _settings.BackendGlobalArguments)
+        {
+            _process.StartInfo.ArgumentList.Add(argument.Argument);
+        }
+
+        foreach (string argument in GenericArguments)
+        {
+            _process.StartInfo.ArgumentList.Add(argument);
+        }
     }
 
     public async Task StartDownloadAsync(string link, CancellationToken cancellationToken = default)
     {
         PrepareProcessStartInfo();
-        _process.StartInfo.ArgumentList.AddRange(GeneratedDownloadArguments);
-        _process.StartInfo.ArgumentList.AddRange(_settings.AppSettings.BackendDownloadArguments.Select(x => x.Argument));
+
+        foreach (string argument in GeneratedDownloadArguments)
+        {
+            _process.StartInfo.ArgumentList.Add(argument);
+        }
+
+        foreach (BackendArgument argument in _settings.AppSettings.BackendDownloadArguments)
+        {
+            _process.StartInfo.ArgumentList.Add(argument.Argument);
+        }
+
         _process.StartInfo.ArgumentList.Add(link);
 
         if (_settings.UseCustomPath)

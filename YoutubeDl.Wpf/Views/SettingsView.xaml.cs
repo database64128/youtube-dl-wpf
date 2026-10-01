@@ -1,9 +1,8 @@
 ﻿using MaterialDesignThemes.Wpf;
-using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
-using System;
-using System.Reactive.Disposables.Fluent;
-using System.Reactive.Linq;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.ObservableEvents;
+using ReactiveUI.Primitives.Signals;
 using YoutubeDl.Wpf.Models;
 using YoutubeDl.Wpf.Utils;
 
@@ -20,6 +19,8 @@ public partial class SettingsView
 
         this.WhenActivated(disposables =>
         {
+            BooleanToVisibilityTypeConverter booleanToVisibility = new();
+
             // Color mode
             this.OneWayBind(ViewModel,
                 viewModel => viewModel.SharedSettings.AppColorMode,
@@ -67,7 +68,8 @@ public partial class SettingsView
             this.OneWayBind(ViewModel,
                 viewModel => viewModel.SharedSettings.IsDlBinaryValid,
                 view => view.dlPathHintTextBlock.Visibility,
-                conversionHint: BooleanToVisibilityHint.Inverse)
+                booleanToVisibility,
+                conversionHint: BooleanToVisibilityHints.Inverse)
                 .DisposeWith(disposables);
 
             this.OneWayBind(ViewModel,
@@ -108,7 +110,8 @@ public partial class SettingsView
             this.OneWayBind(ViewModel,
                 viewModel => viewModel.SharedSettings.IsFfmpegBinaryValid,
                 view => view.ffmpegPathHintTextBlock.Visibility,
-                conversionHint: BooleanToVisibilityHint.Inverse)
+                booleanToVisibility,
+                conversionHint: BooleanToVisibilityHints.Inverse)
                 .DisposeWith(disposables);
 
             // Network
@@ -120,7 +123,8 @@ public partial class SettingsView
             this.OneWayBind(ViewModel,
                 viewModel => viewModel.SharedSettings.IsProxyUrlValid,
                 view => view.proxyHintTextBlock.Visibility,
-                conversionHint: BooleanToVisibilityHint.Inverse)
+                booleanToVisibility,
+                conversionHint: BooleanToVisibilityHints.Inverse)
                 .DisposeWith(disposables);
 
             // Logging
@@ -164,19 +168,19 @@ public partial class SettingsView
             this.BindCommand(ViewModel,
                 viewModel => viewModel.ChangeColorModeCommand,
                 view => view.systemColorModeRadioButton,
-                Observable.Return(BaseTheme.Inherit))
+                Signal.Return(BaseTheme.Inherit))
                 .DisposeWith(disposables);
 
             this.BindCommand(ViewModel,
                 viewModel => viewModel.ChangeColorModeCommand,
                 view => view.lightColorModeRadioButton,
-                Observable.Return(BaseTheme.Light))
+                Signal.Return(BaseTheme.Light))
                 .DisposeWith(disposables);
 
             this.BindCommand(ViewModel,
                 viewModel => viewModel.ChangeColorModeCommand,
                 view => view.darkColorModeRadioButton,
-                Observable.Return(BaseTheme.Dark))
+                Signal.Return(BaseTheme.Dark))
                 .DisposeWith(disposables);
 
             // Window size
