@@ -53,6 +53,6 @@ public partial class PresetDialogView
                 viewModel => viewModel.CloseDialogCommand,
                 view => view.discardButton)
                 .DisposeWith(disposables);
-        });
+        }, this.WhenAnyValue(x => x.ViewModel));
     }
 }

@@ -337,6 +337,6 @@ public partial class HomeView
                 viewModel => viewModel.QueuedTextBoxSink.ClearCommand,
                 view => view.clearLogsButton)
                 .DisposeWith(disposables);
-        });
+        }, this.WhenAnyValue(x => x.ViewModel));
     }
 }

@@ -33,6 +33,6 @@ public partial class ArgumentChipView
                 Signal.Return(ViewModel),
                 nameof(argumentChip.DeleteClick))
                 .DisposeWith(disposables);
-        });
+        }, this.WhenAnyValue(x => x.ViewModel));
     }
 }

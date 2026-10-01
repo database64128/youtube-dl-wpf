@@ -222,6 +222,6 @@ public partial class SettingsView
                 viewModel => viewModel.ToggleLogToFilesHintCommand,
                 view => view.logToFilesToggle)
                 .DisposeWith(disposables);
-        });
+        }, this.WhenAnyValue(x => x.ViewModel));
     }
 }

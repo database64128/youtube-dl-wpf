@@ -76,6 +76,6 @@ public partial class GetStartedDialogView
                 viewModel => viewModel.CloseDialogCommand,
                 view => view.goButton)
                 .DisposeWith(disposables);
-        });
+        }, this.WhenAnyValue(x => x.ViewModel));
     }
 }

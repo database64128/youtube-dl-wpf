@@ -32,6 +32,6 @@ public partial class AddArgumentView
                            .Select(_ => ViewModel!.Argument)
                            .InvokeCommand(ViewModel!.AddArgumentCommand) // Null forgiving reason: upstream limitation.
                            .DisposeWith(disposables);
-        });
+        }, this.WhenAnyValue(x => x.ViewModel));
     }
 }

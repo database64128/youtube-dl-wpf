@@ -81,6 +81,6 @@ public partial class MainWindow
                 viewModel => viewModel.BackendService.ProgressState,
                 view => view.TaskbarItemInfo.ProgressState)
                 .DisposeWith(disposables);
-        });
+        }, this.WhenAnyValue(x => x.ViewModel));
     }
 }

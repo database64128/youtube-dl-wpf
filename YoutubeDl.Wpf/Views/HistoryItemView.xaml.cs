@@ -30,6 +30,6 @@ public partial class HistoryItemView
                 view => view.deleteButton,
                 Signal.Return(ViewModel))
                 .DisposeWith(disposables);
-        });
+        }, this.WhenAnyValue(x => x.ViewModel));
     }
 }
