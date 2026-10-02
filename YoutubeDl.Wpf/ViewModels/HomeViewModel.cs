@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 using ReactiveUI.SourceGenerators;
 using Splat;
 using System.Collections.ObjectModel;
@@ -185,7 +186,7 @@ public partial class HomeViewModel : ReactiveObject
 
         SharedSettings.BackendGlobalArguments
             .ToReactiveChangeSet()
-            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .WitnessOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(UpdateGlobalArguments);
 
         this.WhenAnyValue(
@@ -197,7 +198,7 @@ public partial class HomeViewModel : ReactiveObject
             x => x.SharedSettings.CookiesBrowserArg,
             (_, _, _, _, _, _) => RxVoid.Default)
             .Calm(TimeSpan.FromMilliseconds(250))
-            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .WitnessLatestOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ => GenerateGenericArguments());
 
         this.WhenAnyValue(
@@ -214,7 +215,7 @@ public partial class HomeViewModel : ReactiveObject
             x => x.SharedSettings.Backend,
             x => x.SharedSettings.SelectedPreset)
             .Calm(TimeSpan.FromMilliseconds(250))
-            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .WitnessLatestOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ => GenerateDownloadArguments());
 
         _canResetCustomOutputTemplate = this.WhenAnyValue(

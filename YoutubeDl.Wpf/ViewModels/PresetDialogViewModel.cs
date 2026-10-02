@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using YoutubeDl.Wpf.Models;
@@ -55,7 +56,7 @@ public partial class PresetDialogViewModel : ReactiveObject
             x => x.IsYtdlSupported,
             x => x.IsYtdlpSupported)
             .Calm(TimeSpan.FromMilliseconds(250))
-            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .WitnessLatestOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(values => UpdatePreset(values.Property1, values.Property2, values.Property3, values.Property4));
     }
 
