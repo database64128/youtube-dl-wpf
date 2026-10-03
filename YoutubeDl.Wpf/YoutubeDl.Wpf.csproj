@@ -48,8 +48,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="ReactiveUI.Primitives.ObservableEvents" Version="8.4.0" PrivateAssets="all" />
-    <PackageReference Include="ReactiveUI.WPF" Version="25.1.1" />
+    <PackageReference Include="ReactiveUI.Primitives.ObservableEvents" Version="9.0.0" PrivateAssets="all" />
+    <PackageReference Include="ReactiveUI.WPF" Version="26.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Splat.Serilog" Version="21.0.0" />
   </ItemGroup>
