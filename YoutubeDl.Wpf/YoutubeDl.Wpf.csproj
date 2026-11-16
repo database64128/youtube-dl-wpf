@@ -51,7 +51,7 @@
     <PackageReference Include="ReactiveUI.Primitives.ObservableEvents" Version="9.0.0" PrivateAssets="all" />
     <PackageReference Include="ReactiveUI.WPF" Version="26.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-    <PackageReference Include="Splat.Serilog" Version="21.0.0" />
+    <PackageReference Include="Splat.Serilog" Version="22.0.1" />
   </ItemGroup>
 
   <ItemGroup>
