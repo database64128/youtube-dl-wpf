@@ -163,6 +163,17 @@ public partial class BackendInstance : ReactiveObject, IEnableLogger
     {
         GenericArguments.Clear();
 
+        // The backends are Python programs. On Windows with a non-UTF-8 ANSI code page
+        // (e.g. 936 on zh-CN systems), Python writes to the redirected stdout/stderr pipes
+        // using that code page, while we decode them as UTF-8 (see StandardOutputEncoding in
+        // the constructor). Non-ASCII text in the log, such as video titles in
+        // "[download] Destination: ...", would then be rendered as garbage.
+        // Force the backends to emit UTF-8 instead. This cannot be done with the
+        // PYTHONIOENCODING environment variable, because the prebuilt (PyInstaller-frozen)
+        // yt-dlp/youtube-dl executables ignore it.
+        GenericArguments.Add("--encoding");
+        GenericArguments.Add("utf-8");
+
         if (!string.IsNullOrEmpty(_settings.Proxy))
         {
             GenericArguments.Add("--proxy");
